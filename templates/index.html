@@ -1,0 +1,3570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Lite - Classy Frontend</title>
+    <!-- FontAwesome for beautiful, clean icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Outfit Google Font for a modern, sleek appearance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS VARIABLES FOR EASY COLOR THEMING AND CUSTOMIZATION */
+        :root {
+            --bg-color: #0c0d12;            /* Rich dark navy slate background */
+            --panel-bg: rgba(22, 26, 36, 0.65); /* Glassmorphic card background */
+            --panel-hover: rgba(28, 32, 44, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08); /* Subtle glass border */
+            --text-color: #f3f4f6;          /* Clean off-white text */
+            --text-muted: #9ca3af;          /* Slate gray text */
+            --accent-color: #8b5cf6;        /* Vibrant purple accent */
+            --accent-gradient: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #6d28d9 100%);
+            --story-gradient: linear-gradient(45deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            --danger-color: #ef4444;        /* Heart/Like red color */
+            --font-family: 'Outfit', sans-serif;
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+            --accent-shadow: 0 0 15px rgba(139, 92, 246, 0.45);
+        }
+
+        /* RESET & BASE STYLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            display: flex;
+        }
+
+        /* MAIN APP LAYOUT CONTAINER */
+        #app-layout {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* NAVIGATION SIDEBAR (LEFT SIDE) */
+        .sidebar {
+            width: 245px;
+            border-right: 1px solid var(--border-color);
+            padding: 24px 12px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            background: rgba(12, 13, 18, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            padding: 12px 12px 32px 12px;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            background: var(--story-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.1s ease, border-left 0.2s ease, padding-left 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-item:active {
+            transform: scale(0.98);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item:hover i {
+            color: var(--accent-color);
+        }
+
+        .nav-item.active {
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.06);
+            border-left: 3px solid var(--accent-color);
+            padding-left: 9px;
+            box-shadow: inset 4px 0 10px rgba(139, 92, 246, 0.08);
+        }
+
+        .nav-item.active i {
+            color: var(--accent-color);
+        }
+
+        /* Custom scrollbars globally */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            border: 2px solid var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        /* ACTIVE USER BANNER AT BOTTOM OF SIDEBAR */
+        .current-user-panel {
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        .current-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+        }
+
+        .current-user-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+
+        .current-username {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .current-fullname {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .switch-user-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-family: var(--font-family);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        /* MAIN CONTENT AREA */
+        .main-content {
+            margin-left: 245px;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+            min-height: 100vh;
+        }
+
+        /* SCREEN SWITCHER TARGETS */
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 630px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* STORIES SECTION */
+        .stories-container {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(22, 26, 36, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+            box-shadow: var(--glass-shadow);
+            scrollbar-width: none; /* Hide scrollbar for clean look */
+        }
+
+        .stories-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .story-bubble {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            min-width: 66px;
+        }
+
+        .story-ring {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            padding: 2px;
+            background: var(--story-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+
+        .story-bubble:hover .story-ring {
+            transform: scale(1.05);
+        }
+
+        .story-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--panel-bg);
+        }
+
+        .story-username {
+            font-size: 11px;
+            color: var(--text-color);
+            max-width: 66px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+
+        /* STORIES & HIGHLIGHTS PREMIUM STYLES */
+        .story-bubble-me {
+            position: relative;
+        }
+
+        .story-add-badge {
+            position: absolute;
+            bottom: 20px;
+            right: 0px;
+            width: 18px;
+            height: 18px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border: 2px solid var(--panel-bg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 5;
+        }
+
+        .story-ring.story-viewed {
+            background: var(--border-color); /* Viewed stories get a gray ring */
+        }
+        
+        .story-ring.story-none {
+            background: transparent;
+            border: 1px solid var(--border-color);
+        }
+
+        .highlight-bubble {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            min-width: 60px;
+        }
+
+        .highlight-ring {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            padding: 2px;
+            border: 2px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s ease;
+            background: var(--panel-bg);
+        }
+
+        .highlight-bubble:hover .highlight-ring {
+            transform: scale(1.05);
+            border-color: var(--accent-color);
+        }
+
+        .highlight-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .highlight-title {
+            font-size: 10.5px;
+            color: var(--text-color);
+            max-width: 60px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+
+        .highlight-add-btn {
+            border: 2px dashed var(--border-color) !important;
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        .highlight-add-btn:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color);
+        }
+
+        /* TIMELINE STYLES FOR STORY VIEWER */
+        .story-progress-segment {
+            flex: 1;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.35);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .story-progress-fill {
+            height: 100%;
+            width: 0%;
+            background-color: white;
+        }
+
+        /* INSTAGRAM FEED POST CARD */
+        .post-card {
+            background-color: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            box-shadow: var(--glass-shadow);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .post-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px;
+        }
+
+        .post-author-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .post-author-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--border-color);
+        }
+
+        .post-author-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .post-more-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Post media container to support double-click to like animation */
+        .post-image-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background-color: #050505;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* HEART POP ANIMATION FOR DOUBLE CLICK */
+        .heart-pop {
+            position: absolute;
+            font-size: 80px;
+            color: #ffffff;
+            opacity: 0;
+            transform: scale(0);
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+            text-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        .heart-pop.animate {
+            animation: heartPop 0.8s ease forwards;
+        }
+
+        @keyframes heartPop {
+            0% { opacity: 0; transform: scale(0); }
+            30% { opacity: 0.9; transform: scale(1.2); }
+            50% { opacity: 0.9; transform: scale(1.0); }
+            80% { opacity: 0.9; transform: scale(1.0); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+
+        /* POST ACTIONS (LIKE, COMMENT, ETC.) */
+        .post-actions {
+            padding: 12px 14px 8px 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .post-action-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        .post-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 22px;
+            cursor: pointer;
+            transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        .post-action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .post-action-btn.liked {
+            color: var(--danger-color);
+        }
+
+        .post-likes-count {
+            padding: 0 14px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .post-caption-box {
+            padding: 0 14px;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .post-caption-user {
+            font-weight: 700;
+            margin-right: 6px;
+            cursor: pointer;
+        }
+
+        /* COMMENTS SECTION */
+        .post-comments-container {
+            padding: 0 14px 14px 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 10px;
+        }
+
+        .view-all-comments {
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+
+        .comment-item {
+            font-size: 13.5px;
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+
+        .comment-user {
+            font-weight: 600;
+            margin-right: 6px;
+            cursor: pointer;
+        }
+
+        .comment-text {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* NEW COMMENT INPUT FORM */
+        .comment-input-box {
+            display: flex;
+            border-top: 1px solid var(--border-color);
+            padding: 10px 14px;
+            align-items: center;
+        }
+
+        .comment-input {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-family: var(--font-family);
+            font-size: 14px;
+            flex-grow: 1;
+            outline: none;
+            padding-right: 12px;
+        }
+
+        .comment-submit-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0.5;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .comment-input:not(:placeholder-shown) + .comment-submit-btn {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* PROFILE SCREEN */
+        .profile-container {
+            width: 100%;
+            max-width: 935px;
+            padding-bottom: 50px;
+        }
+
+        .profile-header-area {
+            display: flex;
+            gap: 60px;
+            padding: 30px 20px 44px 20px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: flex-start;
+        }
+
+        .profile-avatar-wrapper {
+            flex-shrink: 0;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            background: #111;
+        }
+
+        .profile-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-details {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .profile-row-1 {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-username-label {
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+        .profile-edit-btn {
+            background-color: #363636;
+            border: none;
+            color: var(--text-color);
+            font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 14px;
+            padding: 7px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .profile-edit-btn:hover {
+            background-color: #454545;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+            font-size: 16px;
+        }
+
+        .profile-stats span {
+            font-weight: 600;
+        }
+
+        .profile-fullname-label {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .profile-bio-text {
+            font-size: 14.5px;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.9);
+            white-space: pre-wrap;
+        }
+
+        /* 3-COLUMN IMAGE GRID FOR POSTS */
+        .profile-posts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            padding-top: 15px;
+        }
+
+        .grid-item {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            background-color: #111;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .grid-item-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .grid-item:hover .grid-item-overlay {
+            opacity: 1;
+        }
+
+        .grid-item:hover img {
+            transform: scale(1.02);
+        }
+
+        .grid-overlay-stat {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* MODERN DIALOG/MODALS styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.65);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 460px;
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* MODAL FORMS */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            background-color: #1e1e1e;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            padding: 12px;
+            font-family: var(--font-family);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .form-submit-btn {
+            width: 100%;
+            background-color: var(--accent-color);
+            border: none;
+            color: #ffffff;
+            font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 8px;
+        }
+
+        .form-submit-btn:hover {
+            background-color: #1877f2;
+        }
+
+        /* TOAST NOTIFICATION BANNER */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: #262626;
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger-color);
+        }
+
+        /* EMPTY STATE WRAPPERS */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: var(--text-muted);
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .empty-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-family: var(--font-family);
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* MOBILE RESPONSIVENESS */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 60px;
+                flex-direction: row;
+                position: fixed;
+                bottom: 0;
+                top: auto;
+                left: 0;
+                border-right: none;
+                border-top: 1px solid var(--border-color);
+                padding: 0 16px;
+                justify-content: space-around;
+                align-items: center;
+            }
+
+            .logo {
+                display: none; /* Hide brand logo in mobile bar */
+            }
+
+            .nav-links {
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-around;
+                margin: 0;
+                gap: 0;
+            }
+
+            .nav-item {
+                padding: 10px;
+                font-size: 0; /* Hide text label on mobile */
+            }
+
+            .nav-item i {
+                font-size: 24px;
+            }
+
+            .current-user-panel {
+                border-top: none;
+                padding-top: 0;
+                margin-top: 0;
+            }
+
+            .current-user-info {
+                display: none; /* Hide current user username text on mobile */
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px 8px 80px 8px;
+            }
+
+            .profile-header-area {
+                gap: 20px;
+                padding: 20px 10px;
+            }
+
+            .profile-avatar-wrapper {
+                width: 77px;
+                height: 77px;
+            }
+
+            .profile-row-1 {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        /* REELS SMARTPHONE MOCKUP VIEW */
+        .reel-mobile-mockup {
+            position: relative;
+            width: 350px;
+            height: 620px;
+            margin: 0 auto 30px auto;
+            border-radius: 28px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: var(--glass-shadow), 0 0 0 6px #1e2029; /* Realistic Phone Bezel outer rim */
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .reel-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            cursor: pointer;
+        }
+        
+        .reel-overlay-grad-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .reel-overlay-grad-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 180px;
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .reel-header-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 3;
+            cursor: pointer;
+        }
+
+        .reel-author-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .reel-author-name {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 14px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .reel-actions-overlay {
+            position: absolute;
+            bottom: 30px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            z-index: 3;
+        }
+
+        .reel-action-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .reel-action-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s, color 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .reel-action-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .reel-action-btn.liked {
+            color: var(--danger-color);
+            background: rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .reel-action-btn.delete {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .reel-action-btn.delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #ffffff;
+        }
+
+        .reel-action-label {
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .reel-caption-overlay {
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            right: 80px;
+            z-index: 3;
+            color: #ffffff;
+        }
+
+        .reel-caption-user {
+            font-weight: 700;
+            font-size: 14.5px;
+            margin-bottom: 6px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .reel-caption-text {
+            color: rgba(255,255,255,0.9);
+            font-size: 13px;
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+        }
+
+        /* ADMIN CONTROL CENTER CUSTOM AESTHETICS */
+        .admin-dashboard-container {
+            width: 100%;
+            max-width: 900px;
+            padding-bottom: 60px;
+        }
+
+        .admin-title-badge {
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 10px;
+            box-shadow: var(--accent-shadow);
+        }
+
+        .admin-section-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: transform 0.25s, border-color 0.25s;
+        }
+
+        .admin-section-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .admin-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            margin-bottom: 8px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .admin-list-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(4px);
+        }
+
+        .admin-btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger-color);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .admin-btn-delete:hover {
+            background: var(--danger-color);
+            color: #ffffff;
+            border-color: var(--danger-color);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
+        }
+
+        .admin-btn-disabled {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .admin-scroll-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        /* CUSTOM SCROLLBARS FOR CHIC EXPERIENCE */
+        .admin-scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .admin-scroll-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+
+        .admin-scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 4px;
+        }
+
+        .admin-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-layout">
+        <!-- LEFT SIDE NAVIGATION BAR -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-gradient fa-brands fa-instagram"></i>
+                <span>Instagram Lite</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li onclick="switchScreen('feed')" id="nav-feed" class="nav-item active">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Home Feed</span>
+                </li>
+                <li onclick="openModal('create-post-modal')" class="nav-item">
+                    <i class="fa-regular fa-square-plus"></i>
+                    <span>Create Post</span>
+                </li>
+                <li onclick="switchScreen('reels')" id="nav-reels" class="nav-item">
+                    <i class="fa-solid fa-clapperboard"></i>
+                    <span>Reels</span>
+                </li>
+                <li onclick="openModal('create-reel-modal')" class="nav-item">
+                    <i class="fa-solid fa-circle-play"></i>
+                    <span>Create Reel</span>
+                </li>
+                <li onclick="openModal('create-user-modal')" class="nav-item">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>New Account</span>
+                </li>
+                <li onclick="viewMyProfile()" id="nav-profile" class="nav-item">
+                    <i class="fa-regular fa-user"></i>
+                    <span>My Profile</span>
+                </li>
+                <li onclick="switchScreen('admin-panel')" id="nav-admin" class="nav-item" style="display: none;">
+                    <i class="fa-solid fa-user-shield" style="color: var(--accent-color);"></i>
+                    <span>Admin Panel</span>
+                </li>
+            </ul>
+
+            <!-- CURRENT ACTIVE ACCOUNT BOX -->
+            <div class="current-user-panel" id="active-user-panel">
+                <!-- Dynamically Populated by JavaScript -->
+                <div style="text-align: center; width: 100%;">
+                    <button class="switch-user-btn" onclick="openModal('switch-user-modal')">Select User</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+        <main class="main-content">
+            
+            <!-- FEED SCREEN -->
+            <section id="feed-screen" class="screen active">
+                <!-- Stories Carousel -->
+                <div class="stories-container" id="stories-shelf">
+                    <!-- Stories bubbles dynamically generated here -->
+                </div>
+
+                <!-- Feed Card Stream -->
+                <div id="feed-stream">
+                    <!-- Post cards dynamically generated here -->
+                </div>
+            </section>
+
+            <!-- REELS SCREEN -->
+            <section id="reels-screen" class="screen">
+                <div id="reels-stream">
+                    <!-- Reels card list dynamically populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- PROFILE SCREEN -->
+            <section id="profile-screen" class="screen">
+                <div class="profile-container">
+                    
+                    <!-- Bio & Details Info Header -->
+                    <header class="profile-header-area">
+                        <div class="profile-avatar-wrapper">
+                            <img id="profile-avatar-img" class="profile-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="Avatar">
+                        </div>
+                        <div class="profile-details">
+                            <div class="profile-row-1">
+                                <h2 class="profile-username-label" id="profile-username-title">username</h2>
+                                <button class="profile-edit-btn" id="profile-action-btn" onclick="openBioModal()">Edit Bio</button>
+                            </div>
+                            <ul class="profile-stats">
+                                <li><span id="profile-posts-count">0</span> posts</li>
+                                <li><span id="profile-followers-count">0</span> followers</li>
+                                <li><span id="profile-following-count">0</span> following</li>
+                            </ul>
+                            <div>
+                                <h3 class="profile-fullname-label" id="profile-fullname-title">Full Name</h3>
+                                <p class="profile-bio-text" id="profile-bio-description">No bio yet.</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    <!-- Highlights Container -->
+                    <div id="profile-highlights-container" style="display: flex; gap: 15px; overflow-x: auto; padding: 10px 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); margin-top: 15px; margin-bottom: 15px; width: 100%; scrollbar-width: none;">
+                        <!-- Highlights bubbles will be dynamically loaded here -->
+                    </div>
+
+                    <!-- Posts Grid -->
+                    <div class="profile-posts-grid" id="profile-posts-grid-container">
+                        <!-- Grid elements dynamically generated here -->
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ADMIN PANEL SCREEN -->
+            <section id="admin-screen" class="screen">
+                <div class="admin-dashboard-container">
+                    <header style="padding: 20px 0; border-bottom: 1px solid var(--border-color); margin-bottom: 25px;">
+                        <h2 style="font-size: 24px; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-user-shield" style="color: var(--accent-color);"></i>
+                            Admin Control Center
+                            <span class="admin-title-badge">Secure Console</span>
+                        </h2>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">Manage users, delete posts, and perform system administrative duties.</p>
+                    </header>
+
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+                        <!-- USERS CONTROL -->
+                        <div class="admin-section-card">
+                            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-users" style="color: var(--accent-color);"></i>
+                                User Accounts (<span id="admin-users-count">0</span>)
+                            </h3>
+                            <div id="admin-users-list" class="admin-scroll-container">
+                                <!-- Dynamically populated list of users -->
+                            </div>
+                        </div>
+
+                        <!-- POSTS CONTROL -->
+                        <div class="admin-section-card">
+                            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-images" style="color: var(--danger-color);"></i>
+                                Feed Posts (<span id="admin-posts-count">0</span>)
+                            </h3>
+                            <div id="admin-posts-list" class="admin-scroll-container">
+                                <!-- Dynamically populated list of posts -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL: REGISTER/CREATE NEW USER -->
+    <div id="create-user-modal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <header class="modal-header">
+                <span class="modal-title">Create Account</span>
+                <button class="modal-close-btn" onclick="closeModal('create-user-modal')">&times;</button>
+            </header>
+            <div class="modal-body">
+                <form id="create-user-form" onsubmit="handleCreateUser(event)">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" id="reg-username" class="form-input" placeholder="e.g. janesmith" required pattern="^[a-zA-Z0-9_\.]+$" title="Only letters, numbers, dots and underscores allowed">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="reg-email" class="form-input" placeholder="e.g. jane@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="reg-password" class="form-input" placeholder="Password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="reg-fullname" class="form-input" placeholder="e.g. Jane Smith">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Profile Image</label>
+                        <input type="file" id="reg-avatar-file" class="form-input" accept="image/*">
+                        <span style="font-size: 11px; color: var(--text-muted); display: block; margin-top: 4px;">Only image files are allowed. Leave blank for a default avatar.</span>
+                    </div>
+                    <button type="submit" class="form-submit-btn">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: LOGIN TO ACCOUNT -->
+    <div id="switch-user-modal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <header class="modal-header">
+                <span class="modal-title">Log In</span>
+                <button class="modal-close-btn" onclick="closeModal('switch-user-modal')">&times;</button>
+            </header>
+            <div class="modal-body">
+                <form id="login-user-form" onsubmit="handleLoginUser(event)">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" id="login-username" class="form-input" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="login-password" class="form-input" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="form-submit-btn">Log In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREATE NEW POST -->
+    <div id="create-post-modal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <header class="modal-header">
+                <span class="modal-title">Create New Post</span>
+                <button class="modal-close-btn" onclick="closeModal('create-post-modal')">&times;</button>
+            </header>
+            <div class="modal-body">
+                <form id="create-post-form" onsubmit="handleCreatePost(event)">
+                    <div class="form-group">
+                        <label class="form-label">Image File</label>
+                        <input type="file" id="post-image-file" class="form-input" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Caption</label>
+                        <textarea id="post-caption" class="form-input" style="height: 100px; resize: none;" placeholder="Write a caption..." required></textarea>
+                    </div>
+                    <button type="submit" class="form-submit-btn">Share Post</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREATE NEW REEL -->
+    <div id="create-reel-modal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <header class="modal-header">
+                <span class="modal-title">Create New Reel</span>
+                <button class="modal-close-btn" onclick="closeModal('create-reel-modal')">&times;</button>
+            </header>
+            <div class="modal-body">
+                <form id="create-reel-form" onsubmit="handleCreateReel(event)">
+                    <div class="form-group">
+                        <label class="form-label">Video File</label>
+                        <input type="file" id="reel-video-file" class="form-input" accept="video/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Caption</label>
+                        <textarea id="reel-caption" class="form-input" style="height: 100px; resize: none;" placeholder="Write a caption..." required></textarea>
+                    </div>
+                    <button type="submit" class="form-submit-btn">Share Reel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: UPDATE USER BIO -->
+    <div id="edit-bio-modal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <header class="modal-header">
+                <span class="modal-title">Update Biography</span>
+                <button class="modal-close-btn" onclick="closeModal('edit-bio-modal')">&times;</button>
+            </header>
+            <div class="modal-body">
+                <form id="edit-bio-form" onsubmit="handleUpdateBio(event)">
+                    <div class="form-group">
+                        <label class="form-label">Bio Description</label>
+                        <textarea id="edit-bio-text" class="form-input" style="height: 100px; resize: none;" placeholder="Tell people about yourself..."></textarea>
+                    </div>
+                    <button type="submit" class="form-submit-btn">Save changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- HIDDEN STORY FILE INPUT -->
+    <input type="file" id="story-file-input" style="display: none;" accept="image/*,video/*" onchange="uploadNewStory(event)">
+
+    <!-- MODAL: STORY VIEWER -->
+    <div id="story-viewer-modal" class="modal-overlay" onclick="closeStoryViewerOnOverlay(event)" style="background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 10000; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;">
+        <button class="modal-close-btn" onclick="closeStoryViewer()" style="position: absolute; top: 20px; right: 20px; font-size: 36px; color: white; background: none; border: none; cursor: pointer; z-index: 10100;">&times;</button>
+        
+        <div class="story-viewer-container" style="position: relative; width: 100%; max-width: 420px; height: 90vh; max-height: 750px; background: #000; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <!-- Progress bars container -->
+            <div id="story-progress-bars" style="position: absolute; top: 12px; left: 10px; right: 10px; display: flex; gap: 4px; z-index: 10050;">
+                <!-- Dynamically added segments -->
+            </div>
+            
+            <!-- Story Header (User Info) -->
+            <div class="story-viewer-header" style="position: absolute; top: 25px; left: 15px; right: 15px; display: flex; align-items: center; justify-content: space-between; z-index: 10050; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img id="story-viewer-avatar" src="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
+                    <span id="story-viewer-username" style="font-weight: 600; font-size: 14px;">username</span>
+                    <span id="story-viewer-time" style="font-size: 11px; color: rgba(255,255,255,0.7);">time</span>
+                </div>
+                <button id="story-viewer-delete-btn" onclick="deleteActiveStory()" style="background: none; border: none; color: #ff3b30; font-size: 18px; cursor: pointer; display: none; padding: 5px;" title="Delete Story">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
+            </div>
+            
+            <!-- Story Content (Image / Video) -->
+            <div id="story-viewer-content" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000;">
+                <!-- img or video element will be injected here -->
+            </div>
+            
+            <!-- Navigation Areas -->
+            <div class="story-nav-prev" onclick="prevStory()" style="position: absolute; top: 80px; bottom: 80px; left: 0; width: 25%; cursor: w-resize; z-index: 10040;"></div>
+            <div class="story-nav-next" onclick="nextStory()" style="position: absolute; top: 80px; bottom: 80px; right: 0; width: 25%; cursor: e-resize; z-index: 10040;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREATE NEW HIGHLIGHT -->
+    <div id="create-highlight-modal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <header class="modal-header">
+                <span class="modal-title">Create Highlight Collection</span>
+                <button class="modal-close-btn" onclick="closeModal('create-highlight-modal')">&times;</button>
+            </header>
+            <div class="modal-body">
+                <form id="create-highlight-form" onsubmit="handleCreateHighlight(event)">
+                    <div class="form-group">
+                        <label class="form-label">Highlight Title</label>
+                        <input type="text" id="highlight-title" class="form-input" placeholder="e.g. Travel" required maxlength="15">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Select Active Stories to Include</label>
+                        <div id="highlight-stories-selection-list" style="display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.2); min-height: 80px;">
+                            <!-- Dynamically populated with checkbox items -->
+                        </div>
+                    </div>
+                    <button type="submit" class="form-submit-btn">Create Highlight</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST BANNERS -->
+    <div id="toast-banner" class="toast">
+        <i class="fa-regular fa-bell"></i>
+        <span id="toast-message">Message placeholder</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // CONFIGURATION: Set the FastAPI Backend server URL here
+        const API_BASE_URL = (window.location.protocol === 'file:') ? 'http://127.0.0.1:8001' : window.location.origin;
+
+        // GLOBAL APPLICATION STATE
+        let allUsers = [];
+        let allPosts = [];
+        let allReels = [];
+        let currentUser = null; // The currently logged-in User object
+        let activeScreen = 'feed'; // 'feed' or 'profile'
+
+        // STORIES & HIGHLIGHTS GLOBAL STATE
+        let userStoriesMap = {}; // user_id -> list of active stories
+        let currentViewerUserId = null; // ID of the user whose stories are being viewed
+        let currentViewerStories = []; // List of stories currently playing
+        let currentStoryIndex = 0; // Current story slide index
+        let storyProgressAnimFrame = null; // RequestAnimationFrame ID
+        let storyDuration = 5000; // Duration in milliseconds
+        let isStoryPaused = false;
+        let selectedStoryIdsForHighlight = []; // Selected story IDs for new highlight creation
+        let profileViewingUser = null; // Stored user when looking at a profile page
+
+        // FETCH INTERCEPTOR FOR AUTOMATIC REFRESH QUEUE
+        let isRefreshing = false;
+        let refreshSubscribers = [];
+
+        function subscribeTokenRefresh(cb) {
+            refreshSubscribers.push(cb);
+        }
+
+        function onRefreshed(newAccessToken) {
+            refreshSubscribers.forEach(cb => cb(newAccessToken));
+            refreshSubscribers = [];
+        }
+
+        // API FETCH WRAPPER WITH JWT AUTHENTICATION
+        async function fetchAPI(path, options = {}) {
+            const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
+            const headers = { ...options.headers };
+            
+            if (options.body && typeof options.body === 'string' && !headers['Content-Type']) {
+                headers['Content-Type'] = 'application/json';
+            }
+            
+            let token = localStorage.getItem('instagram_access_token');
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            let mergedOptions = {
+                ...options,
+                headers
+            };
+            
+            let res = await fetch(url, mergedOptions);
+            
+            // Intercept 401 and try silently refreshing the token
+            if (res.status === 401 && localStorage.getItem('instagram_refresh_token')) {
+                if (path === '/user/refresh' || path === '/user/login') {
+                    // Avoid infinite loop if refresh request fails with 401
+                    return res;
+                }
+                
+                if (!isRefreshing) {
+                    isRefreshing = true;
+                    try {
+                        const refreshToken = localStorage.getItem('instagram_refresh_token');
+                        const refreshRes = await fetch(`${API_BASE_URL}/user/refresh`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ refresh_token: refreshToken })
+                        });
+                        
+                        if (refreshRes.ok) {
+                            const refreshData = await refreshRes.json();
+                            localStorage.setItem('instagram_access_token', refreshData.access_token);
+                            localStorage.setItem('instagram_refresh_token', refreshData.refresh_token);
+                            isRefreshing = false;
+                            onRefreshed(refreshData.access_token);
+                        } else {
+                            isRefreshing = false;
+                            handleLogout(false);
+                            showToast("Session expired. Please log in again.", true);
+                            return res;
+                        }
+                    } catch (err) {
+                        isRefreshing = false;
+                        handleLogout(false);
+                        return res;
+                    }
+                }
+                
+                // Return a Promise that resolves when the token has been successfully refreshed
+                const retryRequest = new Promise((resolve) => {
+                    subscribeTokenRefresh((newAccessToken) => {
+                        mergedOptions.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                        resolve(fetch(url, mergedOptions));
+                    });
+                });
+                return retryRequest;
+            }
+            
+            return res;
+        }
+
+        // ON LOAD INITIALIZATION
+        window.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('instagram_access_token');
+            if (token) {
+                await fetchCurrentUser();
+            }
+            
+            await reloadData();
+            updateCurrentUserUI();
+            renderFeed();
+            renderStories();
+        });
+
+        // FETCH CURRENT LOGGED IN USER VIA JWT
+        async function fetchCurrentUser() {
+            try {
+                const res = await fetchAPI('/user/users/me');
+                if (res.ok) {
+                    currentUser = await res.json();
+                    currentUser.isAdmin = false;
+                    try {
+                        const rolesRes = await fetchAPI(`/user/users/${currentUser.user_id}/roles`);
+                        if (rolesRes.ok) {
+                            const roles = await rolesRes.json();
+                            currentUser.isAdmin = roles.some(r => r.role_name === 'Admin');
+                        }
+                    } catch (roleErr) {
+                        console.error("Failed to fetch user roles", roleErr);
+                    }
+                } else {
+                    handleLogout(false);
+                }
+            } catch (err) {
+                console.error("Failed to fetch current user profile", err);
+                handleLogout(false);
+            }
+        }
+
+        // LOGOUT HANDLER
+        async function handleLogout(notify = true) {
+            const refreshToken = localStorage.getItem('instagram_refresh_token');
+            if (refreshToken && currentUser) {
+                try {
+                    // Send background revocation, use raw fetch to avoid fetchAPI 401 loop on logout
+                    fetch(`${API_BASE_URL}/user/logout`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('instagram_access_token')}`
+                        },
+                        body: JSON.stringify({ refresh_token: refreshToken })
+                    }).catch(err => console.error("Logout request failed", err));
+                } catch (e) {
+                    console.error("Logout call error", e);
+                }
+            }
+            currentUser = null;
+            localStorage.removeItem('instagram_access_token');
+            localStorage.removeItem('instagram_refresh_token');
+            userStoriesMap = {};
+            closeStoryViewer();
+            updateCurrentUserUI();
+            if (notify) {
+                showToast("Logged out successfully");
+            }
+            // Switch to feed screen and empty feed
+            switchScreen('feed');
+            renderFeed();
+            renderStories();
+        }
+
+        // CENTRALIZED REFRESH OF SYSTEM DATA
+        async function reloadData() {
+            try {
+                // Fetch Users
+                const userRes = await fetchAPI('/user/users');
+                if (userRes.ok) {
+                    allUsers = await userRes.json();
+                } else {
+                    allUsers = [];
+                }
+
+                // Fetch Stories for all loaded users in parallel
+                userStoriesMap = {};
+                if (allUsers.length > 0) {
+                    const storyPromises = allUsers.map(async (u) => {
+                        try {
+                            const res = await fetchAPI(`/user/users/${u.user_id}/stories/active`);
+                            if (res.ok) {
+                                const stories = await res.json();
+                                return { user_id: u.user_id, stories };
+                            }
+                        } catch (e) {
+                            console.error(`Failed to fetch stories for user ${u.user_id}`, e);
+                        }
+                        return { user_id: u.user_id, stories: [] };
+                    });
+                    const results = await Promise.all(storyPromises);
+                    results.forEach(r => {
+                        userStoriesMap[r.user_id] = r.stories;
+                    });
+                }
+
+                // Fetch Posts
+                const postsRes = await fetchAPI('/user/posts');
+                if (postsRes.ok) {
+                    allPosts = await postsRes.json();
+                } else {
+                    allPosts = [];
+                }
+
+                // Fetch Reels
+                const reelsRes = await fetchAPI('/user/reels');
+                if (reelsRes.ok) {
+                    allReels = await reelsRes.json();
+                } else {
+                    allReels = [];
+                }
+            } catch (err) {
+                console.error("Connection failed: Backend might be offline.", err);
+                showToast("Cannot connect to backend server. Make sure it is running!", true);
+            }
+        }
+
+        // DYNAMIC SCREEN TABS TOGGLER
+        function switchScreen(screenName) {
+            activeScreen = screenName;
+            
+            // Update Active tab navigation CSS
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            // Hide all screens
+            document.getElementById('feed-screen').classList.remove('active');
+            document.getElementById('profile-screen').classList.remove('active');
+            document.getElementById('reels-screen').classList.remove('active');
+            const adminScr = document.getElementById('admin-screen');
+            if (adminScr) adminScr.classList.remove('active');
+            
+            if (screenName === 'feed') {
+                const nav = document.getElementById('nav-feed');
+                if (nav) nav.classList.add('active');
+                document.getElementById('feed-screen').classList.add('active');
+                renderFeed();
+            } else if (screenName === 'reels') {
+                const nav = document.getElementById('nav-reels');
+                if (nav) nav.classList.add('active');
+                document.getElementById('reels-screen').classList.add('active');
+                renderReels();
+            } else if (screenName === 'profile') {
+                const nav = document.getElementById('nav-profile');
+                if (nav) nav.classList.add('active');
+                document.getElementById('profile-screen').classList.add('active');
+                renderProfile();
+            } else if (screenName === 'admin-panel') {
+                const nav = document.getElementById('nav-admin');
+                if (nav) nav.classList.add('active');
+                if (adminScr) adminScr.classList.add('active');
+                renderAdminScreen();
+            }
+        }
+
+        // HELPERS TO VIEW PROFILES
+        function viewMyProfile() {
+            if (!currentUser) {
+                showToast("Please register or login first!", true);
+                openModal('switch-user-modal');
+                return;
+            }
+            profileViewingUser = currentUser;
+            switchScreen('profile');
+            renderProfile();
+        }
+
+        async function viewUserProfile(userId) {
+            const targetUser = allUsers.find(u => u.user_id == userId);
+            if (!targetUser) return;
+            profileViewingUser = targetUser;
+            switchScreen('profile');
+            renderProfile();
+        }
+
+        // UPDATE SIDEBAR LOGGED IN BANNER
+        function updateCurrentUserUI() {
+            const panel = document.getElementById('active-user-panel');
+            const adminNav = document.getElementById('nav-admin');
+            
+            if (!currentUser) {
+                if (adminNav) adminNav.style.display = 'none';
+                panel.innerHTML = `
+                    <div style="text-align: center; width: 100%;">
+                        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">No active user</p>
+                        <button class="switch-user-btn" style="width:100%; border:1px solid var(--border-color); padding:6px; border-radius:6px; margin-bottom:4px;" onclick="openModal('switch-user-modal')">Log In</button>
+                        <button class="switch-user-btn" style="width:100%; border:1px solid var(--border-color); padding:6px; border-radius:6px;" onclick="openModal('create-user-modal')">Sign Up</button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (adminNav) {
+                adminNav.style.display = currentUser.isAdmin ? 'flex' : 'none';
+            }
+
+            const avatarUrl = currentUser.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUser.username}`;
+            panel.innerHTML = `
+                <img class="current-user-avatar" src="${avatarUrl}" alt="Avatar">
+                <div class="current-user-info">
+                    <span class="current-username">${currentUser.username}</span>
+                    <span class="current-fullname">${currentUser.full_name || 'Instagram User'}</span>
+                </div>
+                <button class="switch-user-btn" onclick="handleLogout()">Logout</button>
+            `;
+        }
+
+        // ACCOUNT LOGIN HANDLER
+        async function handleLoginUser(event) {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/user/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.detail || "Incorrect username or password");
+                }
+
+                localStorage.setItem('instagram_access_token', data.access_token);
+                localStorage.setItem('instagram_refresh_token', data.refresh_token);
+                showToast("Logged in successfully!");
+                document.getElementById('login-user-form').reset();
+                closeModal('switch-user-modal');
+
+                await fetchCurrentUser();
+                await reloadData();
+                switchScreen('feed');
+                renderFeed();
+                renderStories();
+            } catch (err) {
+                console.error(err);
+                showToast(err.message, true);
+            }
+        }
+
+        // ACCOUNT REGISTRATION HANDLER
+        async function handleCreateUser(e) {
+            e.preventDefault();
+            const username = document.getElementById('reg-username').value.trim().toLowerCase();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const full_name = document.getElementById('reg-fullname').value.trim();
+            
+            const avatarFileInput = document.getElementById('reg-avatar-file');
+            let profile_picture = "";
+
+            if (avatarFileInput && avatarFileInput.files && avatarFileInput.files[0]) {
+                const file = avatarFileInput.files[0];
+                if (!file.type.startsWith('image/')) {
+                    showToast("Please upload image files only.", true);
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("file", file);
+
+                try {
+                    const uploadRes = await fetch(`${API_BASE_URL}/user/upload`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!uploadRes.ok) {
+                        const uploadData = await uploadRes.json();
+                        throw new Error(uploadData.detail || "Profile image upload failed");
+                    }
+
+                    const uploadResult = await uploadRes.json();
+                    profile_picture = uploadResult.url;
+                } catch (err) {
+                    console.error("Profile picture upload failed", err);
+                    showToast(err.message || "Failed to upload profile picture.", true);
+                    return;
+                }
+            }
+
+            if (!profile_picture) {
+                profile_picture = `https://api.dicebear.com/7.x/adventurer/svg?seed=${username}`;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/user/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password, full_name, profile_picture })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.detail || "Registration failed");
+                }
+
+                showToast("Account created successfully! Logging in...");
+                document.getElementById('create-user-form').reset();
+                closeModal('create-user-modal');
+                
+                // Perform automatic login
+                const loginRes = await fetch(`${API_BASE_URL}/user/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                if (loginRes.ok) {
+                    const loginData = await loginRes.json();
+                    localStorage.setItem('instagram_access_token', loginData.access_token);
+                    localStorage.setItem('instagram_refresh_token', loginData.refresh_token);
+                }
+
+                await fetchCurrentUser();
+                await reloadData();
+                renderFeed();
+                renderStories();
+
+            } catch (err) {
+                console.error(err);
+                showToast(err.message, true);
+            }
+        }
+
+        // CREATE NEW POST HANDLER
+        async function handleCreatePost(e) {
+            e.preventDefault();
+            if (!currentUser) {
+                showToast("Please register or login first!", true);
+                openModal('switch-user-modal');
+                return;
+            }
+
+            const fileInput = document.getElementById('post-image-file');
+            const caption = document.getElementById('post-caption').value.trim();
+
+            if (fileInput.files.length === 0) return;
+
+            try {
+                showToast("Uploading image...");
+                const formData = new FormData();
+                formData.append("file", fileInput.files[0]);
+
+                const uploadRes = await fetchAPI('/user/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!uploadRes.ok) {
+                    const errData = await uploadRes.json();
+                    throw new Error(errData.detail || "Image upload failed");
+                }
+
+                const uploadData = await uploadRes.json();
+                const image_url = uploadData.url;
+
+                const res = await fetchAPI('/user/posts', {
+                    method: 'POST',
+                    body: JSON.stringify({ user_id: currentUser.user_id, caption, image_url })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.detail || "Failed to create post");
+                }
+
+                showToast("Shared new post!");
+                document.getElementById('create-post-form').reset();
+                closeModal('create-post-modal');
+                
+                await reloadData();
+                renderFeed();
+                
+                // If viewing own profile, update grid
+                if (activeScreen === 'profile' && profileViewingUser.user_id === currentUser.user_id) {
+                    renderProfile();
+                }
+
+            } catch (err) {
+                console.error(err);
+                showToast(err.message, true);
+            }
+        }
+
+        // CREATE NEW REEL HANDLER
+        async function handleCreateReel(e) {
+            e.preventDefault();
+            if (!currentUser) {
+                showToast("Please register or login first!", true);
+                openModal('switch-user-modal');
+                return;
+            }
+
+            const fileInput = document.getElementById('reel-video-file');
+            const caption = document.getElementById('reel-caption').value.trim();
+
+            if (fileInput.files.length === 0) return;
+
+            try {
+                showToast("Uploading video...");
+                const formData = new FormData();
+                formData.append("file", fileInput.files[0]);
+
+                const uploadRes = await fetchAPI('/user/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!uploadRes.ok) {
+                    const errData = await uploadRes.json();
+                    throw new Error(errData.detail || "Video upload failed");
+                }
+
+                const uploadData = await uploadRes.json();
+                const video_url = uploadData.url;
+
+                const res = await fetchAPI('/user/reels', {
+                    method: 'POST',
+                    body: JSON.stringify({ video_url, caption })
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.detail || "Failed to share Reel");
+                }
+
+                showToast("Shared new Reel!");
+                document.getElementById('create-reel-form').reset();
+                closeModal('create-reel-modal');
+                
+                await reloadData();
+                if (activeScreen === 'reels') {
+                    renderReels();
+                }
+
+            } catch (err) {
+                console.error(err);
+                showToast(err.message, true);
+            }
+        }
+
+        // FETCH ACTIVE BIO FOR PROFILE PAGE
+        async function loadUserBio(userId) {
+            try {
+                const res = await fetchAPI(`/user/users/${userId}/bio`);
+                if (res.ok) {
+                    const data = await res.json();
+                    return data.bio_text;
+                }
+            } catch (e) {
+                console.log("No active bio found", e);
+            }
+            return null;
+        }
+
+        // EDIT BIOGRAPHY DISPATCHER
+        async function handleUpdateBio(e) {
+            e.preventDefault();
+            const bioText = document.getElementById('edit-bio-text').value.trim();
+            
+            try {
+                const res = await fetchAPI(`/user/users/${currentUser.user_id}/bio`, {
+                    method: 'POST',
+                    body: JSON.stringify({ bio_text: bioText, is_active: true })
+                });
+
+                if (res.ok) {
+                    showToast("Biography updated!");
+                    closeModal('edit-bio-modal');
+                    await reloadData();
+                    renderProfile();
+                } else {
+                    const error = await res.json();
+                    throw new Error(error.detail || "Failed to edit bio");
+                }
+            } catch(err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function openBioModal() {
+            const bioText = document.getElementById('profile-bio-description').textContent;
+            document.getElementById('edit-bio-text').value = bioText === 'No bio yet.' ? '' : bioText;
+            openModal('edit-bio-modal');
+        }
+
+        // RENDER FEED STREAM CHRONOLOGICALLY
+        async function renderFeed() {
+            const stream = document.getElementById('feed-stream');
+            
+            if (!currentUser) {
+                stream.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-lock"></i>
+                        <h3>Authentication Required</h3>
+                        <p>Please log in or sign up to view the feed.</p>
+                        <button class="empty-btn" onclick="openModal('switch-user-modal')">Log In</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Empty state if no posts in database
+            if (allPosts.length === 0) {
+                stream.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-regular fa-image"></i>
+                        <h3>Welcome to Instagram Lite</h3>
+                        <p>No posts exist on the database server yet.</p>
+                        <button class="empty-btn" onclick="openModal('create-post-modal')">Create First Post</button>
+                    </div>
+                `;
+                return;
+            }
+
+            stream.innerHTML = ''; // Clear stream
+
+            for (const post of allPosts) {
+                // Find user details of post owner
+                const postOwner = allUsers.find(u => u.user_id === post.user_id);
+                const ownerUsername = postOwner ? postOwner.username : `User_${post.user_id}`;
+                const ownerAvatar = postOwner ? postOwner.profile_picture : `https://api.dicebear.com/7.x/adventurer/svg?seed=user${post.user_id}`;
+                
+                // Fetch likes count and comments for this post
+                let likesCount = 0;
+                let isLikedByMe = false;
+                let comments = [];
+
+                try {
+                    const likesRes = await fetchAPI(`/user/posts/${post.post_id}/likes/count`);
+                    if (likesRes.ok) {
+                        const countData = await likesRes.json();
+                        likesCount = countData.likes_count;
+                    }
+
+                    // Check if current user liked it
+                    if (currentUser) {
+                        const likedUsersRes = await fetchAPI(`/user/posts/${post.post_id}/likes/users`);
+                        if (likedUsersRes.ok) {
+                            const likedUsers = await likedUsersRes.json();
+                            isLikedByMe = likedUsers.some(u => u.user_id === currentUser.user_id);
+                        }
+                    }
+
+                    const commentsRes = await fetchAPI(`/user/posts/${post.post_id}/comments`);
+                    if (commentsRes.ok) {
+                        comments = await commentsRes.json();
+                    }
+                } catch(e) {
+                    console.error("Error loading post social details", e);
+                }
+
+                // Render single post Card
+                const card = document.createElement('article');
+                card.className = 'post-card';
+                card.id = `post-${post.post_id}`;
+
+                let commentsHTML = '';
+                if (comments.length > 0) {
+                    // Show only first 3 comments, with "view all" indicator
+                    const slicedComments = comments.slice(0, 3);
+                    
+                    commentsHTML = slicedComments.map(c => {
+                        const commenter = allUsers.find(u => u.user_id === c.user_id);
+                        const cName = commenter ? commenter.username : `user_${c.user_id}`;
+                        return `
+                            <div class="comment-item">
+                                <span class="comment-user" onclick="viewUserProfile(${c.user_id})">${cName}</span>
+                                <span class="comment-text">${escapeHTML(c.comment_text)}</span>
+                            </div>
+                        `;
+                    }).join('');
+
+                    if (comments.length > 3) {
+                        commentsHTML = `
+                            <div class="view-all-comments" onclick="showAllCommentsModal(${post.post_id})">
+                                View all ${comments.length} comments
+                            </div>
+                            ${commentsHTML}
+                        `;
+                    }
+                }
+
+                const showDeleteBtn = currentUser && currentUser.isAdmin;
+                const postMoreBtnHTML = showDeleteBtn ? `
+                    <button class="post-more-btn" onclick="deletePost(${post.post_id})" title="Delete Post" style="color: var(--danger-color); font-size: 18px; padding: 4px; background: none; border: none; cursor: pointer;">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                ` : `
+                    <button class="post-more-btn" style="background: none; border: none; color: var(--text-color); cursor: pointer;"><i class="fa-solid fa-ellipsis"></i></button>
+                `;
+
+                card.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-author-info" onclick="viewUserProfile(${post.user_id})">
+                            <img class="post-author-avatar" src="${ownerAvatar}" alt="Avatar">
+                            <span class="post-author-name">${ownerUsername}</span>
+                        </div>
+                        ${postMoreBtnHTML}
+                    </div>
+
+                    <div class="post-image-container" ondblclick="triggerDoubleLike(${post.post_id})">
+                        ${isVideoUrl(post.image_url) ? `
+                            <video class="post-image" src="${post.image_url}" controls loop muted playsinline style="width: 100%; height: auto; max-height: 500px; object-fit: cover; display: block; border-radius: 4px;"></video>
+                        ` : `
+                            <img class="post-image" src="${post.image_url}" alt="Post Image" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600'">
+                        `}
+                        <i class="fa-solid fa-heart heart-pop" id="heart-pop-${post.post_id}"></i>
+                    </div>
+
+                    <div class="post-actions">
+                        <div class="post-action-group">
+                            <button class="post-action-btn ${isLikedByMe ? 'liked' : ''}" onclick="toggleLike(${post.post_id}, ${isLikedByMe})">
+                                <i class="${isLikedByMe ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                            </button>
+                            <button class="post-action-btn" onclick="focusCommentInput(${post.post_id})">
+                                <i class="fa-regular fa-comment"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="post-likes-count" id="likes-count-${post.post_id}">${likesCount} likes</div>
+
+                    <div class="post-caption-box">
+                        <span class="post-caption-user" onclick="viewUserProfile(${post.user_id})">${ownerUsername}</span>
+                        <span>${escapeHTML(post.caption)}</span>
+                    </div>
+
+                    <div class="post-comments-container" id="comments-container-${post.post_id}">
+                        ${commentsHTML}
+                    </div>
+
+                    <form class="comment-input-box" onsubmit="submitComment(event, ${post.post_id})">
+                        <input class="comment-input" type="text" placeholder="Add a comment..." required>
+                        <button class="comment-submit-btn" type="submit">Post</button>
+                    </form>
+                `;
+
+                stream.appendChild(card);
+            }
+        }
+
+        // RENDER TOP STORIES SHELF
+        function renderStories() {
+            const shelf = document.getElementById('stories-shelf');
+            if (!currentUser || allUsers.length === 0) {
+                shelf.style.display = 'none';
+                return;
+            }
+            shelf.style.display = 'flex';
+            shelf.innerHTML = '';
+
+            // 1. Render Current User First
+            const myStories = userStoriesMap[currentUser.user_id] || [];
+            const myBubble = document.createElement('div');
+            myBubble.className = 'story-bubble story-bubble-me';
+            
+            const myAvatar = currentUser.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUser.username}`;
+            
+            let ringClass = 'story-ring';
+            if (myStories.length === 0) {
+                ringClass += ' story-none';
+            }
+
+            myBubble.innerHTML = `
+                <div class="${ringClass}">
+                    <img class="story-avatar" src="${myAvatar}" alt="Avatar">
+                </div>
+                ${myStories.length === 0 ? `
+                    <span class="story-add-badge" onclick="event.stopPropagation(); triggerAddStory()"><i class="fa-solid fa-plus"></i></span>
+                ` : ''}
+                <span class="story-username">Your story</span>
+            `;
+            
+            myBubble.onclick = () => {
+                if (myStories.length > 0) {
+                    playStories(currentUser.user_id);
+                } else {
+                    triggerAddStory();
+                }
+            };
+            shelf.appendChild(myBubble);
+
+            // 2. Render Other Users with Active Stories
+            allUsers.forEach(u => {
+                if (u.user_id === currentUser.user_id) return; // Skip current user (already rendered)
+                
+                const stories = userStoriesMap[u.user_id] || [];
+                if (stories.length === 0) return; // Only show users with active stories
+
+                const bubble = document.createElement('div');
+                bubble.className = 'story-bubble';
+                bubble.onclick = () => playStories(u.user_id);
+                
+                const avatar = u.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${u.username}`;
+
+                bubble.innerHTML = `
+                    <div class="story-ring">
+                        <img class="story-avatar" src="${avatar}" alt="Avatar">
+                    </div>
+                    <span class="story-username">${u.username}</span>
+                `;
+                shelf.appendChild(bubble);
+            });
+        }
+
+        // RENDER USER PROFILE SCREEN
+        async function renderProfile() {
+            if (!profileViewingUser) return;
+            
+            // Set header labels
+            document.getElementById('profile-username-title').textContent = profileViewingUser.username;
+            document.getElementById('profile-fullname-title').textContent = profileViewingUser.full_name || 'Instagram User';
+            document.getElementById('profile-avatar-img').src = profileViewingUser.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${profileViewingUser.username}`;
+            
+            // Edit bio button configurations (if viewing other user, show follow/unfollow logic)
+            const actionBtn = document.getElementById('profile-action-btn');
+            if (currentUser && currentUser.user_id === profileViewingUser.user_id) {
+                actionBtn.textContent = 'Edit Bio';
+                actionBtn.onclick = openBioModal;
+                actionBtn.style.backgroundColor = '#363636';
+            } else {
+                actionBtn.textContent = 'Follow';
+                actionBtn.style.backgroundColor = 'var(--accent-color)';
+                
+                if (currentUser) {
+                    try {
+                        const followingRes = await fetchAPI(`/user/users/${currentUser.user_id}/following`);
+                        if (followingRes.ok) {
+                            const following = await followingRes.json();
+                            const isFollowing = following.some(u => u.user_id === profileViewingUser.user_id);
+                            if (isFollowing) {
+                                actionBtn.textContent = 'Following';
+                                actionBtn.style.backgroundColor = '#363636';
+                                actionBtn.onclick = () => toggleFollow(profileViewingUser.user_id, true);
+                            } else {
+                                actionBtn.textContent = 'Follow';
+                                actionBtn.onclick = () => toggleFollow(profileViewingUser.user_id, false);
+                            }
+                        }
+                    } catch(e) {
+                        console.error(e);
+                    }
+                } else {
+                    actionBtn.onclick = () => { showToast("Sign in to follow users!", true); openModal('switch-user-modal'); };
+                }
+            }
+
+            // Load Biography
+            const bioDescription = await loadUserBio(profileViewingUser.user_id);
+            document.getElementById('profile-bio-description').textContent = bioDescription || "No bio yet.";
+
+            // Load counts and user posts grid
+            let userPosts = [];
+            let followersCount = 0;
+            let followingCount = 0;
+
+            try {
+                // Posts
+                const postsRes = await fetchAPI(`/user/users/${profileViewingUser.user_id}/posts`);
+                if (postsRes.ok) {
+                    userPosts = await postsRes.json();
+                }
+
+                // Followers
+                const followersRes = await fetchAPI(`/user/users/${profileViewingUser.user_id}/followers`);
+                if (followersRes.ok) {
+                    const followers = await followersRes.json();
+                    followersCount = followers.length;
+                }
+
+                // Following
+                const followingRes = await fetchAPI(`/user/users/${profileViewingUser.user_id}/following`);
+                if (followingRes.ok) {
+                    const followingList = await followingRes.json();
+                    followingCount = followingList.length;
+                }
+
+            } catch (err) {
+                console.error("Failed to load user profile metrics", err);
+            }
+
+            document.getElementById('profile-posts-count').textContent = userPosts.length;
+            document.getElementById('profile-followers-count').textContent = followersCount;
+            document.getElementById('profile-following-count').textContent = followingCount;
+
+            // Load & Render Highlights
+            const hContainer = document.getElementById('profile-highlights-container');
+            hContainer.innerHTML = '';
+            
+            const isMyProfile = currentUser && currentUser.user_id === profileViewingUser.user_id;
+            if (isMyProfile) {
+                const addBubble = document.createElement('div');
+                addBubble.className = 'highlight-bubble';
+                addBubble.innerHTML = `
+                    <div class="highlight-ring highlight-add-btn">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                    <span class="highlight-title">New</span>
+                `;
+                addBubble.onclick = () => openCreateHighlightModal();
+                hContainer.appendChild(addBubble);
+            }
+            
+            try {
+                const hlRes = await fetchAPI(`/user/users/${profileViewingUser.user_id}/highlights`);
+                if (hlRes.ok) {
+                    const highlights = await hlRes.json();
+                    
+                    if (highlights.length === 0 && !isMyProfile) {
+                        hContainer.style.display = 'none';
+                    } else {
+                        hContainer.style.display = 'flex';
+                        
+                        // Fetch stories for all highlights in parallel to get covers
+                        const detailPromises = highlights.map(async (h) => {
+                            try {
+                                const sRes = await fetchAPI(`/user/highlights/${h.highlight_id}/stories`);
+                                if (sRes.ok) {
+                                    const stories = await sRes.json();
+                                    return { ...h, stories };
+                                }
+                            } catch (e) {}
+                            return { ...h, stories: [] };
+                        });
+                        
+                        const highlightsWithDetails = await Promise.all(detailPromises);
+                        
+                        for (const hl of highlightsWithDetails) {
+                            const bubble = document.createElement('div');
+                            bubble.className = 'highlight-bubble';
+                            
+                            let cover = hl.cover_url;
+                            if (!cover && hl.stories.length > 0) {
+                                cover = hl.stories[0].media_url;
+                            }
+                            if (!cover) {
+                                cover = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100';
+                            }
+                            
+                            bubble.innerHTML = `
+                                <div class="highlight-ring">
+                                    <img class="highlight-avatar" src="${cover}" alt="Highlight cover" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'">
+                                </div>
+                                <span class="highlight-title">${escapeHTML(hl.title)}</span>
+                            `;
+                            
+                            bubble.onclick = () => playHighlightStories(hl);
+                            hContainer.appendChild(bubble);
+                        }
+                    }
+                } else if (!isMyProfile) {
+                    hContainer.style.display = 'none';
+                }
+            } catch(e) {
+                console.error("Failed to load highlights", e);
+                if (!isMyProfile) hContainer.style.display = 'none';
+            }
+
+            const grid = document.getElementById('profile-posts-grid-container');
+            if (userPosts.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; padding: 40px 0; text-align: center; color: var(--text-muted);">
+                        <i class="fa-solid fa-camera" style="font-size:32px; margin-bottom:10px;"></i>
+                        <p>No Posts Yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Grid renders images
+            grid.innerHTML = '';
+            for (const post of userPosts) {
+                let likes = 0;
+                let comments = 0;
+
+                try {
+                    const lRes = await fetchAPI(`/user/posts/${post.post_id}/likes/count`);
+                    if (lRes.ok) likes = (await lRes.json()).likes_count;
+                    
+                    const cRes = await fetchAPI(`/user/posts/${post.post_id}/comments`);
+                    if (cRes.ok) comments = (await cRes.json()).length;
+                } catch(e) {}
+
+                const gridItem = document.createElement('div');
+                gridItem.className = 'grid-item';
+                gridItem.onclick = () => {
+                    // Navigate to feed and scroll to specific post
+                    switchScreen('feed');
+                    setTimeout(() => {
+                        const targetPost = document.getElementById(`post-${post.post_id}`);
+                        if (targetPost) {
+                            targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            targetPost.style.border = '2px solid var(--accent-color)';
+                            setTimeout(() => { targetPost.style.border = '1px solid var(--border-color)'; }, 2000);
+                        }
+                    }, 200);
+                };
+
+                gridItem.innerHTML = `
+                    ${isVideoUrl(post.image_url) ? `
+                        <video src="${post.image_url}" style="width: 100%; height: 100%; object-fit: cover;" muted playsinline></video>
+                        <div style="position: absolute; top: 8px; right: 8px; color: white; background: rgba(0,0,0,0.6); padding: 4px 6px; border-radius: 4px; font-size: 10px; z-index: 2; display: flex; align-items: center; gap: 3px;">
+                            <i class="fa-solid fa-video"></i>
+                        </div>
+                    ` : `
+                        <img src="${post.image_url}" alt="Post thumbnail" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400'">
+                    `}
+                    <div class="grid-item-overlay">
+                        <span class="grid-overlay-stat"><i class="fa-solid fa-heart"></i> ${likes}</span>
+                        <span class="grid-overlay-stat"><i class="fa-solid fa-comment"></i> ${comments}</span>
+                    </div>
+                `;
+                grid.appendChild(gridItem);
+            }
+        }
+
+        // SOCIAL LIKE HANDLER
+        async function toggleLike(postId, isCurrentlyLiked) {
+            if (!currentUser) {
+                showToast("Please register or login first!", true);
+                openModal('switch-user-modal');
+                return;
+            }
+
+            try {
+                let res;
+                if (isCurrentlyLiked) {
+                    // UNLIKE post
+                    res = await fetchAPI(`/user/posts/${postId}/like/${currentUser.user_id}`, {
+                        method: 'DELETE'
+                    });
+                } else {
+                    // LIKE post
+                    res = await fetchAPI(`/user/posts/${postId}/like`, {
+                        method: 'POST',
+                        body: JSON.stringify({ user_id: currentUser.user_id })
+                    });
+                }
+
+                if (res.ok) {
+                    await reloadData();
+                    renderFeed();
+                } else {
+                    throw new Error("Unable to like post");
+                }
+            } catch(e) {
+                showToast(e.message, true);
+            }
+        }
+
+        // DOUBLE CLICK LIKE TRIGGER
+        async function triggerDoubleLike(postId) {
+            if (!currentUser) return;
+            
+            // Pop heart animation inside post
+            const heart = document.getElementById(`heart-pop-${postId}`);
+            heart.classList.add('animate');
+            setTimeout(() => heart.classList.remove('animate'), 800);
+
+            // Fetch current liked users to check if already liked
+            try {
+                const likedUsersRes = await fetchAPI(`/user/posts/${postId}/likes/users`);
+                if (likedUsersRes.ok) {
+                    const likedUsers = await likedUsersRes.json();
+                    const alreadyLiked = likedUsers.some(u => u.user_id === currentUser.user_id);
+                    
+                    if (!alreadyLiked) {
+                        await toggleLike(postId, false);
+                    }
+                }
+            } catch(e) {
+                console.error("Double tap like failed", e);
+            }
+        }
+
+        // COMMENTS DISPATCHER
+        async function submitComment(event, postId) {
+            event.preventDefault();
+            if (!currentUser) {
+                showToast("Please register or login first!", true);
+                openModal('switch-user-modal');
+                return;
+            }
+
+            const form = event.target;
+            const input = form.querySelector('.comment-input');
+            const commentText = input.value.trim();
+
+            try {
+                const res = await fetchAPI(`/user/posts/${postId}/comments`, {
+                    method: 'POST',
+                    body: JSON.stringify({ user_id: currentUser.user_id, comment_text: commentText })
+                });
+
+                if (res.ok) {
+                    input.value = '';
+                    await reloadData();
+                    renderFeed();
+                } else {
+                    throw new Error("Unable to post comment");
+                }
+            } catch(e) {
+                showToast(e.message, true);
+            }
+        }
+
+        // SOCIAL FOLLOWS HANDLER
+        async function toggleFollow(followingId, isCurrentlyFollowing) {
+            if (!currentUser) return;
+
+            try {
+                let res;
+                if (isCurrentlyFollowing) {
+                    // UNFOLLOW
+                    res = await fetchAPI(`/user/users/${currentUser.user_id}/unfollow/${followingId}`, {
+                        method: 'POST'
+                    });
+                } else {
+                    // FOLLOW
+                    res = await fetchAPI(`/user/users/${currentUser.user_id}/follow/${followingId}`, {
+                        method: 'POST'
+                    });
+                }
+
+                if (res.ok) {
+                    showToast(isCurrentlyFollowing ? "Unfollowed user" : "Following user");
+                    await reloadData();
+                    renderProfile();
+                } else {
+                    throw new Error("Action failed");
+                }
+            } catch(e) {
+                showToast(e.message, true);
+            }
+        }
+
+        // RENDER REELS STREAM
+        async function renderReels() {
+            const stream = document.getElementById('reels-stream');
+            
+            if (!currentUser) {
+                stream.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-lock"></i>
+                        <h3>Authentication Required</h3>
+                        <p>Please log in or sign up to watch Reels.</p>
+                        <button class="empty-btn" onclick="openModal('switch-user-modal')">Log In</button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (allReels.length === 0) {
+                stream.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-clapperboard"></i>
+                        <h3>No Reels Yet</h3>
+                        <p>Be the first to share a Reel!</p>
+                        <button class="empty-btn" onclick="openModal('create-reel-modal')">Create Reel</button>
+                    </div>
+                `;
+                return;
+            }
+
+            stream.innerHTML = '';
+
+            for (const reel of allReels) {
+                const owner = allUsers.find(u => u.user_id === reel.user_id);
+                const username = owner ? owner.username : `user_${reel.user_id}`;
+                const avatar = owner ? owner.profile_picture : `https://api.dicebear.com/7.x/adventurer/svg?seed=user${reel.user_id}`;
+                
+                let likesCount = 0;
+                let isLikedByMe = false;
+
+                try {
+                    const countRes = await fetchAPI(`/user/reels/${reel.reel_id}/likes/count`);
+                    if (countRes.ok) {
+                        likesCount = (await countRes.json()).likes_count;
+                    }
+
+                    const usersRes = await fetchAPI(`/user/reels/${reel.reel_id}/likes/users`);
+                    if (usersRes.ok) {
+                        const likedUsers = await usersRes.json();
+                        isLikedByMe = likedUsers.some(u => u.user_id === currentUser.user_id);
+                    }
+                } catch (e) {
+                    console.error("Error fetching reel likes info", e);
+                }
+
+                const card = document.createElement('div');
+                card.className = 'reel-mobile-mockup';
+
+                card.innerHTML = `
+                    <video src="${reel.video_url}" class="reel-video" loop autoplay muted playsinline onclick="toggleReelPlay(this)"></video>
+                    
+                    <div class="reel-overlay-grad-top"></div>
+                    <div class="reel-overlay-grad-bottom"></div>
+
+                    <div class="reel-header-overlay" onclick="viewUserProfile(${reel.user_id})">
+                        <img class="reel-author-avatar" src="${avatar}" alt="Avatar">
+                        <span class="reel-author-name">${username}</span>
+                    </div>
+
+                    <div class="reel-actions-overlay">
+                        <div class="reel-action-btn-wrapper">
+                            <button class="reel-action-btn ${isLikedByMe ? 'liked' : ''}" onclick="toggleLikeReel(${reel.reel_id}, ${isLikedByMe})">
+                                <i class="${isLikedByMe ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                            </button>
+                            <span class="reel-action-label">${likesCount}</span>
+                        </div>
+                        
+                        ${(currentUser.user_id === reel.user_id || currentUser.isAdmin) ? `
+                        <div class="reel-action-btn-wrapper">
+                            <button class="reel-action-btn delete" onclick="deleteReel(${reel.reel_id})">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                            <span class="reel-action-label">Delete</span>
+                        </div>` : ''}
+                    </div>
+
+                    <div class="reel-caption-overlay">
+                        <span class="reel-caption-user" onclick="viewUserProfile(${reel.user_id})">${username}</span>
+                        <p class="reel-caption-text">${escapeHTML(reel.caption || '')}</p>
+                    </div>
+                `;
+
+                stream.appendChild(card);
+            }
+        }
+
+        function toggleReelPlay(video) {
+            if (video.paused) {
+                video.play().catch(err => console.log("Play failed", err));
+            } else {
+                video.pause();
+            }
+        }
+
+        async function deleteReel(reelId) {
+            if (!confirm("Are you sure you want to delete this Reel?")) return;
+            try {
+                const res = await fetchAPI(`/user/reels/${reelId}`, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    showToast("Reel deleted successfully");
+                    await reloadData();
+                    renderReels();
+                } else {
+                    const data = await res.json();
+                    throw new Error(data.detail || "Failed to delete Reel");
+                }
+            } catch (e) {
+                showToast(e.message, true);
+            }
+        }
+
+        // SOCIAL LIKE FOR REELS (MONGODB)
+        async function toggleLikeReel(reelId, isCurrentlyLiked) {
+            if (!currentUser) {
+                showToast("Please register or login first!", true);
+                openModal('switch-user-modal');
+                return;
+            }
+
+            try {
+                let res;
+                if (isCurrentlyLiked) {
+                    res = await fetchAPI(`/user/reels/${reelId}/like/${currentUser.user_id}`, {
+                        method: 'DELETE'
+                    });
+                } else {
+                    res = await fetchAPI(`/user/reels/${reelId}/like`, {
+                        method: 'POST'
+                    });
+                }
+
+                if (res.ok) {
+                    await reloadData();
+                    renderReels();
+                } else {
+                    const errData = await res.json();
+                    throw new Error(errData.detail || "Unable to toggle like on Reel");
+                }
+            } catch(e) {
+                showToast(e.message, true);
+            }
+        }
+
+        // UTILITIES: Focus comment input easily
+        function focusCommentInput(postId) {
+            const card = document.getElementById(`post-${postId}`);
+            if (card) {
+                const input = card.querySelector('.comment-input');
+                if (input) input.focus();
+            }
+        }
+
+        // TOAST BANNER UTILITY
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-banner');
+            const msgEl = document.getElementById('toast-message');
+            msgEl.textContent = message;
+            
+            if (isError) {
+                toast.classList.add('error');
+            } else {
+                toast.classList.remove('error');
+            }
+
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ADMIN PANEL FUNCTIONS
+        async function renderAdminScreen() {
+            if (!currentUser || !currentUser.isAdmin) {
+                showToast("Access Denied: Admins Only", true);
+                switchScreen('feed');
+                return;
+            }
+
+            const usersListContainer = document.getElementById('admin-users-list');
+            const postsListContainer = document.getElementById('admin-posts-list');
+            
+            usersListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading users...</p>';
+            postsListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading posts...</p>';
+
+            try {
+                // Fetch users using the admin endpoint
+                const usersRes = await fetchAPI('/admin/users');
+                let adminUsers = [];
+                if (usersRes.ok) {
+                    adminUsers = await usersRes.json();
+                }
+                document.getElementById('admin-users-count').textContent = adminUsers.length;
+
+                // Fetch posts using the admin endpoint
+                const postsRes = await fetchAPI('/admin/posts');
+                let adminPosts = [];
+                if (postsRes.ok) {
+                    adminPosts = await postsRes.json();
+                }
+                document.getElementById('admin-posts-count').textContent = adminPosts.length;
+
+                // Render Users list
+                if (adminUsers.length === 0) {
+                    usersListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No users found.</p>';
+                } else {
+                    usersListContainer.innerHTML = '';
+                    adminUsers.forEach(u => {
+                        const isSelf = u.user_id === currentUser.user_id;
+                        const avatarUrl = u.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${u.username}`;
+                        
+                        const item = document.createElement('div');
+                        item.className = 'admin-list-item';
+                        
+                        item.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="${avatarUrl}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                <div>
+                                    <p style="font-size: 13.5px; font-weight: 600;">${escapeHTML(u.username)} ${isSelf ? '<span style="font-size: 10px; background-color: var(--accent-color); padding: 2px 6px; border-radius: 10px; margin-left: 5px;">You</span>' : ''}</p>
+                                    <p style="font-size: 11px; color: var(--text-muted);">${escapeHTML(u.email)}</p>
+                                </div>
+                            </div>
+                            <button onclick="${isSelf ? '' : `deleteUser(${u.user_id})`}" 
+                                    class="${isSelf ? 'admin-btn-disabled' : 'admin-btn-delete'}"
+                                    ${isSelf ? 'disabled' : ''}>
+                                Delete
+                            </button>
+                        `;
+                        usersListContainer.appendChild(item);
+                    });
+                }
+
+                // Render Posts list
+                if (adminPosts.length === 0) {
+                    postsListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No posts found.</p>';
+                } else {
+                    postsListContainer.innerHTML = '';
+                    adminPosts.forEach(p => {
+                        const author = adminUsers.find(u => u.user_id === p.user_id);
+                        const authorName = author ? author.username : `User_${p.user_id}`;
+                        
+                        const item = document.createElement('div');
+                        item.className = 'admin-list-item';
+                        
+                        item.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 10px; overflow: hidden; flex-grow: 1; margin-right: 15px;">
+                                ${isVideoUrl(p.image_url) ? `
+                                    <div style="position: relative; width: 40px; height: 40px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: #000;">
+                                        <video src="${p.image_url}" style="width: 100%; height: 100%; object-fit: cover;" muted playsinline></video>
+                                        <i class="fa-solid fa-video" style="position: absolute; bottom: 2px; right: 2px; font-size: 8px; color: white; background: rgba(0,0,0,0.5); padding: 2px; border-radius: 2px;"></i>
+                                    </div>
+                                ` : `
+                                    <img src="${p.image_url}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; flex-shrink: 0;" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'">
+                                `}
+                                <div style="overflow: hidden;">
+                                    <p style="font-size: 12.5px; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${escapeHTML(p.caption || 'No caption')}</p>
+                                    <p style="font-size: 11px; color: var(--accent-color);">by @${escapeHTML(authorName)}</p>
+                                </div>
+                            </div>
+                            <button onclick="deletePost(${p.post_id})" class="admin-btn-delete">
+                                Delete
+                            </button>
+                        `;
+                        postsListContainer.appendChild(item);
+                    });
+                }
+
+            } catch (err) {
+                console.error("Admin rendering failed", err);
+                showToast("Failed to fetch admin dashboard lists", true);
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm("WARNING: Are you sure you want to permanently delete this user and all of their posts, reels, comments, and stories?")) return;
+            try {
+                const res = await fetchAPI(`/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    showToast("User deleted successfully");
+                    await reloadData();
+                    renderAdminScreen();
+                } else {
+                    const data = await res.json();
+                    throw new Error(data.detail || "Failed to delete user");
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function deletePost(postId) {
+            if (!confirm("Are you sure you want to delete this post?")) return;
+            try {
+                const res = await fetchAPI(`/admin/posts/${postId}`, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    showToast("Post deleted successfully");
+                    await reloadData();
+                    if (activeScreen === 'feed') renderFeed();
+                    else if (activeScreen === 'profile') renderProfile();
+                    else if (activeScreen === 'admin-panel') renderAdminScreen();
+                } else {
+                    const data = await res.json();
+                    throw new Error(data.detail || "Failed to delete post");
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // DIALOG MODAL UTILITIES
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        // Handle ESC key or modal close button
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function closeModalOnOverlay(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // ==========================================
+        // STORIES & HIGHLIGHTS INTERACTION LOGIC
+        // ==========================================
+
+        function triggerAddStory() {
+            document.getElementById('story-file-input').click();
+        }
+
+        async function uploadNewStory(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+            const allowed = [".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".avi", ".mkv"];
+            if (!allowed.includes(ext)) {
+                showToast("Invalid file type. Only standard images and videos are allowed.", true);
+                return;
+            }
+
+            showToast("Uploading story...", false);
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const uploadRes = await fetch(`${API_BASE_URL}/user/upload`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('instagram_access_token')}`
+                    }
+                });
+
+                if (!uploadRes.ok) {
+                    const errData = await uploadRes.json();
+                    throw new Error(errData.detail || "Upload failed");
+                }
+
+                const uploadData = await uploadRes.json();
+                const media_url = uploadData.url;
+
+                const createRes = await fetchAPI('/user/stories', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        user_id: currentUser.user_id,
+                        media_url: media_url
+                    })
+                });
+
+                if (!createRes.ok) {
+                    const errData = await createRes.json();
+                    throw new Error(errData.detail || "Failed to create story");
+                }
+
+                showToast("Story shared successfully!");
+                document.getElementById('story-file-input').value = ""; // Reset
+                await reloadData();
+                renderStories();
+            } catch (err) {
+                console.error("Story upload failed", err);
+                showToast(err.message || "Failed to upload story", true);
+            }
+        }
+
+        function playStories(user_id, index = 0, storiesList = null) {
+            currentViewerUserId = user_id;
+            currentStoryIndex = index;
+            currentViewerStories = storiesList || userStoriesMap[user_id] || [];
+            
+            if (currentViewerStories.length === 0) return;
+
+            const modal = document.getElementById('story-viewer-modal');
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+            renderStorySlide();
+            
+            // Set up center hold-to-pause event handlers
+            const contentArea = document.getElementById('story-viewer-content');
+            contentArea.onmousedown = () => pauseStory();
+            contentArea.onmouseup = () => resumeStory();
+            contentArea.ontouchstart = () => pauseStory();
+            contentArea.ontouchend = () => resumeStory();
+        }
+
+        function renderStorySlide() {
+            cancelAnimationFrame(storyProgressAnimFrame);
+            
+            const story = currentViewerStories[currentStoryIndex];
+            const user = allUsers.find(u => u.user_id === currentViewerUserId) || currentUser;
+            
+            // Set User Details
+            document.getElementById('story-viewer-avatar').src = user.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${user.username}`;
+            document.getElementById('story-viewer-username').textContent = user.username;
+            document.getElementById('story-viewer-time').textContent = formatStoryTime(story.created_at);
+            
+            // Delete button authorization
+            const isMyStory = currentUser && (currentUser.user_id === user.user_id || currentUser.isAdmin);
+            document.getElementById('story-viewer-delete-btn').style.display = isMyStory ? 'block' : 'none';
+            
+            // Render Media
+            const contentArea = document.getElementById('story-viewer-content');
+            if (isVideoUrl(story.media_url)) {
+                contentArea.innerHTML = `
+                    <video id="story-video-player" src="${story.media_url}" autoplay playsinline style="width: 100%; height: 100%; object-fit: contain; max-height: 100%;"></video>
+                `;
+                const video = document.getElementById('story-video-player');
+                storyDuration = 15000;
+                video.onloadedmetadata = () => {
+                    storyDuration = Math.min(video.duration * 1000, 15000) || 15000;
+                    startStoryTimer();
+                };
+                video.onerror = () => {
+                    storyDuration = 5000;
+                    startStoryTimer();
+                };
+            } else {
+                contentArea.innerHTML = `
+                    <img src="${story.media_url}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600'">
+                `;
+                storyDuration = 5000;
+                startStoryTimer();
+            }
+            
+            // Progress Bar Segments
+            const progressBars = document.getElementById('story-progress-bars');
+            progressBars.innerHTML = '';
+            for (let i = 0; i < currentViewerStories.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'story-progress-segment';
+                const fill = document.createElement('div');
+                fill.className = 'story-progress-fill';
+                fill.id = `story-progress-fill-${i}`;
+                
+                if (i < currentStoryIndex) {
+                    fill.style.width = '100%';
+                } else {
+                    fill.style.width = '0%';
+                }
+                segment.appendChild(fill);
+                progressBars.appendChild(segment);
+            }
+        }
+
+        function startStoryTimer() {
+            let startTime = null;
+            isStoryPaused = false;
+            let pausedElapsed = 0;
+            
+            function updateProgress(timestamp) {
+                if (isStoryPaused) {
+                    startTime = timestamp - pausedElapsed;
+                    storyProgressAnimFrame = requestAnimationFrame(updateProgress);
+                    return;
+                }
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                pausedElapsed = elapsed;
+                
+                const pct = Math.min((elapsed / storyDuration) * 100, 100);
+                const currentFill = document.getElementById(`story-progress-fill-${currentStoryIndex}`);
+                if (currentFill) {
+                    currentFill.style.width = `${pct}%`;
+                }
+                
+                if (elapsed >= storyDuration) {
+                    nextStory();
+                } else {
+                    storyProgressAnimFrame = requestAnimationFrame(updateProgress);
+                }
+            }
+            storyProgressAnimFrame = requestAnimationFrame(updateProgress);
+        }
+
+        function pauseStory() {
+            isStoryPaused = true;
+            const video = document.getElementById('story-video-player');
+            if (video) video.pause();
+        }
+
+        function resumeStory() {
+            isStoryPaused = false;
+            const video = document.getElementById('story-video-player');
+            if (video) video.play().catch(()=>{});
+        }
+
+        function nextStory() {
+            cancelAnimationFrame(storyProgressAnimFrame);
+            const currentFill = document.getElementById(`story-progress-fill-${currentStoryIndex}`);
+            if (currentFill) currentFill.style.width = '100%';
+            
+            if (currentStoryIndex < currentViewerStories.length - 1) {
+                currentStoryIndex++;
+                renderStorySlide();
+            } else {
+                const activeUsersWithStories = allUsers.filter(u => (userStoriesMap[u.user_id] || []).length > 0);
+                const currentIdx = activeUsersWithStories.findIndex(u => u.user_id === currentViewerUserId);
+                
+                if (currentViewerStories === userStoriesMap[currentViewerUserId] && currentIdx !== -1 && currentIdx < activeUsersWithStories.length - 1) {
+                    const nextUser = activeUsersWithStories[currentIdx + 1];
+                    playStories(nextUser.user_id);
+                } else {
+                    closeStoryViewer();
+                }
+            }
+        }
+
+        function prevStory() {
+            cancelAnimationFrame(storyProgressAnimFrame);
+            const currentFill = document.getElementById(`story-progress-fill-${currentStoryIndex}`);
+            if (currentFill) currentFill.style.width = '0%';
+            
+            if (currentStoryIndex > 0) {
+                currentStoryIndex--;
+                renderStorySlide();
+            } else {
+                const activeUsersWithStories = allUsers.filter(u => (userStoriesMap[u.user_id] || []).length > 0);
+                const currentIdx = activeUsersWithStories.findIndex(u => u.user_id === currentViewerUserId);
+                
+                if (currentViewerStories === userStoriesMap[currentViewerUserId] && currentIdx > 0) {
+                    const prevUser = activeUsersWithStories[currentIdx - 1];
+                    const prevStories = userStoriesMap[prevUser.user_id] || [];
+                    playStories(prevUser.user_id, prevStories.length - 1);
+                } else {
+                    renderStorySlide();
+                }
+            }
+        }
+
+        function closeStoryViewer() {
+            cancelAnimationFrame(storyProgressAnimFrame);
+            const modal = document.getElementById('story-viewer-modal');
+            modal.style.display = 'none';
+            modal.classList.remove('active');
+            const video = document.getElementById('story-video-player');
+            if (video) video.pause();
+            currentViewerUserId = null;
+            currentViewerStories = [];
+        }
+
+        function closeStoryViewerOnOverlay(event) {
+            if (event.target.id === 'story-viewer-modal') {
+                closeStoryViewer();
+            }
+        }
+
+        async function deleteActiveStory() {
+            const story = currentViewerStories[currentStoryIndex];
+            if (!story) return;
+            
+            if (!confirm("Are you sure you want to delete this story?")) return;
+            
+            try {
+                const res = await fetchAPI(`/user/stories/${story.story_id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (res.ok) {
+                    showToast("Story deleted successfully!");
+                    closeStoryViewer();
+                    await reloadData();
+                    renderStories();
+                } else {
+                    const errData = await res.ok ? {} : await res.json();
+                    showToast(errData.detail || "Failed to delete story", true);
+                }
+            } catch (e) {
+                console.error("Story deletion failed", e);
+                showToast("Error deleting story", true);
+            }
+        }
+
+        function openCreateHighlightModal() {
+            openModal('create-highlight-modal');
+            document.getElementById('highlight-title').value = '';
+            
+            const container = document.getElementById('highlight-stories-selection-list');
+            container.innerHTML = '';
+            selectedStoryIdsForHighlight = [];
+            
+            const myStories = userStoriesMap[currentUser.user_id] || [];
+            if (myStories.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); font-size:12.5px; padding: 15px; text-align: center; width: 100%;">You need active stories to create a highlight.</p>';
+                return;
+            }
+            
+            myStories.forEach(s => {
+                const item = document.createElement('div');
+                item.style.position = 'relative';
+                item.style.cursor = 'pointer';
+                item.style.width = '60px';
+                item.style.height = '60px';
+                item.style.flexShrink = '0';
+                item.style.borderRadius = '50%';
+                item.style.border = '2px solid transparent';
+                item.style.overflow = 'hidden';
+                item.style.background = '#000';
+                
+                if (isVideoUrl(s.media_url)) {
+                    item.innerHTML = `<video src="${s.media_url}" style="width:100%; height:100%; object-fit:cover;" muted></video>`;
+                } else {
+                    item.innerHTML = `<img src="${s.media_url}" style="width:100%; height:100%; object-fit:cover;">`;
+                }
+                
+                const check = document.createElement('div');
+                check.style.position = 'absolute';
+                check.style.top = '0';
+                check.style.right = '0';
+                check.style.bottom = '0';
+                check.style.left = '0';
+                check.style.background = 'rgba(0,0,0,0.5)';
+                check.style.display = 'none';
+                check.style.alignItems = 'center';
+                check.style.justifyContent = 'center';
+                check.style.color = 'white';
+                check.innerHTML = '<i class="fa-solid fa-circle-check" style="color: var(--accent-color); font-size: 16px;"></i>';
+                item.appendChild(check);
+                
+                item.onclick = () => {
+                    const idx = selectedStoryIdsForHighlight.indexOf(s.story_id);
+                    if (idx === -1) {
+                        selectedStoryIdsForHighlight.push(s.story_id);
+                        item.style.borderColor = 'var(--accent-color)';
+                        check.style.display = 'flex';
+                    } else {
+                        selectedStoryIdsForHighlight.splice(idx, 1);
+                        item.style.borderColor = 'transparent';
+                        check.style.display = 'none';
+                    }
+                };
+                container.appendChild(item);
+            });
+        }
+
+        async function handleCreateHighlight(event) {
+            event.preventDefault();
+            const title = document.getElementById('highlight-title').value.trim();
+            if (!title) return;
+            
+            if (selectedStoryIdsForHighlight.length === 0) {
+                showToast("Please select at least one story", true);
+                return;
+            }
+            
+            try {
+                showToast("Creating highlight...", false);
+                const res = await fetchAPI('/user/highlights', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        user_id: currentUser.user_id,
+                        title: title,
+                        cover_url: null
+                    })
+                });
+                
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.detail || "Failed to create highlight");
+                }
+                
+                const hl = await res.json();
+                const highlight_id = hl.highlight_id;
+                
+                for (const story_id of selectedStoryIdsForHighlight) {
+                    await fetchAPI(`/user/highlights/${highlight_id}/stories/${story_id}`, {
+                        method: 'POST'
+                    });
+                }
+                
+                showToast("Highlight created successfully!");
+                closeModal('create-highlight-modal');
+                await renderProfile();
+            } catch(e) {
+                console.error("Highlight creation failed", e);
+                showToast(e.message || "Failed to create highlight", true);
+            }
+        }
+
+        async function playHighlightStories(hl) {
+            try {
+                showToast("Loading highlight...", false);
+                const res = await fetchAPI(`/user/highlights/${hl.highlight_id}/stories`);
+                if (res.ok) {
+                    const stories = await res.json();
+                    if (stories.length > 0) {
+                        playStories(hl.user_id, 0, stories);
+                    } else {
+                        showToast("This highlight has no stories", true);
+                    }
+                } else {
+                    showToast("Failed to load highlight stories", true);
+                }
+            } catch(e) {
+                console.error(e);
+                showToast("Error loading highlight", true);
+            }
+        }
+
+        function formatStoryTime(dateStr) {
+            if (!dateStr) return '';
+            const now = new Date();
+            const created = new Date(dateStr);
+            const diffMs = now - created;
+            const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+            if (diffHrs < 1) {
+                const diffMins = Math.floor(diffMs / (1000 * 60));
+                return `${diffMins || 1}m ago`;
+            }
+            return `${diffHrs}h ago`;
+        }
+
+        // HELPER TO IDENTIFY VIDEOS IN POSTS
+        function isVideoUrl(url) {
+            if (!url) return false;
+            const cleanUrl = url.split('?')[0].split('#')[0].toLowerCase();
+            return cleanUrl.endsWith('.mp4') || 
+                   cleanUrl.endsWith('.mov') || 
+                   cleanUrl.endsWith('.avi') || 
+                   cleanUrl.endsWith('.mkv') || 
+                   cleanUrl.endsWith('.webm');
+        }
+
+        // SAFE HTML ESCAPER FOR BEGINNER CODE SECURITY
+        function escapeHTML(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

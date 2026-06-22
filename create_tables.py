@@ -1,6 +1,6 @@
 import asyncio
-import models
-from database import engine, Base
+import Setting.Models as models
+from Setting.Database import engine, Base
 
 
 async def create_tables():
