@@ -11,6 +11,8 @@ class Role(Base):
 
     user_roles = relationship("UserRole", back_populates="role", lazy="selectin")
 
+    role_feature_actions = relationship("RoleFeatureAction", back_populates="role", lazy="selectin")
+
 
 class User(Base):
     __tablename__ = "users"
@@ -227,3 +229,50 @@ class RefreshToken(Base):
     created_at = Column(DateTime, server_default=func.now())
 
     user = relationship("User", back_populates="refresh_tokens")
+
+
+class Feature(Base):
+    __tablename__ = "features"
+
+    feature_id = Column(Integer, primary_key=True)
+    feature_name = Column(String(100), unique=True,nullable=False)
+
+    feature_actions = relationship("FeatureAction",back_populates="feature",lazy="selectin")
+    
+class Action(Base):
+    __tablename__ = "actions"
+
+    action_id = Column(Integer, primary_key=True)
+    action_name = Column(String(100), unique=True,nullable=False)
+    feature_actions = relationship("FeatureAction",back_populates="action",lazy="selectin")
+
+class FeatureAction(Base):
+    __tablename__ = "feature_actions"
+
+    feature_action_id = Column(Integer, primary_key=True)
+    action_id = Column(Integer, ForeignKey("actions.action_id"), nullable=False)
+    feature_id = Column(Integer, ForeignKey("features.feature_id"), nullable=False)
+
+    action = relationship("Action", back_populates="feature_actions")
+    feature = relationship("Feature", back_populates="feature_actions")
+
+    __table_args__ = (
+        UniqueConstraint("feature_id", "action_id", name="uq_feature_action"),
+    )    
+
+class RoleFeatureAction(Base):
+    __tablename__ = "role_feature_actions"
+
+    role_feature_action_id = Column(Integer, primary_key=True)
+    role_id = Column(Integer, ForeignKey("roles.role_id", ondelete="CASCADE"), nullable=False)
+    feature_action_id = Column(Integer, ForeignKey("feature_actions.feature_action_id", ondelete="CASCADE"), nullable=False)
+    
+    role = relationship("Role", back_populates="role_feature_actions", lazy="selectin")    
+    feature_action = relationship("FeatureAction", back_populates="role_feature_actions", lazy="selectin")
+    
+    __table_args__ = (
+        UniqueConstraint("role_id", "feature_action_id", name="uq_role_feature_action"),
+    )
+
+
+    

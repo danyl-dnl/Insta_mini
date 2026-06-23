@@ -18,6 +18,20 @@ async def create_user(db: AsyncSession, username, email, password, full_name=Non
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
+
+    role_result = await db.execute(select(models.Role).where(models.Role.role_name=="User"))
+    user_role = role_result.scalar_one_or_none()
+
+    if user_role:
+        new_ur = models.UserRole(
+            user_id=new_user.user_id,
+            role_id=user_role.role_id,
+            created_at = datetime.utcnow()
+        )
+        db.add(new_ur)
+        await db.commit()
+        await db.refresh(new_ur)
+
     return new_user
 
 
