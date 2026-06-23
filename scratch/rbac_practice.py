@@ -21,23 +21,35 @@ test_post = {
 
 def check_permission(user: dict, action: str, post: dict = None) -> bool:
     user_role = user.get("role")
-    permissions = ROLE_PERMISSIONS.get(user_role)
-    if action=="delete_own_post" and "delete_any_post" in permissions:
-        return True
-    elif action=="delete_own_post" and post.get("owner_id") == user.get("user_id"):
+    permissions = ROLE_PERMISSIONS.get(user_role, [])
+
+    if action == "delete_own_post":
+        if "delete_any_post" in permissions:
+            return True
+        if "delete_own_post" in permissions and post.get("owner_id") == user.get("user_id"):
+            return True
+        return False
+
+    elif action in permissions:
         return True
     else:
         return False
-        
-        
 
 
 
 
 
-result = check_permission(users["alex"],"delete_own_post", test_post)
+print("1. Alice deleting her own post (Expected: Yes):")
+print("Yes" if check_permission(users["alice"], "delete_own_post", test_post) else "No")
 
-if result:
-    print("Yes its possible ")
-else:
-    print("no its not possible")
+print("\n2. Bob deleting Alice's post (Expected: No):")
+print("Yes" if check_permission(users["bob"], "delete_own_post", test_post) else "No")
+
+print("\n3. Supervisor Sam deleting Alice's post (Expected: Yes):")
+print("Yes" if check_permission(users["sam"], "delete_own_post", test_post) else "No")
+
+print("\n4. Alice creating a post (Expected: Yes):")
+print("Yes" if check_permission(users["alice"], "create_post") else "No")
+
+print("\n5. Admin Alex deleting a user (Expected: Yes):")
+print("Yes" if check_permission(users["alex"], "delete_user") else "No")
