@@ -15,8 +15,8 @@ users = {
 
 test_post = {
     "post_id": 101,
-    "owner_id": 1,  # Owner ID 1 corresponds to alice
-    "caption": "Enjoying coding with Antigravity!"
+    "owner_id": 1,  
+    "caption": "Enjoying coding"
 }
 
 def check_permission(user: dict, action: str, post: dict = None) -> bool:

@@ -252,10 +252,12 @@ class FeatureAction(Base):
     feature_action_id = Column(Integer, primary_key=True)
     action_id = Column(Integer, ForeignKey("actions.action_id"), nullable=False)
     feature_id = Column(Integer, ForeignKey("features.feature_id"), nullable=False)
+    permission_name = Column(String(150), unique=True, nullable=True)
 
     action = relationship("Action", back_populates="feature_actions")
     feature = relationship("Feature", back_populates="feature_actions")
-
+    role_feature_actions = relationship("RoleFeatureAction", back_populates="feature_action", lazy="selectin")
+    
     __table_args__ = (
         UniqueConstraint("feature_id", "action_id", name="uq_feature_action"),
     )    
