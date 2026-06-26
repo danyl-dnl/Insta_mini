@@ -17,8 +17,15 @@ async def get_role_by_id(db: AsyncSession, role_id):
 
 
 async def get_role_by_name(db: AsyncSession, role_name):
-    result = await db.execute(select(models.Role).where(models.Role.role_name == role_name))
+    result = await db.execute(
+        select(models.Role).where(models.Role.role_name == role_name)
+    )
     return result.scalar_one_or_none()
+
+
+async def get_all_roles(db: AsyncSession):
+    result = await db.execute(select(models.Role))
+    return list(result.scalars().all())
 
 
 async def update_role(db: AsyncSession, role_id, new_role_name):

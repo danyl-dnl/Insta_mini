@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontend ↔ Backend Integration — Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0d0d0f;
+    --surface:  #141418;
+    --card:     #1a1a20;
+    --border:   rgba(255,255,255,0.08);
+    --accent:   #8b5cf6;
+    --accent2:  #06b6d4;
+    --accent3:  #f59e0b;
+    --green:    #10b981;
+    --red:      #ef4444;
+    --text:     #f1f1f5;
+    --muted:    #6b7280;
+    --code-bg:  #0f0f14;
+    --grad:     linear-gradient(135deg, #8b5cf6, #06b6d4);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── SIDEBAR TOC ── */
+  .toc {
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    overflow-y: auto;
+    z-index: 100;
+  }
+  .toc-logo {
+    font-size: 15px;
+    font-weight: 800;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 24px;
+    display: block;
+  }
+  .toc-section { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 18px 0 6px; }
+  .toc a {
+    display: block;
+    font-size: 12.5px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .toc a:hover { color: var(--text); background: rgba(255,255,255,0.05); border-left-color: var(--accent); }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    margin-left: 240px;
+    max-width: 860px;
+    padding: 60px 48px 120px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 60px 0 80px;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(139,92,246,0.15);
+    border: 1px solid rgba(139,92,246,0.3);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+  }
+  .hero h1 {
+    font-size: 44px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p { font-size: 17px; color: var(--muted); max-width: 560px; margin: 0 auto; }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 80px; }
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+    background: rgba(139,92,246,0.1);
+    border: 1px solid rgba(139,92,246,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 32px 0 12px;
+  }
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 20px 0 8px;
+  }
+  p { color: #c4c4cc; margin-bottom: 14px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .mini-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .mini-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .mini-card .icon { font-size: 28px; margin-bottom: 10px; }
+  .mini-card .label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .mini-card .desc { font-size: 12px; color: var(--muted); }
+
+  /* ── CODE BLOCKS ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 16px 0;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    position: relative;
+  }
+  pre .file-tag {
+    position: absolute;
+    top: 10px; right: 14px;
+    font-size: 10px;
+    background: rgba(139,92,246,0.2);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+  }
+  code { font-family: 'Fira Code', monospace; }
+  .kw  { color: #c792ea; }   /* keyword */
+  .fn  { color: #82aaff; }   /* function */
+  .str { color: #c3e88d; }   /* string */
+  .cm  { color: #546e7a; font-style: italic; }  /* comment */
+  .num { color: #f78c6c; }   /* number */
+  .var { color: #80cbc4; }   /* variable */
+  .url { color: #f59e0b; }   /* url/path */
+  .punct { color: #89ddff; } /* punctuation */
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 24px 0;
+    overflow-x: auto;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .flow-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .flow-arrow {
+    font-size: 18px;
+    color: var(--accent);
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+  .flow-label {
+    font-size: 10px;
+    color: var(--muted);
+    display: block;
+    font-weight: 400;
+    margin-top: 3px;
+  }
+  .flow-box.blue  { border-color: rgba(6,182,212,0.4);  color: var(--accent2); }
+  .flow-box.purple{ border-color: rgba(139,92,246,0.4); color: var(--accent); }
+  .flow-box.green { border-color: rgba(16,185,129,0.4); color: var(--green); }
+  .flow-box.amber { border-color: rgba(245,158,11,0.4); color: var(--accent3); }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-left: 4px solid;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  .callout.info  { border-color: var(--accent2); background: rgba(6,182,212,0.07); }
+  .callout.tip   { border-color: var(--green);   background: rgba(16,185,129,0.07); }
+  .callout.warn  { border-color: var(--accent3); background: rgba(245,158,11,0.07); }
+  .callout.error { border-color: var(--red);     background: rgba(239,68,68,0.07); }
+  .callout strong { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .callout.info  strong { color: var(--accent2); }
+  .callout.tip   strong { color: var(--green); }
+  .callout.warn  strong { color: var(--accent3); }
+  .callout.error strong { color: var(--red); }
+
+  /* ── METHOD BADGES ── */
+  .method {
+    display: inline-block;
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 6px;
+  }
+  .get    { background: rgba(16,185,129,0.2);  color: #10b981; }
+  .post   { background: rgba(59,130,246,0.2);  color: #60a5fa; }
+  .put    { background: rgba(245,158,11,0.2);  color: #f59e0b; }
+  .delete { background: rgba(239,68,68,0.2);   color: #ef4444; }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13.5px; }
+  th { background: rgba(139,92,246,0.12); color: var(--accent); font-weight: 700; padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: #c4c4cc; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ── STEP LIST ── */
+  .steps { counter-reset: step; list-style: none; }
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .steps li::before {
+    content: counter(step);
+    min-width: 28px; height: 28px;
+    background: var(--grad);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .steps li .step-content strong { display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .steps li .step-content p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+  /* ── TAG ── */
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .tag.purple { background: rgba(139,92,246,0.15); color: var(--accent); }
+  .tag.cyan   { background: rgba(6,182,212,0.15);  color: var(--accent2); }
+  .tag.green  { background: rgba(16,185,129,0.15); color: var(--green); }
+  .tag.amber  { background: rgba(245,158,11,0.15); color: var(--accent3); }
+  .tag.red    { background: rgba(239,68,68,0.15);  color: var(--red); }
+
+  /* ── ANALOGY BOX ── */
+  .analogy {
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.08));
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 18px 0;
+    font-size: 14px;
+  }
+  .analogy-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── DIVIDER ── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 60px 0; }
+
+  /* ── INLINE CODE ── */
+  .ic {
+    font-family: 'Fira Code', monospace;
+    font-size: 12.5px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: #e0aaff;
+  }
+
+  /* ── COMPARISON ── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .compare > div {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .compare > div .compare-header {
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .compare > div:first-child .compare-header { background: rgba(239,68,68,0.15); color: var(--red); }
+  .compare > div:last-child  .compare-header { background: rgba(16,185,129,0.15); color: var(--green); }
+  .compare pre { margin: 0; border: none; border-radius: 0; background: transparent; }
+
+  @media (max-width: 768px) {
+    .toc { display: none; }
+    .main { margin-left: 0; padding: 24px; }
+    .compare { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ SIDEBAR ══════════════════════════════════════ -->
+<nav class="toc">
+  <span class="toc-logo">📚 Frontend Notes</span>
+
+  <div class="toc-section">The Basics</div>
+  <a href="#what-is">What is Integration?</a>
+  <a href="#how-web-works">How the Web Works</a>
+  <a href="#http-methods">HTTP Methods</a>
+
+  <div class="toc-section">The Core: fetch()</div>
+  <a href="#fetch-api">The fetch() Function</a>
+  <a href="#fetchapi-wrapper">Our fetchAPI() Wrapper</a>
+
+  <div class="toc-section">Authentication</div>
+  <a href="#jwt">JWT Tokens</a>
+  <a href="#login-flow">Login Flow</a>
+  <a href="#auto-refresh">Auto Token Refresh</a>
+
+  <div class="toc-section">Frontend Patterns</div>
+  <a href="#global-state">Global State</a>
+  <a href="#dom">DOM Manipulation</a>
+  <a href="#components">Reusable Components</a>
+
+  <div class="toc-section">Real Project Examples</div>
+  <a href="#load-feed">Loading the Feed</a>
+  <a href="#create-post">Creating a Post</a>
+  <a href="#search">Search Feature</a>
+  <a href="#admin">Admin Panel</a>
+
+  <div class="toc-section">UI Patterns</div>
+  <a href="#modals">Modals</a>
+  <a href="#toast">Toast Notifications</a>
+  <a href="#upload-zone">Upload Zones</a>
+</nav>
+
+<!-- ══════════════════════════════════════ MAIN ══════════════════════════════════════ -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">📖 Study Notes — Instagram Lite Project</div>
+    <h1>Frontend ↔ Backend<br>Integration Guide</h1>
+    <p>A beginner-friendly walkthrough of how your frontend talks to your FastAPI backend, with real code examples from your project.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="what-is">
+    <div class="section-badge">🌐 Chapter 1</div>
+    <h2>What Is Frontend ↔ Backend Integration?</h2>
+    <p>Think of building a web app like running a restaurant. There are two separate worlds:</p>
+
+    <div class="card-grid">
+      <div class="mini-card">
+        <div class="icon">🖥️</div>
+        <div class="label">Frontend</div>
+        <div class="desc">The dining room. What the customer sees: menus, tables, décor. Built with HTML, CSS, and JavaScript.</div>
+      </div>
+      <div class="mini-card">
+        <div class="icon">🍳</div>
+        <div class="label">Backend</div>
+        <div class="desc">The kitchen. Hidden from customers. Stores data, runs logic, returns results. Your FastAPI server.</div>
+      </div>
+      <div class="mini-card">
+        <div class="icon">🛎️</div>
+        <div class="label">API</div>
+        <div class="desc">The waiter. Carries orders from the dining room to the kitchen and brings back the food (data).</div>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-label">🍽️ The Restaurant Analogy</div>
+      When you click <strong>"Share Post"</strong> in your app, JavaScript (the waiter) takes your photo + caption (the order) to FastAPI (the kitchen). FastAPI saves it to the database (cooks it) and sends back <strong>{ "post_id": 42 }</strong> (the meal). JavaScript then updates the screen to show your new post.
+    </div>
+
+    <p>In your project, the frontend is a single file — <span class="ic">templates/index.html</span> — and the backend is a FastAPI app running at <span class="ic">http://127.0.0.1:8001</span>. They communicate using <strong>HTTP requests</strong>.</p>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="how-web-works">
+    <div class="section-badge">📡 Chapter 2</div>
+    <h2>How the Web Works — Request & Response</h2>
+
+    <p>Every time your frontend needs data or wants to save something, it sends an <strong>HTTP Request</strong> to the backend. The backend processes it and sends back an <strong>HTTP Response</strong>.</p>
+
+    <div class="flow">
+      <div class="flow-box blue">🖥️ Browser<span class="flow-label">index.html JS</span></div>
+      <div class="flow-arrow">──→</div>
+      <div class="flow-box amber">📨 HTTP Request<span class="flow-label">GET /user/posts</span></div>
+      <div class="flow-arrow">──→</div>
+      <div class="flow-box purple">⚡ FastAPI<span class="flow-label">port 8001</span></div>
+      <div class="flow-arrow">──→</div>
+      <div class="flow-box green">🗄️ Database<span class="flow-label">PostgreSQL</span></div>
+    </div>
+    <div class="flow" style="margin-top:-10px;">
+      <div class="flow-box blue">🖥️ Browser<span class="flow-label">renders posts</span></div>
+      <div class="flow-arrow">←──</div>
+      <div class="flow-box amber">📩 HTTP Response<span class="flow-label">[ {post_id:1,...} ]</span></div>
+      <div class="flow-arrow">←──</div>
+      <div class="flow-box purple">⚡ FastAPI<span class="flow-label">returns JSON</span></div>
+      <div class="flow-arrow">←──</div>
+      <div class="flow-box green">🗄️ Database<span class="flow-label">queries rows</span></div>
+    </div>
+
+    <h3>What is JSON?</h3>
+    <p>JSON (JavaScript Object Notation) is the language frontend and backend use to talk. It's just structured text that looks like a JavaScript object:</p>
+    <pre>
+<span class="cm">// Backend sends this to the frontend:</span>
+{
+  <span class="str">"user_id"</span>: <span class="num">3</span>,
+  <span class="str">"username"</span>: <span class="str">"danyl"</span>,
+  <span class="str">"email"</span>: <span class="str">"danyl@example.com"</span>,
+  <span class="str">"profile_picture"</span>: <span class="str">"https://cdn.example.com/avatar.jpg"</span>
+}</pre>
+
+    <p>Frontend JavaScript reads this and uses each field to update the page — for example, showing the username in the sidebar or the avatar image.</p>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="http-methods">
+    <div class="section-badge">🔧 Chapter 3</div>
+    <h2>HTTP Methods — The 4 Verbs</h2>
+    <p>Every request has a <strong>method</strong> (verb) that tells the backend what you want to do:</p>
+
+    <table>
+      <tr>
+        <th>Method</th>
+        <th>What it does</th>
+        <th>Real Example in Your App</th>
+      </tr>
+      <tr>
+        <td><span class="method get">GET</span></td>
+        <td>Fetch/Read data</td>
+        <td>Load all posts: <span class="ic">GET /user/posts</span></td>
+      </tr>
+      <tr>
+        <td><span class="method post">POST</span></td>
+        <td>Create new data</td>
+        <td>Create a post: <span class="ic">POST /user/posts</span></td>
+      </tr>
+      <tr>
+        <td><span class="method put">PUT</span></td>
+        <td>Update existing data</td>
+        <td>Edit your bio: <span class="ic">PUT /user/bios/{id}</span></td>
+      </tr>
+      <tr>
+        <td><span class="method delete">DELETE</span></td>
+        <td>Delete data</td>
+        <td>Delete a post: <span class="ic">DELETE /user/posts/{id}</span></td>
+      </tr>
+    </table>
+
+    <div class="callout info">
+      <strong>💡 Memory Trick</strong>
+      Think of CRUD: <strong>C</strong>reate=POST, <strong>R</strong>ead=GET, <strong>U</strong>pdate=PUT, <strong>D</strong>elete=DELETE. Every database operation maps to one of these four verbs.
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="fetch-api">
+    <div class="section-badge">⚡ Chapter 4</div>
+    <h2>The <code>fetch()</code> Function — How JS Talks to Backend</h2>
+
+    <p><span class="ic">fetch()</span> is a built-in JavaScript function that sends an HTTP request and gives you back the response. It's the core of all frontend ↔ backend communication.</p>
+
+    <h3>Simplest Example — GET Request</h3>
+    <pre>
+<span class="cm">// Read all posts from the backend</span>
+<span class="kw">const</span> <span class="var">response</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'http://127.0.0.1:8001/user/posts'</span>);
+<span class="kw">const</span> <span class="var">posts</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">response</span>.<span class="fn">json</span>();  <span class="cm">// convert response to JS array</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="var">posts</span>);  <span class="cm">// [{post_id:1, caption:"Hello",...}, ...]</span></pre>
+
+    <h3>POST Request — Sending Data</h3>
+    <pre>
+<span class="cm">// Create a new post</span>
+<span class="kw">const</span> <span class="var">response</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'http://127.0.0.1:8001/user/posts'</span>, {
+  <span class="var">method</span>: <span class="str">'POST'</span>,
+  <span class="var">headers</span>: {
+    <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,      <span class="cm">// tell server we're sending JSON</span>
+    <span class="str">'Authorization'</span>: <span class="str">`Bearer ${token}`</span>      <span class="cm">// our login token (more on this later)</span>
+  },
+  <span class="var">body</span>: <span class="fn">JSON.stringify</span>({                        <span class="cm">// convert JS object → JSON text</span>
+    <span class="var">user_id</span>: <span class="num">3</span>,
+    <span class="var">caption</span>: <span class="str">"My first post!"</span>,
+    <span class="var">image_url</span>: <span class="str">"https://cdn.example.com/img.jpg"</span>
+  })
+});
+
+<span class="kw">const</span> <span class="var">newPost</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">response</span>.<span class="fn">json</span>();
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="var">newPost</span>);  <span class="cm">// {post_id: 42, caption: "My first post!", ...}</span></pre>
+
+    <div class="callout warn">
+      <strong>⚠️ Important: await</strong>
+      <span class="ic">fetch()</span> is <strong>asynchronous</strong> — it doesn't freeze the browser while waiting. The <span class="ic">await</span> keyword tells JavaScript to wait for the response before moving to the next line. You must use <span class="ic">async function</span> to use <span class="ic">await</span>.
+    </div>
+
+    <h3>Checking If It Worked</h3>
+    <pre>
+<span class="kw">const</span> <span class="var">res</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetch</span>(...);
+
+<span class="kw">if</span> (<span class="var">res</span>.<span class="var">ok</span>) {              <span class="cm">// res.ok = true if status is 200-299</span>
+  <span class="kw">const</span> <span class="var">data</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">res</span>.<span class="fn">json</span>();
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Success!"</span>, <span class="var">data</span>);
+} <span class="kw">else</span> {
+  <span class="kw">const</span> <span class="var">error</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">res</span>.<span class="fn">json</span>();
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Failed!"</span>, <span class="var">error</span>.<span class="var">detail</span>);  <span class="cm">// FastAPI puts error in .detail</span>
+}</pre>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="fetchapi-wrapper">
+    <div class="section-badge">🔁 Chapter 5</div>
+    <h2>Your <code>fetchAPI()</code> Wrapper — The Smart Version</h2>
+
+    <p>Raw <span class="ic">fetch()</span> is repetitive — you'd have to add the base URL and auth token manually every single time. Your project solved this by creating a <strong>wrapper function</strong> called <span class="ic">fetchAPI()</span> that does it all automatically:</p>
+
+    <pre>
+<span class="file-tag">index.html — JS</span>
+<span class="kw">async function</span> <span class="fn">fetchAPI</span>(<span class="var">path</span>, <span class="var">options</span> <span class="punct">=</span> {}) {
+  <span class="kw">const</span> <span class="var">token</span> <span class="punct">=</span> <span class="var">localStorage</span>.<span class="fn">getItem</span>(<span class="str">'instagram_access_token'</span>);
+
+  <span class="kw">const</span> <span class="var">headers</span> <span class="punct">=</span> { ...<span class="var">options</span>.<span class="var">headers</span> };
+
+  <span class="cm">// Automatically add the JWT token if user is logged in</span>
+  <span class="kw">if</span> (<span class="var">token</span>) {
+    <span class="var">headers</span>[<span class="str">'Authorization'</span>] <span class="punct">=</span> <span class="str">`Bearer ${token}`</span>;
+  }
+
+  <span class="cm">// Automatically add Content-Type for JSON bodies</span>
+  <span class="kw">if</span> (<span class="var">options</span>.<span class="var">body</span> <span class="punct">&&</span> <span class="kw">typeof</span> <span class="var">options</span>.<span class="var">body</span> <span class="punct">===</span> <span class="str">'string'</span>) {
+    <span class="var">headers</span>[<span class="str">'Content-Type'</span>] <span class="punct">=</span> <span class="str">'application/json'</span>;
+  }
+
+  <span class="cm">// Full URL = API_BASE_URL (http://127.0.0.1:8001) + path (/user/posts)</span>
+  <span class="kw">const</span> <span class="var">res</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${API_BASE_URL}${path}`</span>, { ...<span class="var">options</span>, <span class="var">headers</span> });
+
+  <span class="cm">// If token expired (401), silently refresh and retry</span>
+  <span class="kw">if</span> (<span class="var">res</span>.<span class="var">status</span> <span class="punct">===</span> <span class="num">401</span>) {
+    <span class="kw">await</span> <span class="fn">refreshTokens</span>();
+    <span class="cm">// ... retry the request with the new token</span>
+  }
+  <span class="kw">return</span> <span class="var">res</span>;
+}</pre>
+
+    <h4>Why use a wrapper?</h4>
+    <div class="compare">
+      <div>
+        <div class="compare-header">❌ Without wrapper (repetitive)</div>
+        <pre>
+<span class="cm">// You write this EVERY SINGLE TIME</span>
+<span class="kw">const</span> <span class="var">token</span> <span class="punct">=</span> <span class="var">localStorage</span>.<span class="fn">getItem</span>(<span class="str">'instagram_access_token'</span>);
+<span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'http://127.0.0.1:8001/user/posts'</span>, {
+  <span class="var">headers</span>: { <span class="str">'Authorization'</span>: <span class="str">`Bearer ${token}`</span>,
+               <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> }
+});</pre>
+      </div>
+      <div>
+        <div class="compare-header">✅ With wrapper (clean)</div>
+        <pre>
+<span class="cm">// Just this. Wrapper handles the rest.</span>
+<span class="kw">await</span> <span class="fn">fetchAPI</span>(<span class="str">'/user/posts'</span>);
+
+
+
+</pre>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="jwt">
+    <div class="section-badge">🔐 Chapter 6</div>
+    <h2>JWT Authentication — How Login Works</h2>
+
+    <p>JWT stands for <strong>JSON Web Token</strong>. It's like a <strong>VIP wristband</strong> at a concert — you prove who you are once at the door (login), get a wristband (token), and then show the wristband to enter any area (protected API).</p>
+
+    <div class="analogy">
+      <div class="analogy-label">🎟️ Concert Wristband Analogy</div>
+      <strong>Login</strong> = Show your ID at the entrance → Get a wristband<br>
+      <strong>Access Token</strong> = Your wristband (expires after 30 min — short life)<br>
+      <strong>Refresh Token</strong> = A backstage pass to get a new wristband when the old one expires<br>
+      <strong>Bearer Token in Header</strong> = Flashing your wristband every time you enter a room
+    </div>
+
+    <h3>The Two Tokens in Your App</h3>
+    <table>
+      <tr>
+        <th>Token</th>
+        <th>Stored In</th>
+        <th>Lifetime</th>
+        <th>Purpose</th>
+      </tr>
+      <tr>
+        <td><span class="tag purple">access_token</span></td>
+        <td><span class="ic">localStorage['instagram_access_token']</span></td>
+        <td>~30 minutes</td>
+        <td>Sent with every protected API request</td>
+      </tr>
+      <tr>
+        <td><span class="tag cyan">refresh_token</span></td>
+        <td><span class="ic">localStorage['instagram_refresh_token']</span></td>
+        <td>7 days</td>
+        <td>Used to get a new access_token when it expires</td>
+      </tr>
+    </table>
+
+    <h3>How to Use a Token</h3>
+    <p>Every protected route in FastAPI checks for the token in the HTTP <strong>Authorization header</strong>:</p>
+    <pre>
+<span class="cm">// The header you send with every request:</span>
+<span class="var">Authorization</span>: <span class="str">Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</span>
+<span class="cm">//              ^^^^^^ This keyword is required by the OAuth2 standard</span></pre>
+
+    <pre>
+<span class="file-tag">FastAPI — Router.py</span>
+<span class="cm"># This is how FastAPI verifies the token on the backend:</span>
+<span class="kw">@</span><span class="var">UserProtectedRouter</span>.<span class="fn">get</span>(<span class="str">"/posts"</span>)
+<span class="kw">async def</span> <span class="fn">get_all_posts</span>(
+    <span class="var">current_user</span><span class="punct">=</span><span class="fn">Depends</span>(<span class="fn">get_current_user</span>)  <span class="cm"># ← this reads & validates the token</span>
+):
+    ...</pre>
+
+    <div class="callout tip">
+      <strong>✅ Key Insight</strong>
+      If you send a request to <span class="ic">UserProtectedRouter</span> without a token (or with an invalid one), FastAPI automatically returns <strong>401 Unauthorized</strong>. Your <span class="ic">fetchAPI()</span> wrapper catches this and tries to refresh the token silently.
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="login-flow">
+    <div class="section-badge">🚪 Chapter 7</div>
+    <h2>The Full Login Flow — Step by Step</h2>
+
+    <ol class="steps">
+      <li>
+        <div class="step-content">
+          <strong>User fills the login form</strong>
+          <p>They type username + password and click "Log In"</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <strong>JS calls <span class="ic">handleLoginUser()</span></strong>
+          <p>It sends a <span class="method post">POST</span> to <span class="ic">/user/login</span> with <span class="ic">{ username, password }</span> in the body</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <strong>FastAPI verifies the password</strong>
+          <p>Checks the hash in the database using <span class="ic">verify_password()</span></p>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <strong>Backend returns tokens</strong>
+          <p>Sends back <span class="ic">{ access_token: "...", refresh_token: "..." }</span></p>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <strong>JS stores tokens in localStorage</strong>
+          <p><span class="ic">localStorage.setItem('instagram_access_token', data.access_token)</span></p>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <strong>JS fetches current user profile</strong>
+          <p>Calls <span class="ic">fetchCurrentUser()</span> → <span class="method get">GET</span> <span class="ic">/user/users/me</span> to load user data + roles</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <strong>UI updates</strong>
+          <p><span class="ic">updateCurrentUserUI()</span> shows the user avatar + name in the sidebar. Admin nav appears if the user has admin role.</p>
+        </div>
+      </li>
+    </ol>
+
+    <pre>
+<span class="file-tag">index.html — handleLoginUser()</span>
+<span class="kw">async function</span> <span class="fn">handleLoginUser</span>(<span class="var">event</span>) {
+  <span class="var">event</span>.<span class="fn">preventDefault</span>();  <span class="cm">// stop the form from reloading the page</span>
+
+  <span class="kw">const</span> <span class="var">username</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">'login-username'</span>).<span class="var">value</span>;
+  <span class="kw">const</span> <span class="var">password</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">'login-password'</span>).<span class="var">value</span>;
+
+  <span class="kw">const</span> <span class="var">res</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${API_BASE_URL}/user/login`</span>, {
+    <span class="var">method</span>: <span class="str">'POST'</span>,
+    <span class="var">headers</span>: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+    <span class="var">body</span>: <span class="fn">JSON.stringify</span>({ <span class="var">username</span>, <span class="var">password</span> })
+  });
+
+  <span class="kw">const</span> <span class="var">data</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">res</span>.<span class="fn">json</span>();
+
+  <span class="kw">if</span> (!<span class="var">res</span>.<span class="var">ok</span>) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="var">data</span>.<span class="var">detail</span>);  <span class="cm">// show error if wrong password</span>
+
+  <span class="cm">// Store tokens so every future request is authenticated</span>
+  <span class="var">localStorage</span>.<span class="fn">setItem</span>(<span class="str">'instagram_access_token'</span>,  <span class="var">data</span>.<span class="var">access_token</span>);
+  <span class="var">localStorage</span>.<span class="fn">setItem</span>(<span class="str">'instagram_refresh_token'</span>, <span class="var">data</span>.<span class="var">refresh_token</span>);
+
+  <span class="kw">await</span> <span class="fn">fetchCurrentUser</span>();  <span class="cm">// load user data</span>
+  <span class="fn">updateCurrentUserUI</span>();      <span class="cm">// update sidebar</span>
+}</pre>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="auto-refresh">
+    <div class="section-badge">🔄 Chapter 8</div>
+    <h2>Auto Token Refresh — Silent Background Magic</h2>
+
+    <p>Access tokens expire after ~30 minutes. If the user is still on the page, we don't want to log them out — we silently get a new token in the background.</p>
+
+    <div class="flow">
+      <div class="flow-box blue">Request sent<span class="flow-label">fetchAPI()</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box amber">401 received<span class="flow-label">token expired</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box purple">POST /user/refresh<span class="flow-label">send refresh_token</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green">New tokens<span class="flow-label">stored silently</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box blue">Retry request<span class="flow-label">with new token</span></div>
+    </div>
+
+    <p>Your <span class="ic">fetchAPI()</span> wrapper handles this automatically. If any request returns 401, it calls <span class="ic">refreshTokens()</span>, updates localStorage, and retries the original request. The user never even knows it happened.</p>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="global-state">
+    <div class="section-badge">🗃️ Chapter 9</div>
+    <h2>Global State — Shared Data Across the App</h2>
+
+    <p>Since your whole app is in one HTML file, all JavaScript variables are shared globally. Your app uses several <strong>global state variables</strong> at the top of the script:</p>
+
+    <pre>
+<span class="file-tag">index.html — Global Variables</span>
+<span class="cm">// These variables are accessible from EVERY function in the app</span>
+<span class="kw">let</span> <span class="var">allUsers</span> <span class="punct">=</span> [];          <span class="cm">// all users from /user/users</span>
+<span class="kw">let</span> <span class="var">allPosts</span> <span class="punct">=</span> [];          <span class="cm">// all posts from /user/posts</span>
+<span class="kw">let</span> <span class="var">allReels</span> <span class="punct">=</span> [];          <span class="cm">// all reels from /user/reels</span>
+<span class="kw">let</span> <span class="var">currentUser</span> <span class="punct">=</span> <span class="kw">null</span>;     <span class="cm">// logged-in user object (or null)</span>
+<span class="kw">let</span> <span class="var">activeScreen</span> <span class="punct">=</span> <span class="str">'feed'</span>; <span class="cm">// which screen is visible</span>
+<span class="kw">let</span> <span class="var">userStoriesMap</span> <span class="punct">=</span> {};    <span class="cm">// { user_id: [story, story, ...] }</span>
+<span class="kw">let</span> <span class="var">profileViewingUser</span> <span class="punct">=</span> <span class="kw">null</span>; <span class="cm">// which profile page is shown</span></pre>
+
+    <div class="analogy">
+      <div class="analogy-label">📋 Analogy — A Shared Whiteboard</div>
+      Imagine the office has one big whiteboard. Anyone can write on it or read from it. <span class="ic">allUsers</span> is like the contacts list written there — every function can see it without fetching from the server again. When you call <span class="ic">reloadData()</span>, it's like erasing and rewriting the whiteboard from fresh server data.
+    </div>
+
+    <h3>The <code>reloadData()</code> Function</h3>
+    <p>This is the central function that refreshes all global state by calling multiple backend APIs:</p>
+
+    <pre>
+<span class="file-tag">index.html — reloadData()</span>
+<span class="kw">async function</span> <span class="fn">reloadData</span>() {
+  <span class="cm">// Fetch all users → update global allUsers array</span>
+  <span class="kw">const</span> <span class="var">userRes</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetchAPI</span>(<span class="str">'/user/users'</span>);
+  <span class="kw">if</span> (<span class="var">userRes</span>.<span class="var">ok</span>) <span class="var">allUsers</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">userRes</span>.<span class="fn">json</span>();
+
+  <span class="cm">// Fetch all posts → update global allPosts array</span>
+  <span class="kw">const</span> <span class="var">postsRes</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetchAPI</span>(<span class="str">'/user/posts'</span>);
+  <span class="kw">if</span> (<span class="var">postsRes</span>.<span class="var">ok</span>) <span class="var">allPosts</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">postsRes</span>.<span class="fn">json</span>();
+
+  <span class="cm">// Fetch all reels → update global allReels array</span>
+  <span class="kw">const</span> <span class="var">reelsRes</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetchAPI</span>(<span class="str">'/user/reels'</span>);
+  <span class="kw">if</span> (<span class="var">reelsRes</span>.<span class="var">ok</span>) <span class="var">allReels</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">reelsRes</span>.<span class="fn">json</span>();
+}</pre>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="dom">
+    <div class="section-badge">🎨 Chapter 10</div>
+    <h2>DOM Manipulation — Updating What You See</h2>
+
+    <p>The <strong>DOM</strong> (Document Object Model) is the browser's live representation of your HTML. JavaScript can read and change it to update what the user sees — without reloading the page.</p>
+
+    <h3>The Key DOM Methods</h3>
+    <table>
+      <tr><th>Method</th><th>What it does</th><th>Example</th></tr>
+      <tr>
+        <td><span class="ic">getElementById(id)</span></td>
+        <td>Find one element by its id</td>
+        <td><span class="ic">document.getElementById('feed-stream')</span></td>
+      </tr>
+      <tr>
+        <td><span class="ic">element.innerHTML</span></td>
+        <td>Set or get the HTML inside an element</td>
+        <td><span class="ic">stream.innerHTML = '&lt;p&gt;Hello&lt;/p&gt;'</span></td>
+      </tr>
+      <tr>
+        <td><span class="ic">element.textContent</span></td>
+        <td>Set or get plain text (safer, no HTML)</td>
+        <td><span class="ic">span.textContent = user.username</span></td>
+      </tr>
+      <tr>
+        <td><span class="ic">createElement(tag)</span></td>
+        <td>Create a new HTML element</td>
+        <td><span class="ic">const card = document.createElement('div')</span></td>
+      </tr>
+      <tr>
+        <td><span class="ic">appendChild(el)</span></td>
+        <td>Add an element inside another</td>
+        <td><span class="ic">stream.appendChild(card)</span></td>
+      </tr>
+      <tr>
+        <td><span class="ic">classList.add/remove</span></td>
+        <td>Add or remove a CSS class</td>
+        <td><span class="ic">modal.classList.add('active')</span></td>
+      </tr>
+    </table>
+
+    <h3>Pattern: Fetch data → Build HTML → Insert into DOM</h3>
+    <p>This is the most common pattern in your app. Here's how the post feed works:</p>
+
+    <pre>
+<span class="kw">async function</span> <span class="fn">renderFeed</span>() {
+  <span class="kw">const</span> <span class="var">stream</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">'feed-stream'</span>); <span class="cm">// 1. Find container</span>
+  <span class="var">stream</span>.<span class="var">innerHTML</span> <span class="punct">=</span> <span class="str">''</span>;                                   <span class="cm">// 2. Clear old content</span>
+
+  <span class="kw">for</span> (<span class="kw">const</span> <span class="var">post</span> <span class="kw">of</span> <span class="var">allPosts</span>) {  <span class="cm">// 3. Loop through the data</span>
+    <span class="kw">const</span> <span class="var">card</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">createElement</span>(<span class="str">'article'</span>); <span class="cm">// 4. Create element</span>
+    <span class="var">card</span>.<span class="var">className</span> <span class="punct">=</span> <span class="str">'post-card'</span>;
+
+    <span class="var">card</span>.<span class="var">innerHTML</span> <span class="punct">=</span> <span class="str">`
+      &lt;img src="${post.image_url}"&gt;
+      &lt;p&gt;${post.caption}&lt;/p&gt;
+    `</span>;  <span class="cm">// 5. Fill with data using template literals</span>
+
+    <span class="var">stream</span>.<span class="fn">appendChild</span>(<span class="var">card</span>);  <span class="cm">// 6. Add to the page</span>
+  }
+}</pre>
+
+    <div class="callout info">
+      <strong>💡 Template Literals</strong>
+      The backtick (<span class="ic">`</span>) syntax lets you embed variables directly in HTML strings using <span class="ic">${variableName}</span>. This is how your app dynamically fills in usernames, images, and captions.
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="components">
+    <div class="section-badge">🧩 Chapter 11</div>
+    <h2>Reusable Components — Patterns Used Over and Over</h2>
+
+    <p>Even though your app is plain HTML/JS (no React or Vue), it still uses <strong>component patterns</strong> — pieces of UI that are built the same way every time they appear. Let's look at the main ones:</p>
+
+    <h3>1. The Post Card</h3>
+    <p>Used in the <strong>Feed</strong>, <strong>Profile grid</strong>, and <strong>Admin Panel</strong>. The same data (image, username, caption, likes) is displayed with the same HTML structure each time.</p>
+    <pre>
+<span class="cm">// This function is called for EVERY post in allPosts</span>
+<span class="kw">for</span> (<span class="kw">const</span> <span class="var">post</span> <span class="kw">of</span> <span class="var">allPosts</span>) {
+  <span class="kw">const</span> <span class="var">card</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">createElement</span>(<span class="str">'article'</span>);
+  <span class="var">card</span>.<span class="var">className</span> <span class="punct">=</span> <span class="str">'post-card'</span>;
+  <span class="var">card</span>.<span class="var">id</span> <span class="punct">=</span> <span class="str">`post-${post.post_id}`</span>;   <span class="cm">// unique ID for scroll-to</span>
+  <span class="var">card</span>.<span class="var">innerHTML</span> <span class="punct">=</span> <span class="str">`...post HTML...`</span>;   <span class="cm">// same template every time</span>
+  <span class="var">stream</span>.<span class="fn">appendChild</span>(<span class="var">card</span>);
+}</pre>
+
+    <h3>2. The Story Bubble</h3>
+    <p>Used in the <strong>stories shelf</strong> at the top and inside the <strong>story viewer</strong>. Each bubble shows a user avatar with a gradient ring if they have stories.</p>
+
+    <h3>3. The Highlight Bubble</h3>
+    <p>Used in the <strong>Profile page</strong>. Same structure as story bubbles but displays highlight covers and opens a special story viewer when clicked.</p>
+
+    <h3>4. The Admin List Item</h3>
+    <p>Used twice in the Admin Panel — once for the <strong>users list</strong>, once for the <strong>posts list</strong>. Same layout: thumbnail + info text + a delete button.</p>
+
+    <h3>Pattern: Reuse via loops</h3>
+    <pre>
+<span class="cm">// If you have N users, this runs N times, creating N identical-structured items</span>
+<span class="var">adminUsers</span>.<span class="fn">forEach</span>(<span class="var">user</span> <span class="punct">=&gt;</span> {
+  <span class="kw">const</span> <span class="var">item</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">createElement</span>(<span class="str">'div'</span>);
+  <span class="var">item</span>.<span class="var">className</span> <span class="punct">=</span> <span class="str">'admin-list-item'</span>;
+  <span class="var">item</span>.<span class="var">innerHTML</span> <span class="punct">=</span> <span class="str">`
+    &lt;img src="${user.profile_picture}"&gt;
+    &lt;p&gt;${user.username}&lt;/p&gt;
+    &lt;button onclick="deleteUser(${user.user_id})"&gt;Delete&lt;/button&gt;
+  `</span>;
+  <span class="var">container</span>.<span class="fn">appendChild</span>(<span class="var">item</span>);
+});</pre>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="load-feed">
+    <div class="section-badge">📰 Chapter 12</div>
+    <h2>Real Example 1 — Loading the Feed</h2>
+
+    <p>Here's the full lifecycle of what happens when the app loads and shows you posts:</p>
+
+    <ol class="steps">
+      <li>
+        <div class="step-content">
+          <strong>Page loads → <span class="ic">DOMContentLoaded</span> fires</strong>
+          <p>Browser runs your JS initialization code</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <strong><span class="ic">fetchCurrentUser()</span> → <span class="method get">GET</span> <span class="ic">/user/users/me</span></strong>
+          <p>If a token exists in localStorage, loads the user's profile + roles</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <strong><span class="ic">reloadData()</span> → 3 parallel API calls</strong>
+          <p>Fetches allUsers, allPosts, allReels — fills global state</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <strong><span class="ic">renderFeed()</span> → loops through allPosts</strong>
+          <p>For each post: fetches likes count + comments, builds the card HTML, adds it to the DOM</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <strong><span class="ic">renderStories()</span> → loops through allUsers</strong>
+          <p>Builds story bubbles for users with active stories</p>
+        </div>
+      </li>
+    </ol>
+
+    <pre>
+<span class="file-tag">index.html — DOMContentLoaded init</span>
+<span class="var">window</span>.<span class="fn">addEventListener</span>(<span class="str">'DOMContentLoaded'</span>, <span class="kw">async</span> () <span class="punct">=&gt;</span> {
+  <span class="cm">// 1. Restore login session if token exists</span>
+  <span class="kw">const</span> <span class="var">token</span> <span class="punct">=</span> <span class="var">localStorage</span>.<span class="fn">getItem</span>(<span class="str">'instagram_access_token'</span>);
+  <span class="kw">if</span> (<span class="var">token</span>) <span class="kw">await</span> <span class="fn">fetchCurrentUser</span>();
+
+  <span class="cm">// 2. Always update sidebar buttons (login/logout state)</span>
+  <span class="fn">updateCurrentUserUI</span>();
+
+  <span class="cm">// 3. Load all data from the backend</span>
+  <span class="kw">await</span> <span class="fn">reloadData</span>();
+  <span class="kw">await</span> <span class="fn">refreshStories</span>(<span class="kw">true</span>);
+
+  <span class="cm">// 4. Render the feed and stories on screen</span>
+  <span class="fn">renderFeed</span>();
+  <span class="fn">renderStories</span>();
+});</pre>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="create-post">
+    <div class="section-badge">📸 Chapter 13</div>
+    <h2>Real Example 2 — Creating a Post (Form + File Upload)</h2>
+
+    <p>This is a perfect example of a multi-step frontend→backend flow involving file upload:</p>
+
+    <div class="flow" style="flex-wrap:wrap; gap: 4px;">
+      <div class="flow-box blue">User picks image<span class="flow-label">drag & drop zone</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box amber">Step 1: Upload file<span class="flow-label">POST /user/upload</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box purple">Get image URL<span class="flow-label">{ "url": "cdn/img.jpg" }</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green">Step 2: Create post<span class="flow-label">POST /user/posts</span></div>
+    </div>
+
+    <h4>Why two steps?</h4>
+    <p>Images can't be sent as JSON (JSON is text-only). So we <strong>first upload the file</strong> using FormData (multipart), get back a URL, then <strong>create the post record</strong> with that URL.</p>
+
+    <pre>
+<span class="file-tag">index.html — handleCreatePost()</span>
+<span class="kw">async function</span> <span class="fn">handleCreatePost</span>(<span class="var">e</span>) {
+  <span class="var">e</span>.<span class="fn">preventDefault</span>();
+
+  <span class="kw">const</span> <span class="var">file</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">'post-image-file'</span>).<span class="var">files</span>[<span class="num">0</span>];
+  <span class="kw">const</span> <span class="var">caption</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">'post-caption'</span>).<span class="var">value</span>;
+
+  <span class="cm">// ── STEP 1: Upload the image file ──────────────────────</span>
+  <span class="kw">const</span> <span class="var">formData</span> <span class="punct">=</span> <span class="kw">new</span> <span class="fn">FormData</span>();   <span class="cm">// special object for file uploads</span>
+  <span class="var">formData</span>.<span class="fn">append</span>(<span class="str">'file'</span>, <span class="var">file</span>);     <span class="cm">// attach the file</span>
+
+  <span class="kw">const</span> <span class="var">uploadRes</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetchAPI</span>(<span class="str">'/user/upload'</span>, {
+    <span class="var">method</span>: <span class="str">'POST'</span>,
+    <span class="var">body</span>: <span class="var">formData</span>   <span class="cm">// NOTE: no Content-Type header — browser sets it automatically</span>
+  });
+  <span class="kw">const</span> <span class="var">uploadData</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">uploadRes</span>.<span class="fn">json</span>();
+  <span class="kw">const</span> <span class="var">image_url</span> <span class="punct">=</span> <span class="var">uploadData</span>.<span class="var">url</span>;   <span class="cm">// e.g. "http://localhost:8001/uploads/abc.jpg"</span>
+
+  <span class="cm">// ── STEP 2: Create the post with the image URL ─────────</span>
+  <span class="kw">const</span> <span class="var">res</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetchAPI</span>(<span class="str">'/user/posts'</span>, {
+    <span class="var">method</span>: <span class="str">'POST'</span>,
+    <span class="var">body</span>: <span class="fn">JSON.stringify</span>({
+      <span class="var">user_id</span>: <span class="var">currentUser</span>.<span class="var">user_id</span>,
+      <span class="var">caption</span>,
+      <span class="var">image_url</span>
+    })
+  });
+
+  <span class="kw">if</span> (<span class="var">res</span>.<span class="var">ok</span>) {
+    <span class="fn">showToast</span>(<span class="str">"Shared new post!"</span>);  <span class="cm">// show success notification</span>
+    <span class="kw">await</span> <span class="fn">reloadData</span>();              <span class="cm">// refresh allPosts</span>
+    <span class="fn">renderFeed</span>();                    <span class="cm">// redraw the feed</span>
+  }
+}</pre>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="search">
+    <div class="section-badge">🔍 Chapter 14</div>
+    <h2>Real Example 3 — The Search Feature</h2>
+
+    <p>Search shows how to use <strong>query parameters</strong> and <strong>debouncing</strong> — two very common frontend patterns:</p>
+
+    <h3>Query Parameters</h3>
+    <p>Query parameters are extra data added to a URL after a <span class="ic">?</span>:</p>
+    <pre>
+<span class="cm">// No query param:  GET /user/posts        → all posts</span>
+<span class="cm">// With query param: GET /user/search?q=cat → posts matching "cat"</span>
+
+<span class="kw">const</span> <span class="var">query</span> <span class="punct">=</span> <span class="str">"danyl"</span>;
+<span class="kw">const</span> <span class="var">res</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetchAPI</span>(<span class="str">`/user/search?q=${encodeURIComponent(query)}`</span>);
+<span class="cm">//                                       ^ encodeURIComponent escapes special chars</span>
+
+<span class="kw">const</span> <span class="var">data</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">res</span>.<span class="fn">json</span>();
+<span class="cm">// { users: [{user_id:3, username:"danyl",...}], posts: [...] }</span></pre>
+
+    <h3>Debouncing — Don't Spam the Server</h3>
+    <p>Without debouncing, every single keypress sends a request. If you type "danyl" (5 chars), that's 5 requests. With debouncing, we wait 350ms after the user stops typing:</p>
+
+    <pre>
+<span class="kw">let</span> <span class="var">searchTimer</span> <span class="punct">=</span> <span class="kw">null</span>;
+
+<span class="kw">function</span> <span class="fn">handleSearchInput</span>(<span class="var">event</span>) {
+  <span class="kw">const</span> <span class="var">query</span> <span class="punct">=</span> <span class="var">event</span>.<span class="var">target</span>.<span class="var">value</span>;
+
+  <span class="fn">clearTimeout</span>(<span class="var">searchTimer</span>);    <span class="cm">// cancel the previous timer</span>
+
+  <span class="var">searchTimer</span> <span class="punct">=</span> <span class="fn">setTimeout</span>(() <span class="punct">=&gt;</span> {
+    <span class="fn">executeSearch</span>(<span class="var">query</span>);        <span class="cm">// only run after 350ms of no typing</span>
+  }, <span class="num">350</span>);
+}</pre>
+
+    <div class="analogy">
+      <div class="analogy-label">⏱️ Debounce Analogy</div>
+      Imagine an elevator — it doesn't close the doors the instant you step in. It waits a few seconds to see if more people are coming. That wait is "debounce". In search, we wait for the user to stop typing before asking the server.
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="admin">
+    <div class="section-badge">🛡️ Chapter 15</div>
+    <h2>Real Example 4 — Role-Based UI (Admin Panel)</h2>
+
+    <p>Some features should only appear for admin users. Your frontend handles this by checking the user's roles after login:</p>
+
+    <pre>
+<span class="file-tag">index.html — fetchCurrentUser()</span>
+<span class="kw">const</span> <span class="var">rolesRes</span> <span class="punct">=</span> <span class="kw">await</span> <span class="fn">fetchAPI</span>(<span class="str">`/user/users/${currentUser.user_id}/roles`</span>);
+<span class="kw">const</span> <span class="var">roles</span> <span class="punct">=</span> <span class="kw">await</span> <span class="var">rolesRes</span>.<span class="fn">json</span>();
+
+<span class="var">currentUser</span>.<span class="var">isSuperAdmin</span> <span class="punct">=</span> <span class="var">roles</span>.<span class="fn">includes</span>(<span class="str">'SuperAdmin'</span>);
+<span class="var">currentUser</span>.<span class="var">isAdmin</span>      <span class="punct">=</span> <span class="var">roles</span>.<span class="fn">includes</span>(<span class="str">'Admin'</span>) <span class="punct">||</span> <span class="var">currentUser</span>.<span class="var">isSuperAdmin</span>;
+<span class="var">currentUser</span>.<span class="var">isSupervisor</span> <span class="punct">=</span> <span class="var">roles</span>.<span class="fn">includes</span>(<span class="str">'Supervisor'</span>) <span class="punct">||</span> <span class="var">currentUser</span>.<span class="var">isAdmin</span>;</pre>
+
+    <p>Then these flags control what's visible:</p>
+    <pre>
+<span class="cm">// Show Admin nav tab only for admins/supervisors</span>
+<span class="kw">const</span> <span class="var">adminNav</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">'nav-admin'</span>);
+<span class="var">adminNav</span>.<span class="var">style</span>.<span class="var">display</span> <span class="punct">=</span> <span class="var">currentUser</span>.<span class="var">isSupervisor</span> <span class="punct">?</span> <span class="str">'flex'</span> <span class="punct">:</span> <span class="str">'none'</span>;
+
+<span class="cm">// Show delete button only for admins</span>
+<span class="kw">const</span> <span class="var">showDelete</span> <span class="punct">=</span> <span class="var">currentUser</span>.<span class="var">isAdmin</span> <span class="punct">||</span> <span class="var">currentUser</span>.<span class="var">user_id</span> <span class="punct">===</span> <span class="var">post</span>.<span class="var">user_id</span>;</pre>
+
+    <div class="callout warn">
+      <strong>⚠️ Frontend vs Backend Security</strong>
+      Hiding a button is for UX only — it is NOT security. A clever user can still call your API directly. Real security lives in the backend (<span class="ic">PermissionChecker</span> in FastAPI). Frontend checks are just polish.
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="modals">
+    <div class="section-badge">🪟 Chapter 16</div>
+    <h2>UI Pattern — Modals (Popup Dialogs)</h2>
+
+    <p>Modals are popup dialogs that overlay the page. Your app uses the same pattern for every modal: an overlay div with a class toggle.</p>
+
+    <pre>
+<span class="file-tag">index.html — HTML structure (same pattern for ALL modals)</span>
+<span class="kw">&lt;div</span> <span class="var">id</span>=<span class="str">"create-post-modal"</span> <span class="var">class</span>=<span class="str">"modal-overlay"</span>
+     <span class="var">onclick</span>=<span class="str">"closeModalOnOverlay(event)"</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;div</span> <span class="var">class</span>=<span class="str">"modal-box"</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;header</span> <span class="var">class</span>=<span class="str">"modal-header"</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;span&gt;</span>Create New Post<span class="kw">&lt;/span&gt;</span>
+      <span class="kw">&lt;button</span> <span class="var">onclick</span>=<span class="str">"closeModal('create-post-modal')"</span><span class="kw">&gt;</span>&amp;times;<span class="kw">&lt;/button&gt;</span>
+    <span class="kw">&lt;/header&gt;</span>
+    <span class="kw">&lt;div</span> <span class="var">class</span>=<span class="str">"modal-body"</span><span class="kw">&gt;</span>
+      <span class="cm">&lt;!-- form goes here --&gt;</span>
+    <span class="kw">&lt;/div&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+<span class="kw">&lt;/div&gt;</span></pre>
+
+    <pre>
+<span class="file-tag">index.html — JS (same functions control ALL modals)</span>
+<span class="kw">function</span> <span class="fn">openModal</span>(<span class="var">modalId</span>) {
+  <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="var">modalId</span>).<span class="var">classList</span>.<span class="fn">add</span>(<span class="str">'active'</span>);
+}
+<span class="kw">function</span> <span class="fn">closeModal</span>(<span class="var">modalId</span>) {
+  <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="var">modalId</span>).<span class="var">classList</span>.<span class="fn">remove</span>(<span class="str">'active'</span>);
+}
+<span class="cm">// Adding 'active' class makes the overlay visible via CSS:
+// .modal-overlay.active { display: flex; }</span></pre>
+
+    <p>The same two functions — <span class="ic">openModal(id)</span> and <span class="ic">closeModal(id)</span> — control <strong>every modal</strong> in the app just by passing different IDs. This is a great example of reuse.</p>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="toast">
+    <div class="section-badge">🍞 Chapter 17</div>
+    <h2>UI Pattern — Toast Notifications</h2>
+
+    <p>Toasts are small popup messages that appear briefly to inform the user. Your app has one toast element that is reused for every notification:</p>
+
+    <pre>
+<span class="file-tag">index.html — showToast()</span>
+<span class="kw">function</span> <span class="fn">showToast</span>(<span class="var">message</span>, <span class="var">isError</span> <span class="punct">=</span> <span class="kw">false</span>) {
+  <span class="kw">const</span> <span class="var">toast</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">'toast-banner'</span>);
+  <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">'toast-message'</span>).<span class="var">textContent</span> <span class="punct">=</span> <span class="var">message</span>;
+
+  <span class="kw">if</span> (<span class="var">isError</span>) <span class="var">toast</span>.<span class="var">classList</span>.<span class="fn">add</span>(<span class="str">'error'</span>);
+  <span class="kw">else</span>         <span class="var">toast</span>.<span class="var">classList</span>.<span class="fn">remove</span>(<span class="str">'error'</span>);
+
+  <span class="var">toast</span>.<span class="var">classList</span>.<span class="fn">add</span>(<span class="str">'show'</span>);      <span class="cm">// make it visible (CSS transition)</span>
+
+  <span class="fn">setTimeout</span>(() <span class="punct">=&gt;</span> {
+    <span class="var">toast</span>.<span class="var">classList</span>.<span class="fn">remove</span>(<span class="str">'show'</span>); <span class="cm">// hide after 3 seconds</span>
+  }, <span class="num">3000</span>);
+}
+
+<span class="cm">// Usage anywhere in the app:</span>
+<span class="fn">showToast</span>(<span class="str">"Post shared!"</span>);           <span class="cm">// green success</span>
+<span class="fn">showToast</span>(<span class="str">"Failed to upload"</span>, <span class="kw">true</span>); <span class="cm">// red error</span></pre>
+  </section>
+
+  <hr>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section class="section" id="upload-zone">
+    <div class="section-badge">📤 Chapter 18</div>
+    <h2>UI Pattern — The Upload Zone</h2>
+
+    <p>The drag & drop upload zone is a custom replacement for the browser's default file input. It uses a hidden <span class="ic">&lt;input type="file"&gt;</span> inside a styled div:</p>
+
+    <pre>
+<span class="file-tag">index.html — Upload Zone HTML</span>
+<span class="kw">&lt;div</span> <span class="var">class</span>=<span class="str">"upload-zone"</span> <span class="var">id</span>=<span class="str">"uz-post"</span>
+     <span class="var">ondragover</span>=<span class="str">"uzDragOver(event, 'uz-post')"</span>
+     <span class="var">ondrop</span>=<span class="str">"uzDrop(event, 'uz-post', 'post-image-file', 'auto')"</span><span class="kw">&gt;</span>
+
+  <span class="cm">&lt;!-- Hidden native input (invisible, covers the whole zone) --&gt;</span>
+  <span class="kw">&lt;input</span> <span class="var">type</span>=<span class="str">"file"</span> <span class="var">id</span>=<span class="str">"post-image-file"</span>
+         <span class="var">onchange</span>=<span class="str">"uzPreview('uz-post', 'post-image-file', 'auto')"</span><span class="kw">&gt;</span>
+
+  <span class="cm">&lt;!-- Idle state: icon + instructions --&gt;</span>
+  <span class="kw">&lt;div</span> <span class="var">class</span>=<span class="str">"upload-zone-idle"</span> <span class="var">id</span>=<span class="str">"uz-post-idle"</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;i</span> <span class="var">class</span>=<span class="str">"fa-solid fa-image"</span><span class="kw">&gt;&lt;/i&gt;</span>
+    <span class="kw">&lt;span&gt;</span>Drop your photo here<span class="kw">&lt;/span&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+
+  <span class="cm">&lt;!-- Preview state: shown after file is selected --&gt;</span>
+  <span class="kw">&lt;div</span> <span class="var">class</span>=<span class="str">"upload-zone-preview"</span> <span class="var">id</span>=<span class="str">"uz-post-preview"</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;img</span> <span class="var">id</span>=<span class="str">"uz-post-preview-img"</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;/div&gt;</span>
+<span class="kw">&lt;/div&gt;</span></pre>
+
+    <pre>
+<span class="file-tag">index.html — uzPreview() — shows image preview after pick</span>
+<span class="kw">function</span> <span class="fn">uzPreview</span>(<span class="var">zoneId</span>, <span class="var">inputId</span>, <span class="var">mediaType</span>) {
+  <span class="kw">const</span> <span class="var">file</span> <span class="punct">=</span> <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="var">inputId</span>).<span class="var">files</span>[<span class="num">0</span>];
+  <span class="kw">const</span> <span class="var">url</span> <span class="punct">=</span> <span class="fn">URL.createObjectURL</span>(<span class="var">file</span>); <span class="cm">// temp local URL for preview</span>
+
+  <span class="cm">// Hide the idle placeholder, show the preview</span>
+  <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">`${zoneId}-idle`</span>).<span class="var">style</span>.<span class="var">display</span> <span class="punct">=</span> <span class="str">'none'</span>;
+  <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">`${zoneId}-preview`</span>).<span class="var">style</span>.<span class="var">display</span> <span class="punct">=</span> <span class="str">'block'</span>;
+
+  <span class="cm">// Set the preview image src to the local object URL</span>
+  <span class="var">document</span>.<span class="fn">getElementById</span>(<span class="str">`${zoneId}-preview-img`</span>).<span class="var">src</span> <span class="punct">=</span> <span class="var">url</span>;
+}</pre>
+
+    <div class="callout info">
+      <strong>💡 URL.createObjectURL()</strong>
+      This creates a temporary local URL (like <span class="ic">blob:http://localhost/abc123</span>) that lets you preview the file immediately without uploading it yet. It only lives as long as the page is open.
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- SUMMARY -->
+  <section class="section">
+    <div class="section-badge">🎓 Summary</div>
+    <h2>The Big Picture — Everything Together</h2>
+
+    <div class="card-grid">
+      <div class="mini-card">
+        <div class="icon">📡</div>
+        <div class="label">fetch() / fetchAPI()</div>
+        <div class="desc">The bridge between frontend and backend. Every data operation goes through here.</div>
+      </div>
+      <div class="mini-card">
+        <div class="icon">🔐</div>
+        <div class="label">JWT Tokens</div>
+        <div class="desc">Stored in localStorage. Sent as Bearer header on every protected request.</div>
+      </div>
+      <div class="mini-card">
+        <div class="icon">🗃️</div>
+        <div class="label">Global State</div>
+        <div class="desc">allUsers, allPosts, currentUser — shared data loaded once and reused everywhere.</div>
+      </div>
+      <div class="mini-card">
+        <div class="icon">🔄</div>
+        <div class="label">Render Loop</div>
+        <div class="desc">Fetch data → Build HTML → Insert into DOM. The core pattern behind every screen.</div>
+      </div>
+      <div class="mini-card">
+        <div class="icon">🧩</div>
+        <div class="label">Components via Loops</div>
+        <div class="desc">Post cards, story bubbles, admin items — all built by looping data through the same template.</div>
+      </div>
+      <div class="mini-card">
+        <div class="icon">🪟</div>
+        <div class="label">Modal Pattern</div>
+        <div class="desc">One openModal(id)/closeModal(id) pair controls every popup by toggling an 'active' CSS class.</div>
+      </div>
+    </div>
+
+    <div class="callout tip" style="margin-top:30px;">
+      <strong>✅ Your Learning Path</strong>
+      1. Understand HTTP methods (GET/POST/PUT/DELETE)<br>
+      2. Learn how fetch() works and async/await<br>
+      3. Understand JWT and why tokens are needed<br>
+      4. Practice the Fetch → Render loop pattern<br>
+      5. Build your own small project using these patterns
+    </div>
+  </section>
+
+  <div style="text-align:center; padding: 40px 0; color: var(--muted); font-size: 13px;">
+    Made for the Instagram Lite project · Built with ❤️ using Antigravity
+  </div>
+
+</main>
+</body>
+</html>

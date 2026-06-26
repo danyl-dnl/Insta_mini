@@ -4,7 +4,9 @@ from datetime import datetime, timedelta
 import Setting.Models as models
 
 
-async def create_story(db: AsyncSession, user_id, media_url, created_at=None, expires_at=None):
+async def create_story(
+    db: AsyncSession, user_id, media_url, created_at=None, expires_at=None
+):
     now = datetime.utcnow()
     new_story = models.Story(
         user_id=user_id,
@@ -19,7 +21,9 @@ async def create_story(db: AsyncSession, user_id, media_url, created_at=None, ex
 
 
 async def get_story_by_id(db: AsyncSession, story_id):
-    result = await db.execute(select(models.Story).where(models.Story.story_id == story_id))
+    result = await db.execute(
+        select(models.Story).where(models.Story.story_id == story_id)
+    )
     return result.scalar_one_or_none()
 
 
@@ -31,16 +35,21 @@ async def get_active_stories_by_user(db: AsyncSession, user_id):
         return [s for s in user.stories if s.expires_at > now]
     return []
 
+
 get_active_stories = get_active_stories_by_user
 
 
 async def delete_story(db: AsyncSession, story_id):
-    result = await db.execute(select(models.Story).where(models.Story.story_id == story_id))
+    result = await db.execute(
+        select(models.Story).where(models.Story.story_id == story_id)
+    )
     story = result.scalar_one_or_none()
     if story:
-        await db.execute(delete(models.HighlightStory).where(
-            models.HighlightStory.story_id == story_id
-        ))
+        await db.execute(
+            delete(models.HighlightStory).where(
+                models.HighlightStory.story_id == story_id
+            )
+        )
         await db.delete(story)
         await db.commit()
         return True
@@ -49,10 +58,7 @@ async def delete_story(db: AsyncSession, story_id):
 
 async def create_highlight(db: AsyncSession, user_id, title, cover_url=None):
     new_hl = models.Highlight(
-        user_id=user_id,
-        title=title,
-        cover_url=cover_url,
-        created_at=datetime.utcnow()
+        user_id=user_id, title=title, cover_url=cover_url, created_at=datetime.utcnow()
     )
     db.add(new_hl)
     await db.commit()
@@ -96,10 +102,14 @@ async def delete_highlight(db: AsyncSession, highlight_id):
     hl = result.scalar_one_or_none()
     if hl:
         await db.execute(
-            delete(models.HighlightStory).where(models.HighlightStory.highlight_id == highlight_id)
+            delete(models.HighlightStory).where(
+                models.HighlightStory.highlight_id == highlight_id
+            )
         )
         await db.execute(
-            delete(models.Highlight).where(models.Highlight.highlight_id == highlight_id)
+            delete(models.Highlight).where(
+                models.Highlight.highlight_id == highlight_id
+            )
         )
         await db.commit()
         return True
@@ -110,7 +120,7 @@ async def add_story_to_highlight(db: AsyncSession, highlight_id, story_id):
     result = await db.execute(
         select(models.HighlightStory).where(
             models.HighlightStory.highlight_id == highlight_id,
-            models.HighlightStory.story_id == story_id
+            models.HighlightStory.story_id == story_id,
         )
     )
     existing = result.scalar_one_or_none()
@@ -126,7 +136,10 @@ async def add_story_to_highlight(db: AsyncSession, highlight_id, story_id):
 async def get_stories_in_highlight(db: AsyncSession, highlight_id):
     result = await db.execute(
         select(models.Story)
-        .join(models.HighlightStory, models.Story.story_id == models.HighlightStory.story_id)
+        .join(
+            models.HighlightStory,
+            models.Story.story_id == models.HighlightStory.story_id,
+        )
         .where(models.HighlightStory.highlight_id == highlight_id)
     )
     return list(result.scalars().all())
@@ -136,7 +149,7 @@ async def remove_story_from_highlight(db: AsyncSession, highlight_id, story_id):
     result = await db.execute(
         select(models.HighlightStory).where(
             models.HighlightStory.highlight_id == highlight_id,
-            models.HighlightStory.story_id == story_id
+            models.HighlightStory.story_id == story_id,
         )
     )
     hls = result.scalar_one_or_none()

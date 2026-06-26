@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Instagram Lite - Classy Frontend</title>
     <!-- FontAwesome for beautiful, clean icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -401,6 +404,57 @@
             height: 100%;
             width: 0%;
             background-color: white;
+        }
+
+        /* USER ROLE BADGES */
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background-color: rgba(255,255,255,0.08);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+        
+        .role-badge.SuperAdmin {
+            background-color: rgba(139, 92, 246, 0.15) !important;
+            border-color: rgba(139, 92, 246, 0.3) !important;
+            color: #c084fc !important;
+        }
+
+        .role-badge.Admin {
+            background-color: rgba(6, 182, 212, 0.15) !important;
+            border-color: rgba(6, 182, 212, 0.3) !important;
+            color: #22d3ee !important;
+        }
+
+        .role-badge.Supervisor {
+            background-color: rgba(245, 158, 11, 0.15) !important;
+            border-color: rgba(245, 158, 11, 0.3) !important;
+            color: #fbbf24 !important;
+        }
+
+        .role-badge.User {
+            background-color: rgba(16, 185, 129, 0.15) !important;
+            border-color: rgba(16, 185, 129, 0.3) !important;
+            color: #34d399 !important;
+        }
+        
+        .role-badge-remove {
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-muted);
+            transition: color 0.15s;
+            line-height: 1;
+            margin-left: 2px;
+        }
+        
+        .role-badge-remove:hover {
+            color: var(--danger-color);
         }
 
         /* INSTAGRAM FEED POST CARD */
@@ -862,6 +916,118 @@
             border-color: var(--accent-color);
         }
 
+        /* MODERN DRAG & DROP UPLOAD ZONE */
+        .upload-zone {
+            position: relative;
+            width: 100%;
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            cursor: pointer;
+            transition: border-color 0.25s ease, background 0.25s ease, transform 0.15s ease;
+            overflow: hidden;
+        }
+        .upload-zone:hover {
+            border-color: var(--accent-color);
+            background: rgba(139,92,246,0.06);
+        }
+        .upload-zone.drag-over {
+            border-color: var(--accent-color);
+            background: rgba(139,92,246,0.12);
+            transform: scale(1.01);
+            box-shadow: 0 0 0 4px rgba(139,92,246,0.15);
+        }
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+        .upload-zone-idle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 16px;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .upload-zone-idle i {
+            font-size: 32px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        .upload-zone-idle .uz-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .upload-zone-idle .uz-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .upload-zone-idle .uz-btn {
+            margin-top: 6px;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            padding: 7px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: var(--font-family);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        .upload-zone-preview {
+            display: none;
+            position: relative;
+            width: 100%;
+        }
+        .upload-zone-preview img,
+        .upload-zone-preview video {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+        }
+        .upload-zone-preview .uz-preview-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.35);
+            border-top: 1px solid var(--border-color);
+        }
+        .upload-zone-preview .uz-filename {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 75%;
+        }
+        .upload-zone-preview .uz-clear {
+            font-size: 11px;
+            color: var(--accent-color);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: var(--font-family);
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .upload-zone-preview .uz-clear:hover {
+            background: rgba(139,92,246,0.15);
+        }
+
         .form-submit-btn {
             width: 100%;
             background-color: var(--accent-color);
@@ -1299,6 +1465,205 @@
         .admin-scroll-container::-webkit-scrollbar-thumb:hover {
             background: var(--accent-color);
         }
+        /* ==========================================
+           SEARCH BAR & RESULTS PANEL
+        ========================================== */
+        .search-bar-wrapper {
+            position: relative;
+            padding: 0 4px 16px 4px;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 9px 14px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .search-bar:focus-within {
+            border-color: var(--accent-color);
+            background: rgba(139,92,246,0.08);
+        }
+        .search-bar i {
+            color: var(--text-muted);
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: color 0.2s;
+        }
+        .search-bar:focus-within i {
+            color: var(--accent-color);
+        }
+        .search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-color);
+            font-family: var(--font-family);
+            font-size: 13.5px;
+        }
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+        .search-clear-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 13px;
+            padding: 0;
+            display: none;
+            transition: color 0.2s;
+        }
+        .search-clear-btn:hover { color: var(--text-color); }
+
+        /* FLOATING RESULTS PANEL */
+        .search-results-panel {
+            position: fixed;
+            left: 248px; /* sidebar width + gap */
+            top: 0;
+            width: 340px;
+            max-height: 100vh;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-left: none;
+            box-shadow: 8px 0 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            display: none;
+            flex-direction: column;
+            z-index: 800;
+            animation: slideInLeft 0.2s ease;
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-12px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        .search-results-panel.open { display: flex; }
+        .srp-header {
+            padding: 18px 20px 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .srp-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
+        }
+        .srp-close:hover { color: var(--text-color); background: rgba(255,255,255,0.08); }
+        .srp-body {
+            overflow-y: auto;
+            flex: 1;
+            padding: 10px 12px;
+        }
+        .srp-section-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 10px 8px 6px;
+        }
+        .srp-user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .srp-user-item:hover { background: rgba(255,255,255,0.06); }
+        .srp-user-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        .srp-user-info { overflow: hidden; }
+        .srp-username {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .srp-fullname {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .srp-post-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .srp-post-item:hover { background: rgba(255,255,255,0.06); }
+        .srp-post-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid var(--border-color);
+        }
+        .srp-post-caption {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .srp-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .srp-empty i { font-size: 28px; display: block; margin-bottom: 10px; opacity: 0.4; }
+        .srp-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        @keyframes srp-spin {
+            to { transform: rotate(360deg); }
+        }
+        .srp-spinner {
+            width: 16px; height: 16px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            animation: srp-spin 0.7s linear infinite;
+        }
     </style>
 </head>
 <body>
@@ -1311,6 +1676,32 @@
                 <span>Instagram Lite</span>
             </div>
             
+            <!-- SEARCH BAR -->
+            <div class="search-bar-wrapper">
+                <div class="search-bar" id="search-bar-container">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input
+                        class="search-input"
+                        id="search-input"
+                        type="text"
+                        placeholder="Search users & posts..."
+                        autocomplete="off"
+                        oninput="handleSearchInput(event)"
+                        onfocus="if(this.value.trim()) openSearchPanel()"
+                    >
+                    <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="Clear">&#x2715;</button>
+                </div>
+            </div>
+
+            <!-- FLOATING SEARCH RESULTS PANEL -->
+            <div class="search-results-panel" id="search-results-panel">
+                <div class="srp-header">
+                    <span id="srp-header-label">Results</span>
+                    <button class="srp-close" onclick="closeSearchPanel()" title="Close">&times;</button>
+                </div>
+                <div class="srp-body" id="srp-body"></div>
+            </div>
+
             <ul class="nav-links">
                 <li onclick="switchScreen('feed')" id="nav-feed" class="nav-item active">
                     <i class="fa-solid fa-house"></i>
@@ -1381,12 +1772,13 @@
                     <!-- Bio & Details Info Header -->
                     <header class="profile-header-area">
                         <div class="profile-avatar-wrapper">
-                            <img id="profile-avatar-img" class="profile-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="Avatar">
+                            <img id="profile-avatar-img" class="profile-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="Avatar" onerror="handleAvatarError(this)">
                         </div>
                         <div class="profile-details">
                             <div class="profile-row-1">
                                 <h2 class="profile-username-label" id="profile-username-title">username</h2>
                                 <button class="profile-edit-btn" id="profile-action-btn" onclick="openBioModal()">Edit Bio</button>
+                                <button class="profile-edit-btn" id="profile-privacy-btn" onclick="toggleProfilePrivacy()" style="margin-left: 10px; display: none; background-color: #363636;"></button>
                             </div>
                             <ul class="profile-stats">
                                 <li><span id="profile-posts-count">0</span> posts</li>
@@ -1427,7 +1819,7 @@
 
                     <div style="display: grid; grid-template-columns: 1fr; gap: 30px;">
                         <!-- USERS CONTROL -->
-                        <div class="admin-section-card">
+                        <div class="admin-section-card" id="admin-users-card">
                             <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
                                 <i class="fa-solid fa-users" style="color: var(--accent-color);"></i>
                                 User Accounts (<span id="admin-users-count">0</span>)
@@ -1452,6 +1844,39 @@
             </section>
 
         </main>
+    </div>
+
+    <!-- MODAL: MANAGE ROLES -->
+    <div id="manage-roles-modal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <header class="modal-header">
+                <span class="modal-title" id="mr-title">Manage Roles</span>
+                <button class="modal-close-btn" onclick="closeModal('manage-roles-modal')">&times;</button>
+            </header>
+            <div class="modal-body">
+                <div style="margin-bottom: 20px;">
+                    <label class="form-label" style="margin-bottom: 8px;">Active Roles</label>
+                    <div id="mr-active-roles" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <!-- Populate role badges here -->
+                    </div>
+                </div>
+                
+                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 15px 0;">
+                
+                <form id="assign-role-form" onsubmit="handleAssignRoleSubmit(event)">
+                    <input type="hidden" id="mr-user-id">
+                    <div class="form-group">
+                        <label class="form-label">Assign New Role</label>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="mr-role-select" class="form-input" style="flex-grow: 1;" required>
+                                <option value="" disabled selected>Select a role...</option>
+                            </select>
+                            <button type="submit" class="profile-edit-btn" style="background-color: var(--accent-color); font-size: 13.5px; padding: 0 16px; height: 38px;">Assign</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL: REGISTER/CREATE NEW USER -->
@@ -1481,8 +1906,26 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Profile Image</label>
-                        <input type="file" id="reg-avatar-file" class="form-input" accept="image/*">
-                        <span style="font-size: 11px; color: var(--text-muted); display: block; margin-top: 4px;">Only image files are allowed. Leave blank for a default avatar.</span>
+                        <div class="upload-zone" id="uz-avatar"
+                             ondragover="uzDragOver(event,'uz-avatar')"
+                             ondragleave="uzDragLeave(event,'uz-avatar')"
+                             ondrop="uzDrop(event,'uz-avatar','reg-avatar-file','image')">
+                            <input type="file" id="reg-avatar-file" accept="image/*"
+                                   onchange="uzPreview('uz-avatar','reg-avatar-file','image')">
+                            <div class="upload-zone-idle" id="uz-avatar-idle">
+                                <i class="fa-solid fa-user-circle"></i>
+                                <span class="uz-title">Upload Profile Photo</span>
+                                <span class="uz-sub">Drag & drop or click to browse</span>
+                                <span class="uz-sub" style="font-size:11px;">Leave blank for a default avatar</span>
+                            </div>
+                            <div class="upload-zone-preview" id="uz-avatar-preview">
+                                <img id="uz-avatar-preview-img" src="" alt="preview">
+                                <div class="uz-preview-info">
+                                    <span class="uz-filename" id="uz-avatar-filename"></span>
+                                    <button type="button" class="uz-clear" onclick="uzClear('uz-avatar','reg-avatar-file','image')">&#x2715; Remove</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" class="form-submit-btn">Create Account</button>
                 </form>
@@ -1523,8 +1966,28 @@
             <div class="modal-body">
                 <form id="create-post-form" onsubmit="handleCreatePost(event)">
                     <div class="form-group">
-                        <label class="form-label">Image File</label>
-                        <input type="file" id="post-image-file" class="form-input" accept="image/*" required>
+                        <label class="form-label">Image or Video File</label>
+                        <div class="upload-zone" id="uz-post"
+                             ondragover="uzDragOver(event,'uz-post')"
+                             ondragleave="uzDragLeave(event,'uz-post')"
+                             ondrop="uzDrop(event,'uz-post','post-image-file','image')">
+                            <input type="file" id="post-image-file" accept="image/*,video/*" required
+                                   onchange="uzPreview('uz-post','post-image-file','auto')">
+                            <div class="upload-zone-idle" id="uz-post-idle">
+                                <i class="fa-solid fa-image"></i>
+                                <span class="uz-title">Drop your photo here</span>
+                                <span class="uz-sub">Drag & drop or click to browse</span>
+                                <span class="uz-sub" style="font-size:11px;">JPG, PNG, GIF, MP4, MOV</span>
+                            </div>
+                            <div class="upload-zone-preview" id="uz-post-preview">
+                                <img id="uz-post-preview-img" src="" alt="preview" style="display:none;">
+                                <video id="uz-post-preview-vid" src="" controls muted style="display:none;"></video>
+                                <div class="uz-preview-info">
+                                    <span class="uz-filename" id="uz-post-filename"></span>
+                                    <button type="button" class="uz-clear" onclick="uzClear('uz-post','post-image-file','auto')">&#x2715; Remove</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Caption</label>
@@ -1547,7 +2010,26 @@
                 <form id="create-reel-form" onsubmit="handleCreateReel(event)">
                     <div class="form-group">
                         <label class="form-label">Video File</label>
-                        <input type="file" id="reel-video-file" class="form-input" accept="video/*" required>
+                        <div class="upload-zone" id="uz-reel"
+                             ondragover="uzDragOver(event,'uz-reel')"
+                             ondragleave="uzDragLeave(event,'uz-reel')"
+                             ondrop="uzDrop(event,'uz-reel','reel-video-file','video')">
+                            <input type="file" id="reel-video-file" accept="video/*" required
+                                   onchange="uzPreview('uz-reel','reel-video-file','video')">
+                            <div class="upload-zone-idle" id="uz-reel-idle">
+                                <i class="fa-solid fa-clapperboard"></i>
+                                <span class="uz-title">Drop your video here</span>
+                                <span class="uz-sub">Drag & drop or click to browse</span>
+                                <span class="uz-sub" style="font-size:11px;">MP4, MOV, AVI, MKV, WEBM</span>
+                            </div>
+                            <div class="upload-zone-preview" id="uz-reel-preview">
+                                <video id="uz-reel-preview-vid" src="" controls muted></video>
+                                <div class="uz-preview-info">
+                                    <span class="uz-filename" id="uz-reel-filename"></span>
+                                    <button type="button" class="uz-clear" onclick="uzClear('uz-reel','reel-video-file','video')">&#x2715; Remove</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Caption</label>
@@ -1594,7 +2076,7 @@
             <!-- Story Header (User Info) -->
             <div class="story-viewer-header" style="position: absolute; top: 25px; left: 15px; right: 15px; display: flex; align-items: center; justify-content: space-between; z-index: 10050; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <img id="story-viewer-avatar" src="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
+                    <img id="story-viewer-avatar" src="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid white;" onerror="handleAvatarError(this)">
                     <span id="story-viewer-username" style="font-weight: 600; font-size: 14px;">username</span>
                     <span id="story-viewer-time" style="font-size: 11px; color: rgba(255,255,255,0.7);">time</span>
                 </div>
@@ -1650,6 +2132,33 @@
         // CONFIGURATION: Set the FastAPI Backend server URL here
         const API_BASE_URL = (window.location.protocol === 'file:') ? 'http://127.0.0.1:8001' : window.location.origin;
 
+        // UTILITY FUNCTIONS FOR OFFLINE-SAFE MEDIA PATHS & FALLBACKS
+        const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" fill="%2327272a"/><circle cx="12" cy="8" r="4" fill="%23a1a1aa"/><path d="M12 14c-6.1 0-8 4-8 4h16s-1.9-4-8-4z" fill="%23a1a1aa"/></svg>';
+
+        function formatAvatarUrl(url, username) {
+            if (!url) {
+                return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(username || 'user')}`;
+            }
+            if (url.startsWith('/static/')) {
+                return `${API_BASE_URL}${url}`;
+            }
+            return url;
+        }
+
+        function handleAvatarError(img) {
+            img.onerror = null; // Prevent infinite loops
+            img.src = DEFAULT_AVATAR;
+        }
+
+        function formatAssetUrl(url) {
+            if (!url) return '';
+            if (url.startsWith('/static/')) {
+                return `${API_BASE_URL}${url}`;
+            }
+            return url;
+        }
+
+
         // GLOBAL APPLICATION STATE
         let allUsers = [];
         let allPosts = [];
@@ -1659,6 +2168,7 @@
 
         // STORIES & HIGHLIGHTS GLOBAL STATE
         let userStoriesMap = {}; // user_id -> list of active stories
+        let storiesLastFetched = 0; // Timestamp of last story fetch (for cache control)
         let currentViewerUserId = null; // ID of the user whose stories are being viewed
         let currentViewerStories = []; // List of stories currently playing
         let currentStoryIndex = 0; // Current story slide index
@@ -1667,6 +2177,8 @@
         let isStoryPaused = false;
         let selectedStoryIdsForHighlight = []; // Selected story IDs for new highlight creation
         let profileViewingUser = null; // Stored user when looking at a profile page
+        let allAvailableRoles = []; // Cache of available roles loaded from GET /admin/roles
+        let mrActiveUsername = ''; // Stored username of user whose roles are being managed
 
         // FETCH INTERCEPTOR FOR AUTOMATIC REFRESH QUEUE
         let isRefreshing = false;
@@ -1753,13 +2265,19 @@
 
         // ON LOAD INITIALIZATION
         window.addEventListener('DOMContentLoaded', async () => {
+            // Always try to restore session first
             const token = localStorage.getItem('instagram_access_token');
             if (token) {
-                await fetchCurrentUser();
+                try { await fetchCurrentUser(); } catch(e) { console.error("Session restore failed", e); }
             }
-            
-            await reloadData();
+
+            // Always update the sidebar regardless of whether data loads
             updateCurrentUserUI();
+
+            // Load data separately — errors here won't break the login/logout UI
+            try { await reloadData(); } catch(e) { console.error("reloadData failed", e); }
+            try { await refreshStories(true); } catch(e) { console.error("refreshStories failed", e); }
+
             renderFeed();
             renderStories();
         });
@@ -1770,12 +2288,18 @@
                 const res = await fetchAPI('/user/users/me');
                 if (res.ok) {
                     currentUser = await res.json();
+                    currentUser.roles = [];
+                    currentUser.isSuperAdmin = false;
                     currentUser.isAdmin = false;
+                    currentUser.isSupervisor = false;
                     try {
                         const rolesRes = await fetchAPI(`/user/users/${currentUser.user_id}/roles`);
                         if (rolesRes.ok) {
                             const roles = await rolesRes.json();
-                            currentUser.isAdmin = roles.some(r => r.role_name === 'Admin');
+                            currentUser.roles = roles.map(r => r.role_name);
+                            currentUser.isSuperAdmin = currentUser.roles.includes('SuperAdmin');
+                            currentUser.isAdmin = currentUser.roles.includes('Admin') || currentUser.isSuperAdmin;
+                            currentUser.isSupervisor = currentUser.roles.includes('Supervisor') || currentUser.isAdmin;
                         }
                     } catch (roleErr) {
                         console.error("Failed to fetch user roles", roleErr);
@@ -1822,7 +2346,38 @@
             renderStories();
         }
 
+        // BUG FIX #4: Fetch stories separately with a 60-second cache so reloadData()
+        // does not fire N story requests after every like, comment, or follow action.
+        async function refreshStories(force = false) {
+            const CACHE_TTL = 60 * 1000; // 60 seconds
+            if (!force && (Date.now() - storiesLastFetched) < CACHE_TTL) return;
+            if (allUsers.length === 0) return;
+
+            try {
+                const storyPromises = allUsers.map(async (u) => {
+                    try {
+                        const res = await fetchAPI(`/user/users/${u.user_id}/stories/active`);
+                        if (res.ok) {
+                            const stories = await res.json();
+                            return { user_id: u.user_id, stories };
+                        }
+                    } catch (e) {
+                        console.error(`Failed to fetch stories for user ${u.user_id}`, e);
+                    }
+                    return { user_id: u.user_id, stories: [] };
+                });
+                const results = await Promise.all(storyPromises);
+                results.forEach(r => {
+                    userStoriesMap[r.user_id] = r.stories;
+                });
+                storiesLastFetched = Date.now();
+            } catch (err) {
+                console.error("Failed to refresh stories", err);
+            }
+        }
+
         // CENTRALIZED REFRESH OF SYSTEM DATA
+        // Stories are NOT fetched here — call refreshStories() explicitly when needed.
         async function reloadData() {
             try {
                 // Fetch Users
@@ -1831,27 +2386,6 @@
                     allUsers = await userRes.json();
                 } else {
                     allUsers = [];
-                }
-
-                // Fetch Stories for all loaded users in parallel
-                userStoriesMap = {};
-                if (allUsers.length > 0) {
-                    const storyPromises = allUsers.map(async (u) => {
-                        try {
-                            const res = await fetchAPI(`/user/users/${u.user_id}/stories/active`);
-                            if (res.ok) {
-                                const stories = await res.json();
-                                return { user_id: u.user_id, stories };
-                            }
-                        } catch (e) {
-                            console.error(`Failed to fetch stories for user ${u.user_id}`, e);
-                        }
-                        return { user_id: u.user_id, stories: [] };
-                    });
-                    const results = await Promise.all(storyPromises);
-                    results.forEach(r => {
-                        userStoriesMap[r.user_id] = r.stories;
-                    });
                 }
 
                 // Fetch Posts
@@ -1932,6 +2466,41 @@
             renderProfile();
         }
 
+        async function toggleProfilePrivacy() {
+            if (!currentUser) return;
+            try {
+                const res = await fetchAPI(`/user/users/${currentUser.user_id}/privacy`);
+                if (res.ok) {
+                    const settings = await res.json();
+                    const privateSetting = settings.find(s => s.privacy_type === 'private');
+                    
+                    if (privateSetting) {
+                        const newActive = !privateSetting.is_active;
+                        const updateRes = await fetchAPI(`/user/privacy/${privateSetting.privacy_id}`, {
+                            method: 'PUT',
+                            body: JSON.stringify({ is_active: newActive })
+                        });
+                        if (updateRes.ok) {
+                            showToast(`Account is now ${newActive ? 'Private' : 'Public'}`);
+                            await renderProfile();
+                        }
+                    } else {
+                        const createRes = await fetchAPI(`/user/users/${currentUser.user_id}/privacy`, {
+                            method: 'POST',
+                            body: JSON.stringify({ privacy_type: 'private', is_active: true })
+                        });
+                        if (createRes.ok) {
+                            showToast("Account is now Private");
+                            await renderProfile();
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to toggle privacy", e);
+                showToast("Error updating privacy settings", true);
+            }
+        }
+
         // UPDATE SIDEBAR LOGGED IN BANNER
         function updateCurrentUserUI() {
             const panel = document.getElementById('active-user-panel');
@@ -1950,12 +2519,12 @@
             }
 
             if (adminNav) {
-                adminNav.style.display = currentUser.isAdmin ? 'flex' : 'none';
+                adminNav.style.display = currentUser.isSupervisor ? 'flex' : 'none';
             }
 
-            const avatarUrl = currentUser.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUser.username}`;
+            const avatarUrl = formatAvatarUrl(currentUser.profile_picture, currentUser.username);
             panel.innerHTML = `
-                <img class="current-user-avatar" src="${avatarUrl}" alt="Avatar">
+                <img class="current-user-avatar" src="${avatarUrl}" alt="Avatar" onerror="handleAvatarError(this)">
                 <div class="current-user-info">
                     <span class="current-username">${currentUser.username}</span>
                     <span class="current-fullname">${currentUser.full_name || 'Instagram User'}</span>
@@ -1989,7 +2558,9 @@
                 closeModal('switch-user-modal');
 
                 await fetchCurrentUser();
+                updateCurrentUserUI(); // Update sidebar immediately after login
                 await reloadData();
+                await refreshStories(true);
                 switchScreen('feed');
                 renderFeed();
                 renderStories();
@@ -2074,7 +2645,9 @@
                 }
 
                 await fetchCurrentUser();
+                updateCurrentUserUI(); // Update sidebar immediately after registration + auto-login
                 await reloadData();
+                await refreshStories(true);
                 renderFeed();
                 renderStories();
 
@@ -2099,7 +2672,7 @@
             if (fileInput.files.length === 0) return;
 
             try {
-                showToast("Uploading image...");
+                showToast("Uploading...");
                 const formData = new FormData();
                 formData.append("file", fileInput.files[0]);
 
@@ -2110,7 +2683,7 @@
 
                 if (!uploadRes.ok) {
                     const errData = await uploadRes.json();
-                    throw new Error(errData.detail || "Image upload failed");
+                    throw new Error(errData.detail || "Upload failed");
                 }
 
                 const uploadData = await uploadRes.json();
@@ -2128,6 +2701,7 @@
 
                 showToast("Shared new post!");
                 document.getElementById('create-post-form').reset();
+                uzClear('uz-post', 'post-image-file', 'auto'); // Reset upload zone UI
                 closeModal('create-post-modal');
                 
                 await reloadData();
@@ -2188,6 +2762,7 @@
 
                 showToast("Shared new Reel!");
                 document.getElementById('create-reel-form').reset();
+                uzClear('uz-reel', 'reel-video-file', 'video'); // Reset upload zone UI
                 closeModal('create-reel-modal');
                 
                 await reloadData();
@@ -2215,25 +2790,39 @@
             return null;
         }
 
-        // EDIT BIOGRAPHY DISPATCHER
+        // BUG FIX #2: EDIT BIOGRAPHY DISPATCHER
+        // Check for an existing bio first — PUT to update it, POST only to create the first one.
         async function handleUpdateBio(e) {
             e.preventDefault();
             const bioText = document.getElementById('edit-bio-text').value.trim();
-            
+
             try {
-                const res = await fetchAPI(`/user/users/${currentUser.user_id}/bio`, {
-                    method: 'POST',
-                    body: JSON.stringify({ bio_text: bioText, is_active: true })
-                });
+                // Try to get the existing bio record
+                const existingRes = await fetchAPI(`/user/users/${currentUser.user_id}/bio`);
+
+                let res;
+                if (existingRes.ok) {
+                    // Bio exists — update it via PUT using the bio_id
+                    const existingBio = await existingRes.json();
+                    res = await fetchAPI(`/user/bios/${existingBio.bio_id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ bio_text: bioText, is_active: true })
+                    });
+                } else {
+                    // No bio yet — create a new one
+                    res = await fetchAPI(`/user/users/${currentUser.user_id}/bio`, {
+                        method: 'POST',
+                        body: JSON.stringify({ bio_text: bioText, is_active: true })
+                    });
+                }
 
                 if (res.ok) {
                     showToast("Biography updated!");
                     closeModal('edit-bio-modal');
-                    await reloadData();
                     renderProfile();
                 } else {
                     const error = await res.json();
-                    throw new Error(error.detail || "Failed to edit bio");
+                    throw new Error(error.detail || "Failed to update bio");
                 }
             } catch(err) {
                 showToast(err.message, true);
@@ -2281,7 +2870,7 @@
                 // Find user details of post owner
                 const postOwner = allUsers.find(u => u.user_id === post.user_id);
                 const ownerUsername = postOwner ? postOwner.username : `User_${post.user_id}`;
-                const ownerAvatar = postOwner ? postOwner.profile_picture : `https://api.dicebear.com/7.x/adventurer/svg?seed=user${post.user_id}`;
+                const ownerAvatar = formatAvatarUrl(postOwner ? postOwner.profile_picture : null, ownerUsername);
                 
                 // Fetch likes count and comments for this post
                 let likesCount = 0;
@@ -2343,9 +2932,12 @@
                     }
                 }
 
-                const showDeleteBtn = currentUser && currentUser.isAdmin;
+                // BUG FIX #1 (continued): Show delete to admins AND the post's own author.
+                // Pass ownerId so deletePost() can choose the right endpoint.
+                const isPostOwner = currentUser && currentUser.user_id === post.user_id;
+                const showDeleteBtn = currentUser && (currentUser.isAdmin || currentUser.isSupervisor || isPostOwner);
                 const postMoreBtnHTML = showDeleteBtn ? `
-                    <button class="post-more-btn" onclick="deletePost(${post.post_id})" title="Delete Post" style="color: var(--danger-color); font-size: 18px; padding: 4px; background: none; border: none; cursor: pointer;">
+                    <button class="post-more-btn" onclick="deletePost(${post.post_id}, ${post.user_id})" title="Delete Post" style="color: var(--danger-color); font-size: 18px; padding: 4px; background: none; border: none; cursor: pointer;">
                         <i class="fa-regular fa-trash-can"></i>
                     </button>
                 ` : `
@@ -2355,7 +2947,7 @@
                 card.innerHTML = `
                     <div class="post-header">
                         <div class="post-author-info" onclick="viewUserProfile(${post.user_id})">
-                            <img class="post-author-avatar" src="${ownerAvatar}" alt="Avatar">
+                            <img class="post-author-avatar" src="${ownerAvatar}" alt="Avatar" onerror="handleAvatarError(this)">
                             <span class="post-author-name">${ownerUsername}</span>
                         </div>
                         ${postMoreBtnHTML}
@@ -2363,9 +2955,9 @@
 
                     <div class="post-image-container" ondblclick="triggerDoubleLike(${post.post_id})">
                         ${isVideoUrl(post.image_url) ? `
-                            <video class="post-image" src="${post.image_url}" controls loop muted playsinline style="width: 100%; height: auto; max-height: 500px; object-fit: cover; display: block; border-radius: 4px;"></video>
+                            <video class="post-image" src="${formatAssetUrl(post.image_url)}" controls loop muted playsinline style="width: 100%; height: auto; max-height: 500px; object-fit: cover; display: block; border-radius: 4px;"></video>
                         ` : `
-                            <img class="post-image" src="${post.image_url}" alt="Post Image" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600'">
+                            <img class="post-image" src="${formatAssetUrl(post.image_url)}" alt="Post Image" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600'">
                         `}
                         <i class="fa-solid fa-heart heart-pop" id="heart-pop-${post.post_id}"></i>
                     </div>
@@ -2417,7 +3009,7 @@
             const myBubble = document.createElement('div');
             myBubble.className = 'story-bubble story-bubble-me';
             
-            const myAvatar = currentUser.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUser.username}`;
+            const myAvatar = formatAvatarUrl(currentUser.profile_picture, currentUser.username);
             
             let ringClass = 'story-ring';
             if (myStories.length === 0) {
@@ -2426,7 +3018,7 @@
 
             myBubble.innerHTML = `
                 <div class="${ringClass}">
-                    <img class="story-avatar" src="${myAvatar}" alt="Avatar">
+                    <img class="story-avatar" src="${myAvatar}" alt="Avatar" onerror="handleAvatarError(this)">
                 </div>
                 ${myStories.length === 0 ? `
                     <span class="story-add-badge" onclick="event.stopPropagation(); triggerAddStory()"><i class="fa-solid fa-plus"></i></span>
@@ -2454,11 +3046,11 @@
                 bubble.className = 'story-bubble';
                 bubble.onclick = () => playStories(u.user_id);
                 
-                const avatar = u.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${u.username}`;
+                const avatar = formatAvatarUrl(u.profile_picture, u.username);
 
                 bubble.innerHTML = `
                     <div class="story-ring">
-                        <img class="story-avatar" src="${avatar}" alt="Avatar">
+                        <img class="story-avatar" src="${avatar}" alt="Avatar" onerror="handleAvatarError(this)">
                     </div>
                     <span class="story-username">${u.username}</span>
                 `;
@@ -2473,24 +3065,48 @@
             // Set header labels
             document.getElementById('profile-username-title').textContent = profileViewingUser.username;
             document.getElementById('profile-fullname-title').textContent = profileViewingUser.full_name || 'Instagram User';
-            document.getElementById('profile-avatar-img').src = profileViewingUser.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${profileViewingUser.username}`;
+            document.getElementById('profile-avatar-img').src = formatAvatarUrl(profileViewingUser.profile_picture, profileViewingUser.username);
             
+            // Fetch profile privacy settings of the target user
+            let isPrivate = false;
+            try {
+                const privacyRes = await fetchAPI(`/user/users/${profileViewingUser.user_id}/privacy`);
+                if (privacyRes.ok) {
+                    const settings = await privacyRes.json();
+                    const privateSetting = settings.find(s => s.privacy_type === 'private' && s.is_active);
+                    if (privateSetting) {
+                        isPrivate = true;
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to load privacy setting", err);
+            }
+
             // Edit bio button configurations (if viewing other user, show follow/unfollow logic)
             const actionBtn = document.getElementById('profile-action-btn');
-            if (currentUser && currentUser.user_id === profileViewingUser.user_id) {
+            const privacyBtn = document.getElementById('profile-privacy-btn');
+            const isMyProfile = currentUser && currentUser.user_id === profileViewingUser.user_id;
+            let isFollowing = false;
+            
+            if (isMyProfile) {
                 actionBtn.textContent = 'Edit Bio';
                 actionBtn.onclick = openBioModal;
                 actionBtn.style.backgroundColor = '#363636';
+                
+                // Show privacy button for owner
+                privacyBtn.style.display = 'inline-block';
+                privacyBtn.innerHTML = isPrivate ? '<i class="fa-solid fa-lock"></i> Private' : '<i class="fa-solid fa-lock-open"></i> Public';
             } else {
                 actionBtn.textContent = 'Follow';
                 actionBtn.style.backgroundColor = 'var(--accent-color)';
+                privacyBtn.style.display = 'none';
                 
                 if (currentUser) {
                     try {
                         const followingRes = await fetchAPI(`/user/users/${currentUser.user_id}/following`);
                         if (followingRes.ok) {
                             const following = await followingRes.json();
-                            const isFollowing = following.some(u => u.user_id === profileViewingUser.user_id);
+                            isFollowing = following.some(u => u.user_id === profileViewingUser.user_id);
                             if (isFollowing) {
                                 actionBtn.textContent = 'Following';
                                 actionBtn.style.backgroundColor = '#363636';
@@ -2511,6 +3127,25 @@
             // Load Biography
             const bioDescription = await loadUserBio(profileViewingUser.user_id);
             document.getElementById('profile-bio-description').textContent = bioDescription || "No bio yet.";
+
+            const hContainer = document.getElementById('profile-highlights-container');
+            const grid = document.getElementById('profile-posts-grid-container');
+
+            // Render Lock screen banner for private profiles
+            if (isPrivate && !isMyProfile && !isFollowing) {
+                hContainer.style.display = 'none';
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; padding: 60px 20px; text-align: center; color: var(--text-color); background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 20px; box-shadow: var(--glass-shadow); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+                        <i class="fa-solid fa-lock" style="font-size:48px; margin-bottom:16px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                        <h3 style="font-size:18px; font-weight:600; margin-bottom:8px;">This Account is Private</h3>
+                        <p style="color:var(--text-muted); font-size:14px;">Follow this account to see their photos and videos.</p>
+                    </div>
+                `;
+                document.getElementById('profile-posts-count').textContent = '0';
+                document.getElementById('profile-followers-count').textContent = '-';
+                document.getElementById('profile-following-count').textContent = '-';
+                return;
+            }
 
             // Load counts and user posts grid
             let userPosts = [];
@@ -2547,10 +3182,8 @@
             document.getElementById('profile-following-count').textContent = followingCount;
 
             // Load & Render Highlights
-            const hContainer = document.getElementById('profile-highlights-container');
             hContainer.innerHTML = '';
             
-            const isMyProfile = currentUser && currentUser.user_id === profileViewingUser.user_id;
             if (isMyProfile) {
                 const addBubble = document.createElement('div');
                 addBubble.className = 'highlight-bubble';
@@ -2596,6 +3229,7 @@
                             if (!cover && hl.stories.length > 0) {
                                 cover = hl.stories[0].media_url;
                             }
+                            cover = formatAssetUrl(cover);
                             if (!cover) {
                                 cover = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100';
                             }
@@ -2619,7 +3253,7 @@
                 if (!isMyProfile) hContainer.style.display = 'none';
             }
 
-            const grid = document.getElementById('profile-posts-grid-container');
+            // grid already declared above — reuse the same reference
             if (userPosts.length === 0) {
                 grid.innerHTML = `
                     <div style="grid-column: 1/-1; padding: 40px 0; text-align: center; color: var(--text-muted);">
@@ -2661,12 +3295,12 @@
 
                 gridItem.innerHTML = `
                     ${isVideoUrl(post.image_url) ? `
-                        <video src="${post.image_url}" style="width: 100%; height: 100%; object-fit: cover;" muted playsinline></video>
+                        <video src="${formatAssetUrl(post.image_url)}" style="width: 100%; height: 100%; object-fit: cover;" muted playsinline></video>
                         <div style="position: absolute; top: 8px; right: 8px; color: white; background: rgba(0,0,0,0.6); padding: 4px 6px; border-radius: 4px; font-size: 10px; z-index: 2; display: flex; align-items: center; gap: 3px;">
                             <i class="fa-solid fa-video"></i>
                         </div>
                     ` : `
-                        <img src="${post.image_url}" alt="Post thumbnail" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400'">
+                        <img src="${formatAssetUrl(post.image_url)}" alt="Post thumbnail" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400'">
                     `}
                     <div class="grid-item-overlay">
                         <span class="grid-overlay-stat"><i class="fa-solid fa-heart"></i> ${likes}</span>
@@ -2830,7 +3464,7 @@
             for (const reel of allReels) {
                 const owner = allUsers.find(u => u.user_id === reel.user_id);
                 const username = owner ? owner.username : `user_${reel.user_id}`;
-                const avatar = owner ? owner.profile_picture : `https://api.dicebear.com/7.x/adventurer/svg?seed=user${reel.user_id}`;
+                const avatar = formatAvatarUrl(owner ? owner.profile_picture : null, username);
                 
                 let likesCount = 0;
                 let isLikedByMe = false;
@@ -2854,13 +3488,13 @@
                 card.className = 'reel-mobile-mockup';
 
                 card.innerHTML = `
-                    <video src="${reel.video_url}" class="reel-video" loop autoplay muted playsinline onclick="toggleReelPlay(this)"></video>
+                    <video src="${formatAssetUrl(reel.video_url)}" class="reel-video" loop autoplay muted playsinline onclick="toggleReelPlay(this)"></video>
                     
                     <div class="reel-overlay-grad-top"></div>
                     <div class="reel-overlay-grad-bottom"></div>
 
                     <div class="reel-header-overlay" onclick="viewUserProfile(${reel.user_id})">
-                        <img class="reel-author-avatar" src="${avatar}" alt="Avatar">
+                        <img class="reel-author-avatar" src="${avatar}" alt="Avatar" onerror="handleAvatarError(this)">
                         <span class="reel-author-name">${username}</span>
                     </div>
 
@@ -2872,7 +3506,7 @@
                             <span class="reel-action-label">${likesCount}</span>
                         </div>
                         
-                        ${(currentUser.user_id === reel.user_id || currentUser.isAdmin) ? `
+                        ${(currentUser.user_id === reel.user_id || currentUser.isAdmin || currentUser.isSupervisor) ? `
                         <div class="reel-action-btn-wrapper">
                             <button class="reel-action-btn delete" onclick="deleteReel(${reel.reel_id})">
                                 <i class="fa-regular fa-trash-can"></i>
@@ -2979,26 +3613,36 @@
 
         // ADMIN PANEL FUNCTIONS
         async function renderAdminScreen() {
-            if (!currentUser || !currentUser.isAdmin) {
-                showToast("Access Denied: Admins Only", true);
+            if (!currentUser || !currentUser.isSupervisor) {
+                showToast("Access Denied: Supervisors & Admins Only", true);
                 switchScreen('feed');
                 return;
+            }
+
+            const usersCard = document.getElementById('admin-users-card');
+            if (usersCard) {
+                usersCard.style.display = currentUser.isAdmin ? 'block' : 'none';
             }
 
             const usersListContainer = document.getElementById('admin-users-list');
             const postsListContainer = document.getElementById('admin-posts-list');
             
-            usersListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading users...</p>';
+            if (currentUser.isAdmin && usersListContainer) {
+                usersListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading users...</p>';
+            }
             postsListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Loading posts...</p>';
 
             try {
-                // Fetch users using the admin endpoint
-                const usersRes = await fetchAPI('/admin/users');
                 let adminUsers = [];
-                if (usersRes.ok) {
-                    adminUsers = await usersRes.json();
+                if (currentUser.isAdmin) {
+                    // Fetch users using the admin endpoint
+                    const usersRes = await fetchAPI('/admin/users');
+                    if (usersRes.ok) {
+                        adminUsers = await usersRes.json();
+                    }
+                    const countEl = document.getElementById('admin-users-count');
+                    if (countEl) countEl.textContent = adminUsers.length;
                 }
-                document.getElementById('admin-users-count').textContent = adminUsers.length;
 
                 // Fetch posts using the admin endpoint
                 const postsRes = await fetchAPI('/admin/posts');
@@ -3006,36 +3650,47 @@
                 if (postsRes.ok) {
                     adminPosts = await postsRes.json();
                 }
-                document.getElementById('admin-posts-count').textContent = adminPosts.length;
+                const postsCountEl = document.getElementById('admin-posts-count');
+                if (postsCountEl) postsCountEl.textContent = adminPosts.length;
 
                 // Render Users list
-                if (adminUsers.length === 0) {
-                    usersListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No users found.</p>';
-                } else {
-                    usersListContainer.innerHTML = '';
-                    adminUsers.forEach(u => {
-                        const isSelf = u.user_id === currentUser.user_id;
-                        const avatarUrl = u.profile_picture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${u.username}`;
-                        
-                        const item = document.createElement('div');
-                        item.className = 'admin-list-item';
-                        
-                        item.innerHTML = `
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <img src="${avatarUrl}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
-                                <div>
-                                    <p style="font-size: 13.5px; font-weight: 600;">${escapeHTML(u.username)} ${isSelf ? '<span style="font-size: 10px; background-color: var(--accent-color); padding: 2px 6px; border-radius: 10px; margin-left: 5px;">You</span>' : ''}</p>
-                                    <p style="font-size: 11px; color: var(--text-muted);">${escapeHTML(u.email)}</p>
+                if (currentUser.isAdmin && usersListContainer) {
+                    if (adminUsers.length === 0) {
+                        usersListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">No users found.</p>';
+                    } else {
+                        usersListContainer.innerHTML = '';
+                        adminUsers.forEach(u => {
+                            const isSelf = u.user_id === currentUser.user_id;
+                            const avatarUrl = formatAvatarUrl(u.profile_picture, u.username);
+                            
+                            const item = document.createElement('div');
+                            item.className = 'admin-list-item';
+                            
+                            item.innerHTML = `
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="${avatarUrl}" onerror="handleAvatarError(this)" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                    <div>
+                                        <p style="font-size: 13.5px; font-weight: 600;">${escapeHTML(u.username)} ${isSelf ? '<span style="font-size: 10px; background-color: var(--accent-color); padding: 2px 6px; border-radius: 10px; margin-left: 5px;">You</span>' : ''}</p>
+                                        <p style="font-size: 11px; color: var(--text-muted);">${escapeHTML(u.email)}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <button onclick="${isSelf ? '' : `deleteUser(${u.user_id})`}" 
-                                    class="${isSelf ? 'admin-btn-disabled' : 'admin-btn-delete'}"
-                                    ${isSelf ? 'disabled' : ''}>
-                                Delete
-                            </button>
-                        `;
-                        usersListContainer.appendChild(item);
-                    });
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <button onclick="openManageRolesModal(${u.user_id}, '${escapeHTML(u.username)}')"
+                                            class="profile-edit-btn"
+                                            style="font-size: 11.5px; padding: 5px 10px; height: 30px; border-radius: 6px; background-color: #363636; border: 1px solid var(--border-color); color: var(--text-color); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: background-color 0.2s;">
+                                        <i class="fa-solid fa-user-gear"></i> Roles
+                                    </button>
+                                    <button onclick="${isSelf ? '' : `deleteUser(${u.user_id})`}" 
+                                            class="${isSelf ? 'admin-btn-disabled' : 'admin-btn-delete'}"
+                                            ${isSelf ? 'disabled' : ''}
+                                            style="font-size: 11.5px; padding: 5px 10px; height: 30px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; cursor: ${isSelf ? 'not-allowed' : 'pointer'}; margin: 0;">
+                                        Delete
+                                    </button>
+                                </div>
+                            `;
+                            usersListContainer.appendChild(item);
+                        });
+                    }
                 }
 
                 // Render Posts list
@@ -3044,7 +3699,7 @@
                 } else {
                     postsListContainer.innerHTML = '';
                     adminPosts.forEach(p => {
-                        const author = adminUsers.find(u => u.user_id === p.user_id);
+                        const author = (adminUsers.length ? adminUsers : allUsers).find(u => u.user_id === p.user_id);
                         const authorName = author ? author.username : `User_${p.user_id}`;
                         
                         const item = document.createElement('div');
@@ -3098,12 +3753,142 @@
             }
         }
 
-        async function deletePost(postId) {
-            if (!confirm("Are you sure you want to delete this post?")) return;
+        // ROLE MANAGEMENT FUNCTIONS
+        async function openManageRolesModal(userId, username) {
+            mrActiveUsername = username;
+            document.getElementById('mr-user-id').value = userId;
+            document.getElementById('mr-title').textContent = `Manage Roles for @${username}`;
+            
+            const activeContainer = document.getElementById('mr-active-roles');
+            const selectEl = document.getElementById('mr-role-select');
+            
+            activeContainer.innerHTML = '<p style="color:var(--text-muted); font-size:12px;">Loading active roles...</p>';
+            selectEl.innerHTML = '<option value="" disabled selected>Loading available roles...</option>';
+            
             try {
-                const res = await fetchAPI(`/admin/posts/${postId}`, {
+                // 1. Fetch current active roles for the user
+                const userRolesRes = await fetchAPI(`/user/users/${userId}/roles`);
+                if (!userRolesRes.ok) {
+                    const errData = await userRolesRes.json();
+                    throw new Error(errData.detail || "Failed to load user roles");
+                }
+                const userRoles = await userRolesRes.json();
+                
+                // 2. Fetch all available system roles if not cached
+                if (allAvailableRoles.length === 0) {
+                    const allRolesRes = await fetchAPI('/admin/roles');
+                    if (allRolesRes.ok) {
+                        allAvailableRoles = await allRolesRes.json();
+                    } else {
+                        const errData = await allRolesRes.json();
+                        throw new Error(errData.detail || "Failed to load system roles");
+                    }
+                }
+                
+                // 3. Render active roles with a remove button
+                activeContainer.innerHTML = '';
+                if (userRoles.length === 0) {
+                    activeContainer.innerHTML = '<p style="color:var(--text-muted); font-size:12px; margin: 5px 0;">No roles assigned (Defaults to standard User permissions).</p>';
+                } else {
+                    userRoles.forEach(r => {
+                        const badge = document.createElement('span');
+                        badge.className = `role-badge ${r.role_name}`;
+                        badge.innerHTML = `
+                            ${escapeHTML(r.role_name)}
+                            <span class="role-badge-remove" title="Revoke Role" onclick="handleRemoveRoleClick(${userId}, ${r.role_id}, '${escapeHTML(r.role_name)}')">&times;</span>
+                        `;
+                        activeContainer.appendChild(badge);
+                    });
+                }
+                
+                // 4. Populate select options dropdown with remaining unassigned roles
+                selectEl.innerHTML = '<option value="" disabled selected>Select a role...</option>';
+                const unassignedRoles = allAvailableRoles.filter(ar => !userRoles.some(ur => ur.role_id === ar.role_id));
+                
+                if (unassignedRoles.length === 0) {
+                    selectEl.innerHTML = '<option value="" disabled>All available roles are already assigned</option>';
+                } else {
+                    unassignedRoles.forEach(ar => {
+                        const opt = document.createElement('option');
+                        opt.value = ar.role_id;
+                        opt.textContent = ar.role_name;
+                        selectEl.appendChild(opt);
+                    });
+                }
+                
+                openModal('manage-roles-modal');
+            } catch (err) {
+                console.error("Role manager error", err);
+                showToast(err.message, true);
+            }
+        }
+
+        async function handleAssignRoleSubmit(event) {
+            event.preventDefault();
+            const userId = document.getElementById('mr-user-id').value;
+            const selectEl = document.getElementById('mr-role-select');
+            const roleId = selectEl.value;
+            
+            if (!roleId) return;
+            
+            try {
+                const res = await fetchAPI(`/user/users/${userId}/roles/${roleId}`, {
+                    method: 'POST'
+                });
+                
+                if (res.ok) {
+                    showToast("Role assigned successfully!");
+                    // Reload modal view immediately
+                    openManageRolesModal(userId, mrActiveUsername);
+                    // Reload data in background & update admin board
+                    await reloadData();
+                    renderAdminScreen();
+                } else {
+                    const data = await res.json();
+                    throw new Error(data.detail || "Failed to assign role");
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function handleRemoveRoleClick(userId, roleId, roleName) {
+            if (!confirm(`Are you sure you want to revoke the role "${roleName}" from this user?`)) return;
+            
+            try {
+                const res = await fetchAPI(`/user/users/${userId}/roles/${roleId}`, {
                     method: 'DELETE'
                 });
+                
+                if (res.ok) {
+                    showToast("Role revoked successfully!");
+                    // Reload modal view immediately
+                    openManageRolesModal(userId, mrActiveUsername);
+                    // Reload data in background & update admin board
+                    await reloadData();
+                    renderAdminScreen();
+                } else {
+                    const data = await res.json();
+                    throw new Error(data.detail || "Failed to revoke role");
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+
+        // BUG FIX #1: Route to the correct delete endpoint based on role vs ownership.
+        // Admins use /admin/posts/{id} (bypasses ownership check).
+        // Regular users (post owners) use /user/posts/{id}.
+        async function deletePost(postId, ownerId = null) {
+            if (!confirm("Are you sure you want to delete this post?")) return;
+            try {
+                const isOwner = currentUser && ownerId && currentUser.user_id === ownerId;
+                const endpoint = currentUser.isAdmin
+                    ? `/admin/posts/${postId}`
+                    : `/user/posts/${postId}`;
+
+                const res = await fetchAPI(endpoint, { method: 'DELETE' });
                 if (res.ok) {
                     showToast("Post deleted successfully");
                     await reloadData();
@@ -3119,6 +3904,268 @@
             }
         }
 
+
+        // ==========================================
+        // SEARCH FEATURE
+        // ==========================================
+
+        let searchDebounceTimer = null;
+
+        function handleSearchInput(event) {
+            const query = event.target.value.trim();
+            const clearBtn = document.getElementById('search-clear-btn');
+            clearBtn.style.display = query ? 'block' : 'none';
+
+            clearTimeout(searchDebounceTimer);
+
+            if (!query) {
+                closeSearchPanel();
+                return;
+            }
+
+            // Show loading state immediately
+            openSearchPanel();
+            showSearchLoading();
+
+            // Debounce: fire after 350ms of no typing
+            searchDebounceTimer = setTimeout(() => {
+                executeSearch(query);
+            }, 350);
+        }
+
+        function openSearchPanel() {
+            document.getElementById('search-results-panel').classList.add('open');
+        }
+
+        function closeSearchPanel() {
+            document.getElementById('search-results-panel').classList.remove('open');
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('search-input');
+            input.value = '';
+            document.getElementById('search-clear-btn').style.display = 'none';
+            closeSearchPanel();
+            clearTimeout(searchDebounceTimer);
+            input.focus();
+        }
+
+        function showSearchLoading() {
+            document.getElementById('srp-header-label').textContent = 'Searching...';
+            document.getElementById('srp-body').innerHTML = `
+                <div class="srp-loading">
+                    <div class="srp-spinner"></div>
+                    <span>Looking for results...</span>
+                </div>
+            `;
+        }
+
+        async function executeSearch(query) {
+            if (!currentUser) {
+                document.getElementById('srp-body').innerHTML = `
+                    <div class="srp-empty">
+                        <i class="fa-solid fa-lock"></i>
+                        <p>Please log in to search</p>
+                    </div>
+                `;
+                document.getElementById('srp-header-label').textContent = 'Search';
+                return;
+            }
+
+            try {
+                const res = await fetchAPI(`/user/search?q=${encodeURIComponent(query)}`);
+                if (!res.ok) throw new Error('Search failed');
+                const data = await res.json();
+                renderSearchResults(query, data.users || [], data.posts || []);
+            } catch (err) {
+                console.error('Search error', err);
+                document.getElementById('srp-body').innerHTML = `
+                    <div class="srp-empty">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <p>Search failed. Try again.</p>
+                    </div>
+                `;
+                document.getElementById('srp-header-label').textContent = 'Error';
+            }
+        }
+
+        function renderSearchResults(query, users, posts) {
+            const total = users.length + posts.length;
+            document.getElementById('srp-header-label').textContent =
+                total > 0 ? `${total} result${total !== 1 ? 's' : ''} for "${query}"` : `No results`;
+
+            const body = document.getElementById('srp-body');
+
+            if (total === 0) {
+                body.innerHTML = `
+                    <div class="srp-empty">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <p>No users or posts match "<strong>${escapeHTML(query)}</strong>"</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            // USER RESULTS
+            if (users.length > 0) {
+                html += `<div class="srp-section-label"><i class="fa-solid fa-users" style="margin-right:5px;"></i>People</div>`;
+                for (const u of users) {
+                    const avatar = formatAvatarUrl(u.profile_picture, u.username);
+                    html += `
+                        <div class="srp-user-item" onclick="srpGoToProfile(${u.user_id})">
+                            <img src="${avatar}" alt="Avatar" onerror="handleAvatarError(this)">
+                            <div class="srp-user-info">
+                                <div class="srp-username">@${escapeHTML(u.username)}</div>
+                                <div class="srp-fullname">${escapeHTML(u.full_name || '')}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // POST RESULTS
+            if (posts.length > 0) {
+                html += `<div class="srp-section-label" style="margin-top: ${users.length > 0 ? '10px' : '0'};"><i class="fa-solid fa-images" style="margin-right:5px;"></i>Posts</div>`;
+                for (const p of posts) {
+                    const owner = allUsers.find(u => u.user_id === p.user_id);
+                    const ownerName = owner ? `@${owner.username}` : `User ${p.user_id}`;
+                    const thumb = p.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100';
+                    const isVid = isVideoUrl(p.image_url);
+                    html += `
+                        <div class="srp-post-item" onclick="srpGoToPost(${p.post_id})">
+                            ${isVid
+                                ? `<div style="width:48px;height:48px;border-radius:8px;background:#111;border:1px solid var(--border-color);flex-shrink:0;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-video" style="color:var(--text-muted);font-size:16px;"></i></div>`
+                                : `<img class="srp-post-thumb" src="${thumb}" alt="post" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'">`
+                            }
+                            <div>
+                                <div style="font-size:11px;color:var(--accent-color);margin-bottom:3px;">${escapeHTML(ownerName)}</div>
+                                <div class="srp-post-caption">${escapeHTML(p.caption || 'No caption')}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            body.innerHTML = html;
+        }
+
+        function srpGoToProfile(userId) {
+            closeSearchPanel();
+            clearSearch();
+            viewUserProfile(userId);
+        }
+
+        async function srpGoToPost(postId) {
+            closeSearchPanel();
+            clearSearch();
+            switchScreen('feed');
+            // Wait for feed to render then scroll to the post
+            await reloadData();
+            renderFeed().then(() => {
+                setTimeout(() => {
+                    const el = document.getElementById(`post-${postId}`);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        el.style.border = '2px solid var(--accent-color)';
+                        setTimeout(() => { el.style.border = '1px solid var(--border-color)'; }, 2000);
+                    }
+                }, 300);
+            });
+        }
+
+        // Close search panel when clicking outside
+        document.addEventListener('click', (e) => {
+            const panel = document.getElementById('search-results-panel');
+            const bar = document.getElementById('search-bar-container');
+            if (panel && bar && !panel.contains(e.target) && !bar.contains(e.target)) {
+                closeSearchPanel();
+            }
+        });
+
+        // ESC key closes search
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSearchPanel();
+                document.getElementById('search-input').blur();
+            }
+        });
+
+        // ==========================================
+        // UPLOAD ZONE HELPERS (drag & drop + preview)
+        // ==========================================
+
+        function uzDragOver(event, zoneId) {
+            event.preventDefault();
+            document.getElementById(zoneId).classList.add('drag-over');
+        }
+
+        function uzDragLeave(event, zoneId) {
+            // Only leave if exiting the zone entirely (not entering a child)
+            if (!document.getElementById(zoneId).contains(event.relatedTarget)) {
+                document.getElementById(zoneId).classList.remove('drag-over');
+            }
+        }
+
+        function uzDrop(event, zoneId, inputId, mediaType) {
+            event.preventDefault();
+            document.getElementById(zoneId).classList.remove('drag-over');
+            const files = event.dataTransfer.files;
+            if (!files || files.length === 0) return;
+            // Inject the dropped file into the hidden input
+            const input = document.getElementById(inputId);
+            const dt = new DataTransfer();
+            dt.items.add(files[0]);
+            input.files = dt.files;
+            uzPreview(zoneId, inputId, mediaType);
+        }
+
+        function uzPreview(zoneId, inputId, mediaType) {
+            const input = document.getElementById(inputId);
+            const file = input.files[0];
+            if (!file) return;
+
+            const idle = document.getElementById(`${zoneId}-idle`);
+            const preview = document.getElementById(`${zoneId}-preview`);
+            const filename = document.getElementById(`${zoneId}-filename`);
+
+            if (idle) idle.style.display = 'none';
+            if (preview) preview.style.display = 'block';
+            if (filename) filename.textContent = file.name;
+
+            const url = URL.createObjectURL(file);
+            const isVideo = mediaType === 'video' || (mediaType === 'auto' && file.type.startsWith('video/'));
+
+            if (mediaType === 'image' || (!isVideo && mediaType !== 'video')) {
+                const img = document.getElementById(`${zoneId}-preview-img`);
+                const vid = document.getElementById(`${zoneId}-preview-vid`);
+                if (img) { img.src = url; img.style.display = 'block'; }
+                if (vid) { vid.style.display = 'none'; vid.src = ''; }
+            } else {
+                const vid = document.getElementById(`${zoneId}-preview-vid`);
+                const img = document.getElementById(`${zoneId}-preview-img`);
+                if (vid) { vid.src = url; vid.style.display = 'block'; }
+                if (img) { img.style.display = 'none'; img.src = ''; }
+            }
+        }
+
+        function uzClear(zoneId, inputId, mediaType) {
+            const input = document.getElementById(inputId);
+            if (input) {
+                try { input.value = ''; } catch(e) {}
+            }
+            const idle = document.getElementById(`${zoneId}-idle`);
+            const preview = document.getElementById(`${zoneId}-preview`);
+            if (idle) idle.style.display = 'flex';
+            if (preview) preview.style.display = 'none';
+
+            const img = document.getElementById(`${zoneId}-preview-img`);
+            const vid = document.getElementById(`${zoneId}-preview-vid`);
+            if (img) { img.src = ''; img.style.display = 'none'; }
+            if (vid) { vid.src = ''; vid.style.display = 'none'; }
+        }
+
         // DIALOG MODAL UTILITIES
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
@@ -3126,7 +4173,14 @@
 
         // Handle ESC key or modal close button
         function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
+            // Clear any upload zones inside the modal when it closes
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            modal.querySelectorAll('.upload-zone').forEach(zone => {
+                const zoneId = zone.id;
+                const input = zone.querySelector('input[type="file"]');
+                if (input) uzClear(zoneId, input.id, 'auto');
+            });
         }
 
         function closeModalOnOverlay(event) {
@@ -3192,6 +4246,7 @@
                 showToast("Story shared successfully!");
                 document.getElementById('story-file-input').value = ""; // Reset
                 await reloadData();
+                await refreshStories(true); // Force refresh stories after upload
                 renderStories();
             } catch (err) {
                 console.error("Story upload failed", err);
@@ -3395,9 +4450,11 @@
                     showToast("Story deleted successfully!");
                     closeStoryViewer();
                     await reloadData();
+                    await refreshStories(true); // Force refresh stories after deletion
                     renderStories();
                 } else {
-                    const errData = await res.ok ? {} : await res.json();
+                    // BUG FIX #3: Corrected inverted condition (was: res.ok ? {} : res.json())
+                    const errData = res.ok ? {} : await res.json();
                     showToast(errData.detail || "Failed to delete story", true);
                 }
             } catch (e) {

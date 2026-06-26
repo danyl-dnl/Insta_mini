@@ -1,4 +1,9 @@
+import sys
+import os
 import asyncio
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import Setting.Models as models
 from Setting.Database import engine, Base
 

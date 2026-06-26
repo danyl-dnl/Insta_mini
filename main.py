@@ -20,9 +20,11 @@ app.add_middleware(
 os.makedirs("static/uploads", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 @app.on_event("startup")
 async def startup_event():
     await init_mongo()
+
 
 app.include_router(AdminRouter, prefix="/core")
 app.include_router(AdminRouter, prefix="/admin")
@@ -35,3 +37,11 @@ async def root():
     current_dir = os.path.dirname(os.path.abspath(__file__))
     index_file_path = os.path.join(current_dir, "templates", "index.html")
     return FileResponse(index_file_path)
+
+
+@app.get("/notes")
+async def get_notes():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    notes_file_path = os.path.join(current_dir, "notes.html")
+    return FileResponse(notes_file_path)
+

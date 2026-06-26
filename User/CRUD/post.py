@@ -14,7 +14,7 @@ async def create_post(db: AsyncSession, user_id, caption, image_url):
     db.add(new_post)
     await db.commit()
     await db.refresh(new_post)
-    return  new_post
+    return new_post
 
 
 async def get_post_by_id(db: AsyncSession, post_id):
@@ -46,9 +46,15 @@ async def delete_post(db: AsyncSession, post_id):
     result = await db.execute(select(models.Post).where(models.Post.post_id == post_id))
     post = result.scalar_one_or_none()
     if post:
-        await db.execute(delete(models.SavedPost).where(models.SavedPost.post_id == post_id))
-        await db.execute(delete(models.PostLike).where(models.PostLike.post_id == post_id))
-        await db.execute(delete(models.PostComment).where(models.PostComment.post_id == post_id))
+        await db.execute(
+            delete(models.SavedPost).where(models.SavedPost.post_id == post_id)
+        )
+        await db.execute(
+            delete(models.PostLike).where(models.PostLike.post_id == post_id)
+        )
+        await db.execute(
+            delete(models.PostComment).where(models.PostComment.post_id == post_id)
+        )
         await db.delete(post)
         await db.commit()
         return True
@@ -133,6 +139,7 @@ async def get_likes_count(db: AsyncSession, post_id):
     post = result.scalar_one_or_none()
     return len(post.likes) if post else 0
 
+
 get_post_likes_count = get_likes_count
 
 
@@ -195,5 +202,19 @@ async def delete_comment(db: AsyncSession, comment_id):
 
 
 async def get_all_posts(db: AsyncSession):
-    result = await db.execute(select(models.Post).order_by(models.Post.created_at.desc()))
+    result = await db.execute(
+        select(models.Post).order_by(models.Post.created_at.desc())
+    )
+    return list(result.scalars().all())
+
+
+async def search_posts(db: AsyncSession, query: str, limit: int = 20):
+    """Case-insensitive partial match on post captions."""
+    pattern = f"%{query}%"
+    result = await db.execute(
+        select(models.Post)
+        .where(models.Post.caption.ilike(pattern))
+        .order_by(models.Post.created_at.desc())
+        .limit(limit)
+    )
     return list(result.scalars().all())

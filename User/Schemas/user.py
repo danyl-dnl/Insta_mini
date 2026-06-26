@@ -14,7 +14,6 @@ class UserLogin(BaseModel):
     password: str
 
 
-
 class UserUpdate(BaseModel):
     full_name: str | None = None
     profile_picture: str | None = None

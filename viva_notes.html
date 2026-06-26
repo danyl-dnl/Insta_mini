@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram Mini — Viva Notes 🎓</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#0d0d14;--panel:#13131f;--card:#1a1a2e;--border:rgba(255,255,255,0.08);
+      --accent:#8b5cf6;--accent2:#06b6d4;--accent3:#f59e0b;--green:#10b981;
+      --red:#ef4444;--pink:#ec4899;--text:#f1f1f5;--muted:#6b7280;--code-bg:#0b0b12;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+    .hero{background:var(--panel);border-bottom:1px solid var(--border);padding:48px 40px 40px;text-align:center;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 0%,rgba(139,92,246,.18) 0%,transparent 70%),radial-gradient(ellipse at 10% 100%,rgba(6,182,212,.12) 0%,transparent 60%);pointer-events:none}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.4);border-radius:20px;padding:6px 16px;font-size:13px;color:#c4b5fd;margin-bottom:20px;position:relative}
+    .hero h1{font-size:clamp(28px,5vw,48px);font-weight:800;background:linear-gradient(135deg,#8b5cf6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative}
+    .hero p{margin-top:12px;color:var(--muted);font-size:16px;position:relative;max-width:620px;margin-inline:auto}
+    .toc{background:var(--panel);border-bottom:1px solid var(--border);padding:14px 40px;display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:100}
+    .toc a{text-decoration:none;color:var(--muted);font-size:12.5px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);transition:all .2s}
+    .toc a:hover{color:var(--text);border-color:var(--accent);background:rgba(139,92,246,.1)}
+    main{max-width:1000px;margin:0 auto;padding:40px 24px 80px}
+    .section{margin-bottom:60px}
+    .section-header{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+    .section-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+    .section-title{font-size:clamp(20px,3vw,26px);font-weight:700}
+    .section-subtitle{font-size:13px;color:var(--muted);margin-top:2px}
+    .divider{height:1px;background:linear-gradient(90deg,var(--accent) 0%,transparent 80%);margin-bottom:24px;border-radius:2px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:18px;transition:border-color .2s}
+    .card:hover{border-color:rgba(139,92,246,.4)}
+    .card-title{font-size:16px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;font-family:'JetBrains Mono',monospace}
+    .tag-gen{background:rgba(139,92,246,.2);color:#c4b5fd;border:1px solid rgba(139,92,246,.4)}
+    .tag-dec{background:rgba(6,182,212,.2);color:#67e8f9;border:1px solid rgba(6,182,212,.4)}
+    .tag-async{background:rgba(16,185,129,.2);color:#6ee7b7;border:1px solid rgba(16,185,129,.4)}
+    .tag-cls{background:rgba(245,158,11,.2);color:#fcd34d;border:1px solid rgba(245,158,11,.4)}
+    .tag-pyd{background:rgba(236,72,153,.2);color:#f9a8d4;border:1px solid rgba(236,72,153,.4)}
+    .tag-sql{background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
+    .explain{color:#c7c7d6;font-size:14.5px;line-height:1.8;margin-bottom:14px}
+    .code-wrap{position:relative;margin-top:12px}
+    .code-label{position:absolute;top:10px;right:14px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px}
+    pre{background:var(--code-bg);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:22px 20px 18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8}
+    .kw{color:#c792ea}.fn{color:#82aaff}.cls{color:#ffcb6b}.str{color:#c3e88d}
+    .cm{color:#546e7a;font-style:italic}.dec{color:#f78c6c}.num{color:#f78c6c}
+    .imp{color:#89ddff}
+    .hl{background:rgba(139,92,246,.15);display:block;border-left:2px solid #8b5cf6;padding-left:4px;margin-left:-4px;border-radius:0 4px 4px 0}
+    .callout{display:flex;gap:12px;border-radius:12px;padding:14px 18px;margin:14px 0;font-size:14px}
+    .callout-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3)}
+    .callout-tip{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3)}
+    .callout-info{background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.3)}
+    .callout-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+    .callout-warn .callout-icon{color:var(--accent3)}
+    .callout-tip .callout-icon{color:var(--green)}
+    .callout-info .callout-icon{color:var(--accent2)}
+    .compare-table{width:100%;border-collapse:collapse;margin-top:14px}
+    .compare-table th{background:rgba(139,92,246,.15);color:#c4b5fd;font-size:12px;text-transform:uppercase;letter-spacing:1px;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+    .compare-table td{padding:11px 14px;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top}
+    .compare-table tr:last-child td{border-bottom:none}
+    .compare-table tr:hover td{background:rgba(255,255,255,0.02)}
+    .tval{font-family:'JetBrains Mono',monospace;color:#c3e88d;font-size:12.5px}
+    .flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0}
+    .flow-step{background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.35);border-radius:10px;padding:8px 16px;font-size:13px;font-weight:500}
+    .flow-arrow{color:var(--muted);font-size:18px}
+    .qa-item{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden}
+    .qa-q{display:flex;align-items:flex-start;gap:14px;padding:18px 22px;cursor:pointer;user-select:none;transition:background .2s}
+    .qa-q:hover{background:rgba(255,255,255,0.02)}
+    .qa-num{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#8b5cf6,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+    .qa-question{font-size:15px;font-weight:600;flex:1;padding-top:3px}
+    .qa-toggle{color:var(--muted);transition:transform .3s;font-size:18px;margin-top:4px;flex-shrink:0}
+    .qa-item.open .qa-toggle{transform:rotate(180deg);color:var(--accent)}
+    .qa-a{display:none;padding:0 22px 20px 66px;font-size:14.5px;color:#c7c7d6;line-height:1.8;border-top:1px solid var(--border)}
+    .qa-item.open .qa-a{display:block;padding-top:16px}
+    .qa-a pre{font-size:12.5px}
+    ::-webkit-scrollbar{width:6px;height:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:4px}
+    @media(max-width:600px){.hero{padding:32px 20px}main{padding:24px 16px 60px}.toc{padding:12px 16px}}
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🎓 Viva Revision — Instagram Mini Backend</div>
+  <h1>Backend Viva Cheat Sheet 🚀</h1>
+  <p>Every concept, pattern &amp; possible question from your actual project code — explained simply. Good luck tomorrow!</p>
+</div>
+
+<nav class="toc">
+  <a href="#s1">1. Project Structure</a>
+  <a href="#s2">2. Generator (get_db)</a>
+  <a href="#s3">3. AsyncSession</a>
+  <a href="#s4">4. Decorators</a>
+  <a href="#s5">5. async/await</a>
+  <a href="#s6">6. Pydantic Schemas</a>
+  <a href="#s7">7. ORM Models</a>
+  <a href="#s8">8. JWT Auth</a>
+  <a href="#s9">9. Depends()</a>
+  <a href="#s10">10. PermissionChecker</a>
+  <a href="#s11">11. CRUD Pattern</a>
+  <a href="#s12">12. Alembic</a>
+  <a href="#s13">13. MongoDB</a>
+  <a href="#s14">14. Refresh Token</a>
+  <a href="#s15">15. bcrypt Passwords</a>
+  <a href="#s16">16. Privacy System</a>
+  <a href="#s17">17. File Upload</a>
+  <a href="#s18">18. Protected Router</a>
+  <a href="#s19">19. SQLAlchemy Queries</a>
+  <a href="#s20">20. ORM Relationships</a>
+  <a href="#s21">21. UniqueConstraint</a>
+  <a href="#s22">22. CORS &amp; Config</a>
+  <a href="#s23">23. HTTP Exceptions</a>
+  <a href="#viva">💥 Viva Q&amp;A</a>
+</nav>
+
+<main>
+
+<!-- ── SECTION 1 ── -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#8b5cf6,#06b6d4)">🗂️</div>
+    <div>
+      <div class="section-title">1. Project Structure</div>
+      <div class="section-subtitle">How the whole project is organized</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">Folder Layout</div>
+    <div class="explain">Think of each folder as a "module" — a group of related files. This is called <strong>Separation of Concerns</strong> (each layer has one job).</div>
+    <div class="code-wrap">
+      <div class="code-label">project tree</div>
+      <pre>
+instagram_backend/
+├── <span class="cls">main.py</span>          <span class="cm"># App entry point — creates FastAPI, registers routers</span>
+├── <span class="cls">Setting/</span>
+│   ├── Config.py    <span class="cm"># reads .env (SECRET_KEY, DATABASE_URL etc.)</span>
+│   ├── Database.py  <span class="cm"># creates engine + get_db generator ← VERY IMPORTANT</span>
+│   ├── Models.py    <span class="cm"># all SQLAlchemy ORM table definitions</span>
+│   ├── Security.py  <span class="cm"># hash_password, create_access_token, JWT logic</span>
+│   └── Mongo.py     <span class="cm"># MongoDB connection via Motor</span>
+├── <span class="cls">User/</span>
+│   ├── Router.py    <span class="cm"># all /user API endpoints + auth utilities</span>
+│   ├── CRUD/        <span class="cm"># actual DB operations</span>
+│   └── Schemas/     <span class="cm"># Pydantic models (request/response validation)</span>
+└── <span class="cls">Admin/</span>
+    ├── Router.py    <span class="cm"># admin-only endpoints (role/user/post management)</span>
+    ├── CRUD/        <span class="cm"># admin DB operations</span>
+    └── Schemas/     <span class="cm"># admin Pydantic models</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">main.py — The Entry Point</div>
+    <div class="explain"><code>main.py</code> is the first file that runs. It creates the FastAPI app, adds middleware, and tells it which routers to use.</div>
+    <div class="code-wrap">
+      <div class="code-label">main.py (actual code)</div>
+      <pre>
+<span class="imp">from</span> fastapi <span class="imp">import</span> FastAPI
+<span class="imp">from</span> fastapi.middleware.cors <span class="imp">import</span> CORSMiddleware
+<span class="imp">from</span> fastapi.responses <span class="imp">import</span> FileResponse
+<span class="imp">from</span> fastapi.staticfiles <span class="imp">import</span> StaticFiles
+<span class="imp">from</span> Admin.Router <span class="imp">import</span> AdminRouter
+<span class="imp">from</span> User.Router <span class="imp">import</span> UserRouter, UserProtectedRouter
+<span class="imp">from</span> Setting.Mongo <span class="imp">import</span> init_mongo
+
+app = <span class="cls">FastAPI</span>(title=<span class="str">"Instagram Backend API"</span>)
+
+app.add_middleware(<span class="cls">CORSMiddleware</span>, allow_origins=[<span class="str">"*"</span>], allow_credentials=<span class="kw">True</span>,
+                   allow_methods=[<span class="str">"*"</span>], allow_headers=[<span class="str">"*"</span>])
+
+app.mount(<span class="str">"/static"</span>, <span class="cls">StaticFiles</span>(directory=<span class="str">"static"</span>), name=<span class="str">"static"</span>)
+
+<span class="hl"><span class="dec">@app.on_event</span>(<span class="str">"startup"</span>)       <span class="cm"># decorator — runs when server starts</span>
+<span class="kw">async def</span> <span class="fn">startup_event</span>():
+    <span class="kw">await</span> <span class="fn">init_mongo</span>()          <span class="cm"># creates MongoDB indexes</span></span>
+
+app.include_router(AdminRouter, prefix=<span class="str">"/admin"</span>)
+app.include_router(UserRouter, prefix=<span class="str">"/user"</span>)
+app.include_router(UserProtectedRouter, prefix=<span class="str">"/user"</span>)</pre>
+    </div>
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div><strong>What is a Router?</strong> Instead of defining all endpoints in one file, FastAPI lets you split them into <code>APIRouter</code> objects in separate files and "include" them in the main app. This keeps code clean and organized.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 2 ── -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#10b981,#06b6d4)">⚡</div>
+    <div>
+      <div class="section-title">2. The Generator — <code>get_db()</code></div>
+      <div class="section-subtitle">The most important concept — where generator + async meet</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">What is a Generator? <span class="tag tag-gen">Generator</span></div>
+    <div class="explain">A <strong>generator</strong> is a Python function that uses <code>yield</code> instead of <code>return</code>. It <em>pauses</em> at <code>yield</code>, hands you a value, and resumes from that point later. This is perfect for "setup → use → cleanup" patterns.</div>
+    <div class="code-wrap">
+      <div class="code-label">concept example</div>
+      <pre>
+<span class="cm"># Normal function: returns and is completely done</span>
+<span class="kw">def</span> <span class="fn">normal</span>():
+    <span class="kw">return</span> <span class="num">42</span>
+
+<span class="cm"># Generator: pauses at yield, resumes after</span>
+<span class="kw">def</span> <span class="fn">gen</span>():
+    print(<span class="str">"before yield"</span>)
+    <span class="kw">yield</span> <span class="num">42</span>       <span class="cm"># pauses here — caller gets 42</span>
+    print(<span class="str">"after yield"</span>)  <span class="cm"># runs after caller is done</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><code>get_db()</code> — The Real Code from Your Project <span class="tag tag-gen">Generator</span></div>
+    <div class="explain">This is the <strong>actual</strong> <code>get_db</code> function in <code>Setting/Database.py</code>. It creates a DB session, yields it to the endpoint, and automatically closes it when done — even if an error happens.</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Database.py</div>
+      <pre>
+<span class="imp">from</span> sqlalchemy.ext.asyncio <span class="imp">import</span> create_async_engine, async_sessionmaker
+<span class="imp">from</span> sqlalchemy.orm <span class="imp">import</span> declarative_base
+<span class="imp">from</span> Setting.Config <span class="imp">import</span> DATABASE_URL
+
+<span class="cm"># 1. Async engine = the connection to the database</span>
+engine = <span class="fn">create_async_engine</span>(DATABASE_URL, echo=<span class="kw">True</span>)
+
+<span class="cm"># 2. Base class — all table models inherit from this</span>
+Base = <span class="fn">declarative_base</span>()
+
+<span class="cm"># 3. Session factory — creates AsyncSession objects</span>
+SessionLocal = <span class="fn">async_sessionmaker</span>(bind=engine, expire_on_commit=<span class="kw">False</span>)
+
+<span class="cm"># 4. THE GENERATOR ← This is what mentors will ask about!</span>
+<span class="hl"><span class="kw">async def</span> <span class="fn">get_db</span>():
+    <span class="kw">async with</span> <span class="fn">SessionLocal</span>() <span class="kw">as</span> session:
+        <span class="kw">yield</span> session   <span class="cm"># PAUSE: give session to the endpoint</span>
+                        <span class="cm"># RESUME: auto-closes when endpoint is done</span></span></pre>
+    </div>
+    <div class="callout callout-tip">
+      <div class="callout-icon">💡</div>
+      <div><strong>Memory trick:</strong> Think of <code>get_db</code> like a tap. <code>async with SessionLocal()</code> opens the tap, <code>yield session</code> lets water flow to your endpoint, and when the endpoint is done the tap closes automatically — you never forget to close it!</div>
+    </div>
+    <div class="explain" style="margin-top:14px;">Step-by-step lifecycle of every database request:</div>
+    <div class="flow">
+      <div class="flow-step">Request arrives</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">get_db() called</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">SessionLocal() opens</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">yield session ⏸</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Endpoint runs with db</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Session closes 🔒</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How an endpoint uses <code>get_db</code></div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — login endpoint</div>
+      <pre>
+<span class="dec">@UserRouter.post</span>(<span class="str">"/login"</span>)
+<span class="kw">async def</span> <span class="fn">login</span>(
+    login_data: <span class="cls">user_schemas.UserLogin</span>,
+<span class="hl">    db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)  <span class="cm"># FastAPI calls get_db, injects session</span></span>
+):
+    user = <span class="kw">await</span> user_crud.<span class="fn">get_user_by_username</span>(db, login_data.username)
+    ...</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 3 ── -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#ef4444,#f59e0b)">💾</div>
+    <div>
+      <div class="section-title">3. AsyncSession — The Database Session</div>
+      <div class="section-subtitle">What <code>db: AsyncSession</code> actually is and why it's async</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">What is a Session? <span class="tag tag-sql">SQLAlchemy</span></div>
+    <div class="explain">A <strong>session</strong> is your open conversation with the database. Every read or write needs an open session. <code>AsyncSession</code> is the async version — the server doesn't block while waiting for DB responses.</div>
+    <table class="compare-table">
+      <tr><th>Term</th><th>Analogy</th><th>In Your Project</th></tr>
+      <tr><td><strong>Engine</strong></td><td>The phone number of the database</td><td class="tval">create_async_engine(DATABASE_URL)</td></tr>
+      <tr><td><strong>SessionLocal</strong></td><td>A phone dialer (factory)</td><td class="tval">async_sessionmaker(bind=engine)</td></tr>
+      <tr><td><strong>AsyncSession (db)</strong></td><td>An open phone call</td><td class="tval">db: AsyncSession = Depends(get_db)</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Syntax — the <code>db: AsyncSession</code> pattern</div>
+    <div class="explain">You will see this in almost every CRUD function and every router endpoint:</div>
+    <div class="code-wrap">
+      <div class="code-label">two places where it appears</div>
+      <pre>
+<span class="cm"># In CRUD functions (User/CRUD/user.py) — passed manually by the router</span>
+<span class="kw">async def</span> <span class="fn">get_user_by_id</span>(<span class="hl">db: <span class="cls">AsyncSession</span></span>, user_id):
+    result = <span class="kw">await</span> db.<span class="fn">execute</span>(<span class="fn">select</span>(models.User).<span class="fn">where</span>(models.User.user_id == user_id))
+    <span class="kw">return</span> result.<span class="fn">scalar_one_or_none</span>()
+
+<span class="cm"># In Router endpoints — FastAPI injects it automatically via Depends</span>
+<span class="kw">async def</span> <span class="fn">get_user</span>(user_id: <span class="cls">int</span>, <span class="hl">db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)</span>):
+    user = <span class="kw">await</span> user_crud.<span class="fn">get_user_by_id</span>(db, user_id)
+    ...</pre>
+    </div>
+    <div class="callout callout-warn">
+      <div class="callout-icon">⚠️</div>
+      <div><strong>Key difference:</strong> In CRUD files, <code>db: AsyncSession</code> is just a type hint — you pass the session in manually. In Router files, <code>db: AsyncSession = Depends(get_db)</code> means FastAPI automatically injects it from the generator.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What methods does <code>db</code> have?</div>
+    <table class="compare-table">
+      <tr><th>Method</th><th>What it does</th><th>Example from project</th></tr>
+      <tr><td><code>db.execute(stmt)</code></td><td>Run a SELECT or bulk DELETE</td><td class="tval">await db.execute(select(User)...)</td></tr>
+      <tr><td><code>db.add(obj)</code></td><td>Stage an INSERT (doesn't save yet)</td><td class="tval">db.add(new_user)</td></tr>
+      <tr><td><code>db.commit()</code></td><td>Save all staged changes to DB</td><td class="tval">await db.commit()</td></tr>
+      <tr><td><code>db.refresh(obj)</code></td><td>Reload obj from DB (get auto-IDs)</td><td class="tval">await db.refresh(new_user)</td></tr>
+      <tr><td><code>db.delete(obj)</code></td><td>Stage a DELETE for one object</td><td class="tval">await db.delete(user)</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ── SECTION 4 ── -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">🎨</div>
+    <div>
+      <div class="section-title">4. Decorators — <code>@something</code></div>
+      <div class="section-subtitle">What the @ symbol means and every place it appears in your project</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">What is a Decorator? <span class="tag tag-dec">Decorator</span></div>
+    <div class="explain">A <strong>decorator</strong> is a function that <em>wraps</em> another function to add extra behaviour <em>without changing the original function's code</em>. The <code>@</code> syntax is shorthand for this wrapping.</div>
+    <div class="code-wrap">
+      <div class="code-label">concept — @ is just syntactic sugar</div>
+      <pre>
+<span class="cm"># WITHOUT @ syntax</span>
+<span class="kw">def</span> <span class="fn">my_func</span>(): ...
+my_func = <span class="fn">some_decorator</span>(my_func)
+
+<span class="cm"># WITH @ syntax — exactly the same, but cleaner</span>
+<span class="dec">@some_decorator</span>
+<span class="kw">def</span> <span class="fn">my_func</span>(): ...</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">All Decorators in Your Project</div>
+    <div class="code-wrap">
+      <div class="code-label">1. Route decorators — User/Router.py &amp; Admin/Router.py</div>
+      <pre>
+<span class="cm"># Registers login function as POST /user/login</span>
+<span class="hl"><span class="dec">@UserRouter.post</span>(<span class="str">"/login"</span>)</span>
+<span class="kw">async def</span> <span class="fn">login</span>(login_data: <span class="cls">UserLogin</span>, db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)):
+    ...
+
+<span class="cm"># GET with a path parameter {user_id}</span>
+<span class="hl"><span class="dec">@UserProtectedRouter.get</span>(<span class="str">"/users/{user_id}"</span>)</span>
+<span class="kw">async def</span> <span class="fn">get_user</span>(user_id: <span class="cls">int</span>, db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)):
+    ...
+
+<span class="cm"># POST with status_code=201 = "Created"</span>
+<span class="hl"><span class="dec">@UserRouter.post</span>(<span class="str">"/users"</span>, status_code=<span class="num">201</span>)</span>
+<span class="kw">async def</span> <span class="fn">create_user</span>(user_data: <span class="cls">UserCreate</span>, db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)):
+    ...
+
+<span class="cm"># DELETE</span>
+<span class="hl"><span class="dec">@AdminRouter.delete</span>(<span class="str">"/roles/{role_id}"</span>)</span>
+<span class="kw">async def</span> <span class="fn">delete_role</span>(role_id: <span class="cls">int</span>, ...):
+    ...</pre>
+    </div>
+    <div class="code-wrap" style="margin-top:12px;">
+      <div class="code-label">2. Startup event decorator — main.py</div>
+      <pre>
+<span class="cm"># Runs this async function automatically when the server starts</span>
+<span class="hl"><span class="dec">@app.on_event</span>(<span class="str">"startup"</span>)</span>
+<span class="kw">async def</span> <span class="fn">startup_event</span>():
+    <span class="kw">await</span> <span class="fn">init_mongo</span>()   <span class="cm"># create MongoDB indexes</span></pre>
+    </div>
+    <table class="compare-table" style="margin-top:14px;">
+      <tr><th>Decorator</th><th>HTTP method</th><th>Used for</th></tr>
+      <tr><td class="tval">@router.get()</td><td>GET</td><td>Read / fetch data</td></tr>
+      <tr><td class="tval">@router.post()</td><td>POST</td><td>Create new data</td></tr>
+      <tr><td class="tval">@router.put()</td><td>PUT</td><td>Update/replace data</td></tr>
+      <tr><td class="tval">@router.delete()</td><td>DELETE</td><td>Delete data</td></tr>
+      <tr><td class="tval">@app.on_event("startup")</td><td>—</td><td>Run on server start</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ── SECTION 5 ── -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6)">⏳</div>
+    <div>
+      <div class="section-title">5. async / await — Non-Blocking Code</div>
+      <div class="section-subtitle">Why everything has async and await in front of it</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">Why async? <span class="tag tag-async">async</span></div>
+    <div class="explain">When your server asks the database for data, it takes time (50-100ms). With <strong>synchronous</strong> code, the server just <em>sits and waits</em>, blocking all other requests. With <strong>async/await</strong>, the server goes off and handles other requests while waiting for the DB. It's like a waiter serving multiple tables instead of standing at one waiting for food.</div>
+    <div class="code-wrap">
+      <div class="code-label">User/CRUD/user.py — real async examples</div>
+      <pre>
+<span class="cm"># Rule 1: Any function that uses await must be async</span>
+<span class="hl"><span class="kw">async def</span> <span class="fn">create_user</span>(db: <span class="cls">AsyncSession</span>, username, email, password, ...):</span>
+    new_user = models.<span class="cls">User</span>(username=username, email=email,
+                             password=<span class="fn">hash_password</span>(password),
+                             created_at=datetime.<span class="fn">utcnow</span>())
+    db.<span class="fn">add</span>(new_user)
+<span class="hl">    <span class="kw">await</span> db.<span class="fn">commit</span>()            <span class="cm"># await: waits for DB to save</span></span>
+<span class="hl">    <span class="kw">await</span> db.<span class="fn">refresh</span>(new_user)  <span class="cm"># await: waits for DB to return generated id</span></span>
+    <span class="kw">return</span> new_user
+
+<span class="cm"># Rule 2: To call an async function you must also await it</span>
+<span class="kw">async def</span> <span class="fn">get_user_by_username</span>(db: <span class="cls">AsyncSession</span>, username):
+    result = <span class="hl"><span class="kw">await</span> db.<span class="fn">execute</span>(</span>
+        <span class="fn">select</span>(models.User).<span class="fn">where</span>(models.User.username == username)
+    )
+    <span class="kw">return</span> result.<span class="fn">scalar_one_or_none</span>()</pre>
+    </div>
+    <table class="compare-table" style="margin-top:14px;">
+      <tr><th></th><th><code>def</code> (sync)</th><th><code>async def</code> (async)</th></tr>
+      <tr><td><strong>Blocks server?</strong></td><td>Yes</td><td>No</td></tr>
+      <tr><td><strong>Can use await?</strong></td><td>No</td><td>Yes</td></tr>
+      <tr><td><strong>In project</strong></td><td>Serializer helpers, get_mongo_db</td><td>All endpoints, all CRUD functions</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ── SECTION 6 ── -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#ec4899,#8b5cf6)">📋</div>
+    <div>
+      <div class="section-title">6. Pydantic Schemas — Data Validation</div>
+      <div class="section-subtitle">How FastAPI knows what data to expect and auto-validates it</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">What are Pydantic Schemas? <span class="tag tag-pyd">Pydantic</span></div>
+    <div class="explain">A <strong>Pydantic model</strong> is a Python class that validates JSON data automatically. When a user sends a request body, FastAPI uses the schema to check that all required fields are present and have the correct types. If not, FastAPI returns a 422 error automatically — you don't have to write validation code yourself.</div>
+    <div class="code-wrap">
+      <div class="code-label">User/Schemas/user.py — actual code</div>
+      <pre>
+<span class="imp">from</span> pydantic <span class="imp">import</span> BaseModel, EmailStr
+
+<span class="cm"># Used when user registers — POST /user/users</span>
+<span class="kw">class</span> <span class="cls">UserCreate</span>(<span class="cls">BaseModel</span>):
+    username: <span class="cls">str</span>                         <span class="cm"># required</span>
+    email: <span class="cls">EmailStr</span>                       <span class="cm"># must be a valid email address</span>
+    password: <span class="cls">str</span>                         <span class="cm"># required</span>
+    full_name: <span class="cls">str</span> | <span class="kw">None</span> = <span class="kw">None</span>         <span class="cm"># optional</span>
+    profile_picture: <span class="cls">str</span> | <span class="kw">None</span> = <span class="kw">None</span>  <span class="cm"># optional</span>
+
+<span class="cm"># Used for login — POST /user/login</span>
+<span class="kw">class</span> <span class="cls">UserLogin</span>(<span class="cls">BaseModel</span>):
+    username: <span class="cls">str</span>
+    password: <span class="cls">str</span>
+
+<span class="cm"># Used for updating profile — PUT /user/users/{id}</span>
+<span class="kw">class</span> <span class="cls">UserUpdate</span>(<span class="cls">BaseModel</span>):
+    full_name: <span class="cls">str</span> | <span class="kw">None</span> = <span class="kw">None</span>
+    profile_picture: <span class="cls">str</span> | <span class="kw">None</span> = <span class="kw">None</span>
+
+<span class="cm"># Used for creating bio — POST /user/users/{id}/bio</span>
+<span class="kw">class</span> <span class="cls">UserBioCreate</span>(<span class="cls">BaseModel</span>):
+    bio_text: <span class="cls">str</span>
+    is_active: <span class="cls">bool</span> = <span class="kw">False</span></pre>
+    </div>
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div><strong>Schema vs Model:</strong> <code>Schema</code> (Pydantic) = how data travels over the network as JSON. <code>Model</code> (SQLAlchemy) = how data is stored in the database table.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 7 ── -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#f59e0b,#10b981)">🗄️</div>
+    <div>
+      <div class="section-title">7. SQLAlchemy ORM Models</div>
+      <div class="section-subtitle">How database tables are defined as Python classes</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">ORM = Object-Relational Mapper <span class="tag tag-sql">SQLAlchemy</span></div>
+    <div class="explain">An ORM lets you work with database tables as if they were Python classes. Instead of writing raw SQL like <code>SELECT * FROM users WHERE user_id = 1</code>, you write Python: <code>select(User).where(User.user_id == 1)</code>. SQLAlchemy translates it to SQL for you.</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Models.py — User model (actual code)</div>
+      <pre>
+<span class="imp">from</span> Setting.Database <span class="imp">import</span> Base
+<span class="imp">from</span> sqlalchemy <span class="imp">import</span> Column, Integer, String, Boolean, DateTime, ForeignKey
+<span class="imp">from</span> sqlalchemy.orm <span class="imp">import</span> relationship
+
+<span class="kw">class</span> <span class="cls">User</span>(<span class="cls">Base</span>):                        <span class="cm"># inherits from Base</span>
+    __tablename__ = <span class="str">"users"</span>              <span class="cm"># name of the DB table</span>
+
+    user_id    = <span class="fn">Column</span>(<span class="cls">Integer</span>, primary_key=<span class="kw">True</span>)
+    username   = <span class="fn">Column</span>(<span class="cls">String</span>(<span class="num">100</span>), nullable=<span class="kw">False</span>, unique=<span class="kw">True</span>)
+    email      = <span class="fn">Column</span>(<span class="cls">String</span>(<span class="num">150</span>), nullable=<span class="kw">False</span>, unique=<span class="kw">True</span>)
+    password   = <span class="fn">Column</span>(<span class="cls">String</span>(<span class="num">255</span>), nullable=<span class="kw">False</span>)
+    full_name  = <span class="fn">Column</span>(<span class="cls">String</span>(<span class="num">150</span>))
+    created_at = <span class="fn">Column</span>(<span class="cls">DateTime</span>)
+    updated_at = <span class="fn">Column</span>(<span class="cls">DateTime</span>)
+
+    <span class="cm"># relationships: access related objects like user.posts, user.user_roles</span>
+    posts       = <span class="fn">relationship</span>(<span class="str">"Post"</span>,     back_populates=<span class="str">"author"</span>,     lazy=<span class="str">"selectin"</span>)
+    user_roles  = <span class="fn">relationship</span>(<span class="str">"UserRole"</span>, back_populates=<span class="str">"user"</span>,       lazy=<span class="str">"selectin"</span>)
+    refresh_tokens = <span class="fn">relationship</span>(<span class="str">"RefreshToken"</span>, back_populates=<span class="str">"user"</span>, lazy=<span class="str">"selectin"</span>)</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ForeignKey — Linking tables together</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Models.py — UserBio links to User</div>
+      <pre>
+<span class="kw">class</span> <span class="cls">UserBio</span>(<span class="cls">Base</span>):
+    __tablename__ = <span class="str">"user_bio"</span>
+
+    bio_id   = <span class="fn">Column</span>(<span class="cls">Integer</span>, primary_key=<span class="kw">True</span>)
+<span class="hl">    user_id  = <span class="fn">Column</span>(<span class="cls">Integer</span>, <span class="fn">ForeignKey</span>(<span class="str">"users.user_id"</span>), nullable=<span class="kw">False</span>)</span>
+    bio_text = <span class="fn">Column</span>(<span class="cls">Text</span>)
+    is_active = <span class="fn">Column</span>(<span class="cls">Boolean</span>, default=<span class="kw">False</span>)
+
+    user = <span class="fn">relationship</span>(<span class="str">"User"</span>, back_populates=<span class="str">"bio"</span>)</pre>
+    </div>
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div><code>ForeignKey("users.user_id")</code> means: "The value in this column must exist in the <code>user_id</code> column of the <code>users</code> table." If you try to add a bio for a non-existent user, the DB rejects it automatically.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">All models in your project</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">User</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">UserBio</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">UserRole</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">Role</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">Post</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">PostLike</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">PostComment</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">Story</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">Highlight</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">HighlightStory</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">SavedPost</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">UserFollower</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">CloseFriend</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">Reel</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">RefreshToken</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">Feature</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">Action</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">FeatureAction</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">RoleFeatureAction</span>
+      <span class="tag tag-sql" style="font-size:13px;padding:4px 12px">PrivacyHistory</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 8 ── -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#ef4444,#ec4899)">🔐</div>
+    <div>
+      <div class="section-title">8. Authentication — JWT Tokens</div>
+      <div class="section-subtitle">How login works: password hashing, JWT, refresh tokens</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">Step 1: Password Hashing with bcrypt</div>
+    <div class="explain">Passwords are <strong>never stored as plain text</strong>. They are hashed using <strong>bcrypt</strong> — a one-way algorithm. You cannot reverse a hash to get the original password; you can only <em>compare</em> a plain password against the stored hash.</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Security.py — actual code</div>
+      <pre>
+<span class="imp">import</span> bcrypt
+
+<span class="kw">def</span> <span class="fn">hash_password</span>(password: <span class="cls">str</span>) -> <span class="cls">str</span>:
+    pwd_bytes = password.<span class="fn">encode</span>(<span class="str">"utf-8"</span>)   <span class="cm"># string → bytes</span>
+    salt = bcrypt.<span class="fn">gensalt</span>()               <span class="cm"># random salt added to hash</span>
+    hashed = bcrypt.<span class="fn">hashpw</span>(pwd_bytes, salt)
+    <span class="kw">return</span> hashed.<span class="fn">decode</span>(<span class="str">"utf-8"</span>)         <span class="cm"># bytes → string for DB storage</span>
+
+<span class="kw">def</span> <span class="fn">verify_password</span>(plain_password: <span class="cls">str</span>, hashed_password: <span class="cls">str</span>) -> <span class="cls">bool</span>:
+    <span class="kw">try</span>:
+        <span class="kw">return</span> bcrypt.<span class="fn">checkpw</span>(
+            plain_password.<span class="fn">encode</span>(<span class="str">"utf-8"</span>),
+            hashed_password.<span class="fn">encode</span>(<span class="str">"utf-8"</span>)
+        )
+    <span class="kw">except</span> Exception:
+        <span class="kw">return</span> <span class="kw">False</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Step 2: JWT Access Token</div>
+    <div class="explain">A <strong>JWT</strong> (JSON Web Token) is a signed string the server gives to the client after login. The client sends it back in every future request inside the <code>Authorization: Bearer &lt;token&gt;</code> header. The server reads the JWT to know who is making the request — without hitting the database every time.</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Security.py — JWT create &amp; decode</div>
+      <pre>
+<span class="imp">from</span> jose <span class="imp">import</span> JWTError, jwt
+
+<span class="kw">def</span> <span class="fn">create_access_token</span>(data: <span class="cls">dict</span>) -> <span class="cls">str</span>:
+    to_encode = data.<span class="fn">copy</span>()
+    expire = datetime.<span class="fn">now</span>(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.<span class="fn">update</span>({<span class="str">"exp"</span>: expire})
+    <span class="kw">return</span> jwt.<span class="fn">encode</span>(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+<span class="kw">def</span> <span class="fn">decode_access_token</span>(token: <span class="cls">str</span>) -> <span class="cls">dict</span> | <span class="kw">None</span>:
+    <span class="kw">try</span>:
+        payload = jwt.<span class="fn">decode</span>(token, SECRET_KEY, algorithms=[ALGORITHM])
+        <span class="kw">return</span> payload   <span class="cm"># e.g. {"sub": "5", "exp": 1234567890}</span>
+    <span class="kw">except</span> JWTError:
+        <span class="kw">return</span> <span class="kw">None</span>     <span class="cm"># token expired or tampered with</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Step 3: The Full Login Flow</div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — login endpoint</div>
+      <pre>
+<span class="dec">@UserRouter.post</span>(<span class="str">"/login"</span>)
+<span class="kw">async def</span> <span class="fn">login</span>(login_data: <span class="cls">UserLogin</span>, db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)):
+    <span class="cm"># 1. Find user by username</span>
+    user = <span class="kw">await</span> user_crud.<span class="fn">get_user_by_username</span>(db, login_data.username)
+    <span class="kw">if not</span> user:
+        <span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=<span class="num">400</span>, detail=<span class="str">"Incorrect username or password"</span>)
+
+    <span class="cm"># 2. Verify password</span>
+    <span class="kw">if not</span> <span class="fn">verify_password</span>(login_data.password, user.password):
+        <span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=<span class="num">400</span>, detail=<span class="str">"Incorrect username or password"</span>)
+
+    <span class="cm"># 3. Create JWT access token (short-lived)</span>
+    access_token = <span class="fn">create_access_token</span>(data={<span class="str">"sub"</span>: str(user.user_id)})
+
+    <span class="cm"># 4. Create refresh token (long-lived, stored in DB)</span>
+    refresh_token_str = <span class="fn">generate_refresh_token_string</span>()  <span class="cm"># random 32 bytes</span>
+    <span class="kw">await</span> user_crud.<span class="fn">create_refresh_token</span>(db, user.user_id, refresh_token_str)
+
+    <span class="kw">return</span> {<span class="str">"access_token"</span>: access_token, <span class="str">"refresh_token"</span>: refresh_token_str, <span class="str">"token_type"</span>: <span class="str">"bearer"</span>}</pre>
+    </div>
+    <div class="flow" style="margin-top:14px;">
+      <div class="flow-step">POST /login</div><div class="flow-arrow">→</div>
+      <div class="flow-step">Find user in DB</div><div class="flow-arrow">→</div>
+      <div class="flow-step">bcrypt.checkpw()</div><div class="flow-arrow">→</div>
+      <div class="flow-step">jwt.encode() → access_token</div><div class="flow-arrow">→</div>
+      <div class="flow-step">Save refresh_token to DB</div><div class="flow-arrow">→</div>
+      <div class="flow-step">Return both tokens</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Access Token vs Refresh Token</div>
+    <table class="compare-table">
+      <tr><th>Token</th><th>What it is</th><th>Expires</th><th>Stored where</th></tr>
+      <tr>
+        <td><strong>Access Token</strong></td>
+        <td>Signed JWT containing user_id</td>
+        <td class="tval">60 minutes (from .env)</td>
+        <td>Frontend localStorage</td>
+      </tr>
+      <tr>
+        <td><strong>Refresh Token</strong></td>
+        <td>Random 32-byte string saved in DB</td>
+        <td class="tval">7 days</td>
+        <td>Frontend + DB table refresh_tokens</td>
+      </tr>
+    </table>
+    <div class="callout callout-info" style="margin-top:14px;">
+      <div class="callout-icon">ℹ️</div>
+      <div>When the access token expires, the frontend calls <code>POST /user/refresh</code> with the refresh token to get a new access token — no re-login needed. On logout, the refresh token is revoked in the DB, ending the session.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 9 ── -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#06b6d4,#10b981)">🔗</div>
+    <div>
+      <div class="section-title">9. <code>Depends()</code> — Dependency Injection</div>
+      <div class="section-subtitle">How FastAPI automatically provides values to endpoints</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">What is Dependency Injection?</div>
+    <div class="explain"><code>Depends(something)</code> tells FastAPI: "Before calling my function, call <code>something()</code> first, and pass whatever it returns as this parameter." This avoids repeating the same setup code in every endpoint.</div>
+    <div class="code-wrap">
+      <div class="code-label">three main usages in your project</div>
+      <pre>
+<span class="cm"># 1. Inject a DB session — every endpoint that needs DB</span>
+<span class="kw">async def</span> <span class="fn">some_endpoint</span>(<span class="hl">db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)</span>):
+    ...
+
+<span class="cm"># 2. Inject the currently logged-in user</span>
+<span class="kw">async def</span> <span class="fn">some_endpoint</span>(<span class="hl">current_user = <span class="fn">Depends</span>(get_current_user)</span>):
+    ...
+
+<span class="cm"># 3. Check permissions (PermissionChecker callable class)</span>
+<span class="kw">async def</span> <span class="fn">some_endpoint</span>(<span class="hl">current_user = <span class="fn">Depends</span>(<span class="cls">PermissionChecker</span>(<span class="str">"role"</span>, <span class="str">"delete"</span>))</span>):
+    ...</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><code>get_current_user</code> — Auth on every request</div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — actual code</div>
+      <pre>
+<span class="kw">async def</span> <span class="fn">get_current_user</span>(
+    db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db),
+    token: <span class="cls">str</span> = <span class="fn">Depends</span>(oauth2_scheme)  <span class="cm"># extracts Bearer token from header</span>
+):
+    credentials_exception = <span class="cls">HTTPException</span>(status_code=<span class="num">401</span>,
+                                            detail=<span class="str">"Could not validate credentials"</span>)
+    <span class="kw">if not</span> token: <span class="kw">raise</span> credentials_exception
+
+    payload = <span class="fn">decode_access_token</span>(token)   <span class="cm"># decode JWT</span>
+    <span class="kw">if</span> payload <span class="kw">is None</span>: <span class="kw">raise</span> credentials_exception
+
+    user_id = int(payload.<span class="fn">get</span>(<span class="str">"sub"</span>))      <span class="cm"># "sub" = user_id we stored in JWT</span>
+    user = <span class="kw">await</span> user_crud.<span class="fn">get_user_by_id</span>(db, user_id)
+    <span class="kw">if</span> user <span class="kw">is None</span>: <span class="kw">raise</span> credentials_exception
+    <span class="kw">return</span> user                             <span class="cm"># passed as current_user to endpoints</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Router-level dependency — protects all routes at once</div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py</div>
+      <pre>
+<span class="cm"># This single line protects ALL routes added to UserProtectedRouter</span>
+<span class="hl">UserProtectedRouter = <span class="fn">APIRouter</span>(dependencies=[<span class="fn">Depends</span>(get_current_user)])</span>
+
+<span class="cm"># Both are now protected — no token = 401 Unauthorized</span>
+<span class="dec">@UserProtectedRouter.get</span>(<span class="str">"/users/me"</span>)
+<span class="kw">async def</span> <span class="fn">get_me</span>(current_user = <span class="fn">Depends</span>(get_current_user)):
+    <span class="kw">return</span> <span class="fn">user_to_private_dict</span>(current_user)
+
+<span class="dec">@UserProtectedRouter.get</span>(<span class="str">"/search"</span>)
+<span class="kw">async def</span> <span class="fn">search</span>(q: <span class="cls">str</span>, db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)):
+    ...</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 10 ── -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#f59e0b,#ec4899)">🛡️</div>
+    <div>
+      <div class="section-title">10. PermissionChecker — Role-Based Access</div>
+      <div class="section-subtitle">A callable class used as a configurable dependency for admin endpoints</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">What is a callable class? <span class="tag tag-cls">Class</span></div>
+    <div class="explain">A <strong>callable class</strong> is a class with a <code>__call__</code> method, which makes instances of the class behave like functions. FastAPI calls <code>__call__</code> for each request, but you can configure behaviour in <code>__init__</code> once. This is why it's used as a configurable dependency.</div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — PermissionChecker (actual code)</div>
+      <pre>
+<span class="kw">class</span> <span class="cls">PermissionChecker</span>:
+    <span class="cm"># __init__ runs ONCE when you write: Depends(PermissionChecker("role","update"))</span>
+<span class="hl">    <span class="kw">def</span> <span class="fn">__init__</span>(self, feature_name: <span class="cls">str</span>, action_name: <span class="cls">str</span>):
+        self.feature_name = feature_name
+        self.action_name  = action_name</span>
+
+    <span class="cm"># __call__ runs FOR EVERY REQUEST that uses this dependency</span>
+<span class="hl">    <span class="kw">async def</span> <span class="fn">__call__</span>(
+        self,
+        current_user = <span class="fn">Depends</span>(get_current_user),
+        db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)
+    ):
+        has_permission = <span class="kw">await</span> <span class="fn">check_user_permission</span>(
+            db, current_user.user_id, self.feature_name, self.action_name
+        )
+        <span class="kw">if not</span> has_permission:
+            <span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=<span class="num">403</span>, detail=<span class="str">"Not enough permissions"</span>)
+        <span class="kw">return</span> current_user</span></pre>
+    </div>
+    <div class="code-wrap" style="margin-top:12px;">
+      <div class="code-label">How it is used in Admin/Router.py</div>
+      <pre>
+<span class="cm"># Only admins with role:delete permission can call this endpoint</span>
+<span class="dec">@AdminRouter.delete</span>(<span class="str">"/roles/{role_id}"</span>)
+<span class="kw">async def</span> <span class="fn">delete_role</span>(
+    role_id: <span class="cls">int</span>,
+    db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db),
+<span class="hl">    current_user = <span class="fn">Depends</span>(<span class="cls">PermissionChecker</span>(<span class="str">"role"</span>, <span class="str">"delete"</span>)),</span>
+):
+    deleted = <span class="kw">await</span> role_crud.<span class="fn">delete_role</span>(db, role_id)
+    ...</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 11 ── -->
+<div class="section" id="s11">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#10b981,#8b5cf6)">⚙️</div>
+    <div>
+      <div class="section-title">11. CRUD Pattern</div>
+      <div class="section-subtitle">Create, Read, Update, Delete — the four database operations</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">CRUD = the heart of every backend</div>
+    <table class="compare-table">
+      <tr><th>Operation</th><th>SQL equivalent</th><th>HTTP method</th><th>Example from project</th></tr>
+      <tr><td><strong>Create</strong></td><td>INSERT</td><td class="tval">POST</td><td>create_user, create_user_bio</td></tr>
+      <tr><td><strong>Read</strong></td><td>SELECT</td><td class="tval">GET</td><td>get_user_by_id, get_all_users</td></tr>
+      <tr><td><strong>Update</strong></td><td>UPDATE</td><td class="tval">PUT / PATCH</td><td>update_user, update_user_bio</td></tr>
+      <tr><td><strong>Delete</strong></td><td>DELETE</td><td class="tval">DELETE</td><td>delete_user, delete_user_bio</td></tr>
+    </table>
+    <div class="code-wrap" style="margin-top:14px;">
+      <div class="code-label">User/CRUD/user.py — create pattern</div>
+      <pre>
+<span class="kw">async def</span> <span class="fn">create_user</span>(db: <span class="cls">AsyncSession</span>, username, email, password, ...):
+    new_user = models.<span class="cls">User</span>(
+        username=username, email=email,
+        password=<span class="fn">hash_password</span>(password),   <span class="cm"># NEVER plain text!</span>
+        created_at=datetime.<span class="fn">utcnow</span>()
+    )
+    db.<span class="fn">add</span>(new_user)        <span class="cm"># stage the INSERT in memory</span>
+    <span class="kw">await</span> db.<span class="fn">commit</span>()      <span class="cm"># execute it in the database</span>
+    <span class="kw">await</span> db.<span class="fn">refresh</span>(new_user)  <span class="cm"># reload: get the auto-generated user_id</span>
+    <span class="kw">return</span> new_user</pre>
+    </div>
+    <div class="code-wrap" style="margin-top:12px;">
+      <div class="code-label">User/CRUD/user.py — read pattern</div>
+      <pre>
+<span class="kw">async def</span> <span class="fn">get_user_by_id</span>(db: <span class="cls">AsyncSession</span>, user_id):
+    result = <span class="kw">await</span> db.<span class="fn">execute</span>(<span class="fn">select</span>(models.User).<span class="fn">where</span>(models.User.user_id == user_id))
+    <span class="kw">return</span> result.<span class="fn">scalar_one_or_none</span>()  <span class="cm"># returns User object or None</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 12 ── -->
+<div class="section" id="s12">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#8b5cf6,#f59e0b)">🔄</div>
+    <div>
+      <div class="section-title">12. Alembic — Database Migrations</div>
+      <div class="section-subtitle">How the database schema is versioned and updated safely</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">What is Alembic?</div>
+    <div class="explain">Alembic is a <strong>migration tool</strong> for SQLAlchemy. When you change your models (add a column, create a table), you create a "migration script". Alembic runs that script to update the actual database without losing existing data. Think of it as <strong>Git for your database schema</strong>.</div>
+    <div class="code-wrap">
+      <div class="code-label">commands used in this project</div>
+      <pre>
+<span class="cm"># Auto-generate a migration script from changes in Models.py</span>
+alembic revision --autogenerate -m <span class="str">"add refresh_tokens table"</span>
+
+<span class="cm"># Apply all pending migrations to the database</span>
+alembic upgrade head
+
+<span class="cm"># Roll back the last migration</span>
+alembic downgrade -<span class="num">1</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">alembic/env.py — How it reads your models</div>
+    <div class="code-wrap">
+      <div class="code-label">alembic/env.py — actual code</div>
+      <pre>
+<span class="imp">from</span> Setting.Database <span class="imp">import</span> Base
+<span class="imp">import</span> Setting.Models   <span class="cm"># MUST import so Alembic sees all table definitions</span>
+
+<span class="hl">target_metadata = Base.metadata   <span class="cm"># tells Alembic which tables to track</span></span>
+
+<span class="cm"># Async migrations: wraps the async engine</span>
+<span class="kw">async def</span> <span class="fn">run_async_migrations</span>():
+    connectable = <span class="fn">async_engine_from_config</span>(...)
+    <span class="kw">async with</span> connectable.<span class="fn">connect</span>() <span class="kw">as</span> connection:
+        <span class="kw">await</span> connection.<span class="fn">run_sync</span>(do_run_migrations)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 13 ── -->
+<div class="section" id="s13">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#10b981,#06b6d4)">🍃</div>
+    <div>
+      <div class="section-title">13. MongoDB with Motor</div>
+      <div class="section-subtitle">Why we have a second database and how it connects</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">Why MongoDB alongside SQLite/PostgreSQL?</div>
+    <table class="compare-table">
+      <tr><th>Database</th><th>Used for</th><th>Type</th></tr>
+      <tr><td><strong>SQLite/PostgreSQL</strong></td><td>Users, Posts, Stories, Roles, Auth…</td><td>Relational (SQL, structured)</td></tr>
+      <tr><td><strong>MongoDB</strong></td><td>Reel likes (fast, schema-free counter)</td><td>Document (NoSQL, flexible JSON)</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Setting/Mongo.py — actual code</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Mongo.py</div>
+      <pre>
+<span class="imp">from</span> motor.motor_asyncio <span class="imp">import</span> AsyncIOMotorClient
+<span class="imp">from</span> Setting.Config <span class="imp">import</span> MONGO_URL
+
+<span class="cm"># Create async MongoDB connection</span>
+mongo_client = <span class="cls">AsyncIOMotorClient</span>(MONGO_URL)
+mongo_db = mongo_client.instagram_db  <span class="cm"># "instagram_db" is the DB name</span>
+
+<span class="cm"># Regular function — used as a FastAPI dependency</span>
+<span class="kw">def</span> <span class="fn">get_mongo_db</span>():
+    <span class="kw">return</span> mongo_db
+
+<span class="cm"># Called at startup to create unique index (prevents duplicate likes)</span>
+<span class="kw">async def</span> <span class="fn">init_mongo</span>():
+<span class="hl">    <span class="kw">await</span> mongo_db.reel_likes.<span class="fn">create_index</span>(
+        [(<span class="str">"reel_id"</span>, <span class="num">1</span>), (<span class="str">"user_id"</span>, <span class="num">1</span>)], unique=<span class="kw">True</span>
+    )</span>
+    print(<span class="str">"MongoDB indexes initialized successfully."</span>)</pre>
+    </div>
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div><code>mongo_db.reel_likes</code> is a MongoDB <em>collection</em> (like a table). The compound index on <code>(reel_id, user_id)</code> with <code>unique=True</code> ensures one user can only like a reel once — enforced at the database level.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 14 ── -->
+<div class="section" id="s14">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6)">🔄</div>
+    <div>
+      <div class="section-title">14. Refresh Token System</div>
+      <div class="section-subtitle">Why we have two tokens and how token rotation works</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">Why Two Tokens? Access vs Refresh <span class="tag tag-async">Security</span></div>
+    <div class="explain">Access tokens are short-lived (e.g. 60 min). If stolen they expire fast. Refresh tokens are long-lived and stored in the DB — used only to get a new access token. This way the user stays "logged in" without exposing long-lived credentials on every request.</div>
+    <table class="compare-table">
+      <tr><th>Token</th><th>Stored where?</th><th>Expires</th><th>Used for</th></tr>
+      <tr><td><strong>Access Token</strong></td><td>Frontend memory/localStorage</td><td class="tval">60 minutes</td><td>Every API request (Authorization header)</td></tr>
+      <tr><td><strong>Refresh Token</strong></td><td>DB table <code>refresh_tokens</code></td><td class="tval">Longer (days)</td><td>POST /user/refresh — get new access token</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Login — returns BOTH tokens</div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — /login</div>
+      <pre>
+<span class="dec">@UserRouter.post</span>(<span class="str">"/login"</span>)
+<span class="kw">async def</span> <span class="fn">login</span>(login_data, db = <span class="fn">Depends</span>(get_db)):
+    user = <span class="kw">await</span> user_crud.<span class="fn">get_user_by_username</span>(db, login_data.username)
+    <span class="kw">if not</span> <span class="fn">verify_password</span>(login_data.password, user.password):
+        <span class="kw">raise</span> HTTPException(<span class="num">400</span>, <span class="str">"Incorrect username or password"</span>)
+
+<span class="hl">    access_token  = <span class="fn">create_access_token</span>(data={<span class="str">"sub"</span>: <span class="fn">str</span>(user.user_id)})
+    refresh_token = <span class="fn">generate_refresh_token_string</span>()           <span class="cm"># random urlsafe 32-byte string</span>
+    <span class="kw">await</span> user_crud.<span class="fn">create_refresh_token</span>(db, user.user_id, refresh_token)</span>
+    <span class="kw">return</span> {<span class="str">"access_token"</span>: access_token, <span class="str">"refresh_token"</span>: refresh_token, <span class="str">"token_type"</span>: <span class="str">"bearer"</span>}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Token Rotation — POST /user/refresh</div>
+    <div class="explain">Token rotation = when you use a refresh token, the old one is immediately revoked and a brand new one is issued. If someone steals an old refresh token and tries to use it again, ALL sessions for that user get nuked (security!).</div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — /refresh (token rotation)</div>
+      <pre>
+<span class="dec">@UserRouter.post</span>(<span class="str">"/refresh"</span>)
+<span class="kw">async def</span> <span class="fn">refresh_token_endpoint</span>(refresh_data, db = <span class="fn">Depends</span>(get_db)):
+    token_obj = <span class="kw">await</span> user_crud.<span class="fn">get_refresh_token_by_str</span>(db, refresh_data.refresh_token)
+    <span class="kw">if</span> token_obj.is_revoked:
+<span class="hl">        <span class="kw">await</span> user_crud.<span class="fn">revoke_all_user_refresh_tokens</span>(db, token_obj.user_id)  <span class="cm"># nuke all sessions!</span>
+        <span class="kw">raise</span> HTTPException(<span class="num">401</span>, <span class="str">"Token reuse detected. All sessions invalidated."</span>)</span>
+
+<span class="hl">    token_obj.is_revoked = <span class="kw">True</span>            <span class="cm"># revoke old token</span>
+    new_refresh = <span class="fn">generate_refresh_token_string</span>()  <span class="cm"># create brand new one</span>
+    <span class="kw">await</span> user_crud.<span class="fn">create_refresh_token</span>(db, token_obj.user_id, new_refresh)</span>
+    new_access = <span class="fn">create_access_token</span>(data={<span class="str">"sub"</span>: <span class="fn">str</span>(user.user_id)})
+    <span class="kw">await</span> db.<span class="fn">commit</span>()
+    <span class="kw">return</span> {<span class="str">"access_token"</span>: new_access, <span class="str">"refresh_token"</span>: new_refresh}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">generate_refresh_token_string — Setting/Security.py</div>
+    <div class="code-wrap">
+      <div class="code-label">actual code</div>
+      <pre>
+<span class="kw">def</span> <span class="fn">generate_refresh_token_string</span>() -> <span class="cls">str</span>:
+    <span class="kw">import</span> secrets
+<span class="hl">    <span class="kw">return</span> secrets.<span class="fn">token_urlsafe</span>(<span class="num">32</span>)  <span class="cm"># cryptographically random, URL-safe string</span></span></pre>
+    </div>
+    <div class="callout callout-tip">
+      <div class="callout-icon">💡</div>
+      <div><strong>Why not JWT for refresh?</strong> Refresh tokens are stored in DB so we can revoke them at any time. JWTs can't be revoked once issued (stateless). A plain random string stored in DB is perfect for refresh tokens.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 15 ── -->
+<div class="section" id="s15">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#ef4444,#ec4899)">🔒</div>
+    <div>
+      <div class="section-title">15. bcrypt — Password Hashing</div>
+      <div class="section-subtitle">How passwords are stored and verified securely — Setting/Security.py</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">Why hash? Never store plain passwords! <span class="tag tag-dec">Security</span></div>
+    <div class="explain">If your DB is hacked and passwords are plain text, everyone is exposed. <strong>bcrypt</strong> is a one-way hashing algorithm. The same password always produces a different hash (because of a random "salt"), so you can't reverse it.</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Security.py — actual code</div>
+      <pre>
+<span class="kw">import</span> bcrypt
+
+<span class="kw">def</span> <span class="fn">hash_password</span>(password: <span class="cls">str</span>) -> <span class="cls">str</span>:
+    pwd_bytes = password.<span class="fn">encode</span>(<span class="str">"utf-8"</span>)    <span class="cm"># str → bytes</span>
+<span class="hl">    salt = bcrypt.<span class="fn">gensalt</span>()              <span class="cm"># random salt (makes every hash unique)</span>
+    hashed = bcrypt.<span class="fn">hashpw</span>(pwd_bytes, salt)  <span class="cm"># one-way hash</span></span>
+    <span class="kw">return</span> hashed.<span class="fn">decode</span>(<span class="str">"utf-8"</span>)         <span class="cm"># bytes → str for DB storage
+
+<span class="kw">def</span> <span class="fn">verify_password</span>(plain_password: <span class="cls">str</span>, hashed_password: <span class="cls">str</span>) -> <span class="cls">bool</span>:
+    <span class="kw">try</span>:
+<span class="hl">        <span class="kw">return</span> bcrypt.<span class="fn">checkpw</span>(
+            plain_password.<span class="fn">encode</span>(<span class="str">"utf-8"</span>),
+            hashed_password.<span class="fn">encode</span>(<span class="str">"utf-8"</span>)
+        )  <span class="cm"># True if match, False otherwise</span></span>
+    <span class="kw">except</span> Exception:
+        <span class="kw">return</span> <span class="kw">False</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Where it's used in the project</div>
+    <table class="compare-table">
+      <tr><th>Function</th><th>Where called</th><th>What it does</th></tr>
+      <tr><td><code>hash_password()</code></td><td><code>User/CRUD/user.py → create_user()</code></td><td>Hashes password before saving to DB</td></tr>
+      <tr><td><code>verify_password()</code></td><td><code>User/Router.py → login()</code></td><td>Checks plain password vs stored hash on login</td></tr>
+    </table>
+    <div class="callout callout-warn">
+      <div class="callout-icon">⚠️</div>
+      <div><strong>Key point:</strong> When a user registers, <code>create_user()</code> in CRUD automatically calls <code>hash_password()</code> before <code>db.add()</code>. The raw password <em>never</em> touches the database.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 16 ── -->
+<div class="section" id="s16">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#f59e0b,#10b981)">🔐</div>
+    <div>
+      <div class="section-title">16. Privacy System — check_profile_access()</div>
+      <div class="section-subtitle">How private accounts block strangers — User/Router.py</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">The Privacy Logic</div>
+    <div class="explain">The <code>check_profile_access()</code> function is called before returning followers, posts, stories, highlights for any user. It checks 3 things in order:</div>
+    <div class="flow">
+      <div class="flow-step">1. Own profile?</div>
+      <div class="flow-arrow">→ ✅ allow</div>
+      <div class="flow-step">2. Account public?</div>
+      <div class="flow-arrow">→ ✅ allow</div>
+      <div class="flow-step">3. Following them?</div>
+      <div class="flow-arrow">→ ✅ allow</div>
+      <div class="flow-step">4. Admin permission?</div>
+      <div class="flow-arrow">→ ✅ allow</div>
+      <div class="flow-step">Otherwise → ❌ 403</div>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — actual code</div>
+      <pre>
+<span class="kw">async def</span> <span class="fn">check_profile_access</span>(db, current_user, target_user_id) -> <span class="cls">bool</span>:
+<span class="hl">    <span class="kw">if</span> current_user.user_id == target_user_id:  <span class="cm"># own profile</span>
+        <span class="kw">return True</span></span>
+
+    <span class="cm"># check if target account is private</span>
+    settings = <span class="kw">await</span> user_crud.<span class="fn">get_active_privacy_settings</span>(db, target_user_id)
+    is_private = <span class="kw">any</span>(s.privacy_type == <span class="str">"private"</span> <span class="kw">and</span> s.is_active <span class="kw">for</span> s <span class="kw">in</span> settings)
+    <span class="kw">if not</span> is_private:
+        <span class="kw">return True</span>  <span class="cm"># public account</span>
+
+    <span class="cm"># check if current user follows the target</span>
+<span class="hl">    result = <span class="kw">await</span> db.<span class="fn">execute</span>(<span class="fn">select</span>(UserFollower).<span class="fn">where</span>(
+        UserFollower.follower_id == current_user.user_id,
+        UserFollower.following_id == target_user_id,
+        UserFollower.is_active == <span class="kw">True</span>
+    ))
+    <span class="kw">if</span> result.<span class="fn">scalar_one_or_none</span>() <span class="kw">is not None</span>:
+        <span class="kw">return True</span>  <span class="cm"># is a follower</span></span>
+
+    <span class="cm"># check admin bypass</span>
+    has_bypass = <span class="kw">await</span> <span class="fn">check_user_permission</span>(db, current_user.user_id, <span class="str">"user"</span>, <span class="str">"view"</span>)
+    <span class="kw">return</span> has_bypass</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">PrivacyHistory Model — the DB table behind privacy</div>
+    <div class="explain"><code>PrivacyHistory</code> stores a history of privacy changes. The <em>active</em> record (is_active=True) determines current privacy state. The <code>UniqueConstraint</code> with <code>DEFERRED</code> ensures only one active setting per type per user.</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Models.py — PrivacyHistory</div>
+      <pre>
+<span class="kw">class</span> <span class="cls">PrivacyHistory</span>(Base):
+    __tablename__ = <span class="str">"privacy_history"</span>
+    privacy_id   = <span class="fn">Column</span>(<span class="cls">Integer</span>, primary_key=<span class="kw">True</span>)
+    user_id      = <span class="fn">Column</span>(<span class="cls">Integer</span>, <span class="fn">ForeignKey</span>(<span class="str">"users.user_id"</span>))
+    privacy_type = <span class="fn">Column</span>(<span class="cls">String</span>(<span class="num">20</span>))   <span class="cm"># e.g. "private"</span>
+<span class="hl">    is_active    = <span class="fn">Column</span>(<span class="cls">Boolean</span>, default=<span class="kw">False</span>)  <span class="cm"># only True one is current setting</span></span>
+    created_at   = <span class="fn">Column</span>(<span class="cls">DateTime</span>, server_default=<span class="fn">func.now</span>())</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 17 ── -->
+<div class="section" id="s17">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#10b981,#06b6d4)">📁</div>
+    <div>
+      <div class="section-title">17. File Upload — save_upload_file()</div>
+      <div class="section-subtitle">How images/videos are uploaded and stored — User/Router.py</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">The save_upload_file function <span class="tag tag-async">Utility</span></div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — actual code</div>
+      <pre>
+<span class="cls">UPLOAD_DIR</span> = <span class="str">"static/uploads"</span>
+<span class="cls">ALLOWED_EXTENSIONS</span> = {<span class="str">".jpg"</span>, <span class="str">".jpeg"</span>, <span class="str">".png"</span>, <span class="str">".gif"</span>, <span class="str">".mp4"</span>, <span class="str">".mov"</span>, <span class="str">".avi"</span>, <span class="str">".mkv"</span>}
+
+<span class="kw">def</span> <span class="fn">save_upload_file</span>(file: <span class="cls">UploadFile</span>) -> <span class="cls">str</span>:
+    os.<span class="fn">makedirs</span>(UPLOAD_DIR, exist_ok=<span class="kw">True</span>)  <span class="cm"># create folder if not exists</span>
+
+    ext = os.path.<span class="fn">splitext</span>(file.filename)[<span class="num">1</span>].<span class="fn">lower</span>()
+    <span class="kw">if</span> ext <span class="kw">not in</span> ALLOWED_EXTENSIONS:
+        <span class="kw">raise</span> <span class="cls">HTTPException</span>(<span class="num">400</span>, <span class="str">"Invalid file type"</span>)
+
+<span class="hl">    unique_filename = <span class="fn">f"{uuid.uuid4()}{ext}"</span>  <span class="cm"># e.g. "a3f9...b2.jpg" — prevents name clashes</span>
+    file_path = os.path.<span class="fn">join</span>(UPLOAD_DIR, unique_filename)
+
+    <span class="kw">with</span> <span class="fn">open</span>(file_path, <span class="str">"wb"</span>) <span class="kw">as</span> buffer:
+        shutil.<span class="fn">copyfileobj</span>(file.file, buffer)  <span class="cm"># stream file bytes to disk</span></span>
+
+    <span class="kw">return</span> <span class="fn">f"/static/uploads/{unique_filename}"</span>  <span class="cm"># URL returned to client</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Handling multipart/form-data vs JSON in create_post</div>
+    <div class="explain">The POST /user/posts endpoint supports <em>both</em> JSON body (with image_url) and multipart form (with file upload). It checks the Content-Type header to decide:</div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — create_post dual-mode</div>
+      <pre>
+<span class="kw">if</span> content_type.<span class="fn">startswith</span>(<span class="str">"multipart/form-data"</span>):
+<span class="hl">    form = <span class="kw">await</span> request.<span class="fn">form</span>()        <span class="cm"># read form fields</span>
+    uploaded_file = form.<span class="fn">get</span>(<span class="str">"file"</span>)
+    image_url = <span class="fn">save_upload_file</span>(uploaded_file)  <span class="cm"># save to disk</span></span>
+<span class="kw">else</span>:
+    post_data = <span class="cls">PostCreate</span>.<span class="fn">model_validate</span>(<span class="kw">await</span> request.<span class="fn">json</span>())  <span class="cm"># parse JSON</span></pre>
+    </div>
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div><code>uuid.uuid4()</code> generates a random UUID (e.g. <code>a3f9b2c1-...</code>). Used as a filename so two users uploading <code>photo.jpg</code> don't overwrite each other. <code>StaticFiles</code> in main.py serves these files at <code>/static/uploads/...</code>.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 18 ── -->
+<div class="section" id="s18">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#8b5cf6,#ec4899)">🛡️</div>
+    <div>
+      <div class="section-title">18. UserProtectedRouter — Global Auth Dependency</div>
+      <div class="section-subtitle">How every route in a router gets protected at once</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">Two routers: Public vs Protected <span class="tag tag-dec">Architecture</span></div>
+    <div class="explain">Instead of adding <code>Depends(get_current_user)</code> to every single endpoint, we create a special router with a global dependency. All endpoints added to it are automatically protected.</div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — the two routers</div>
+      <pre>
+<span class="cm"># Public router — no auth needed</span>
+<span class="hl">UserRouter = <span class="cls">APIRouter</span>()</span>             <span class="cm"># login, register, get all users</span>
+
+<span class="cm"># Protected router — auth required for EVERY route added here</span>
+<span class="hl">UserProtectedRouter = <span class="cls">APIRouter</span>(
+    dependencies=[<span class="fn">Depends</span>(get_current_user)]  <span class="cm"># ← global dependency!</span>
+)</span>                                         <span class="cm"># posts, stories, follows, etc.</span>
+
+<span class="cm"># In main.py — both use the same /user prefix</span>
+app.<span class="fn">include_router</span>(UserRouter,          prefix=<span class="str">"/user"</span>)
+app.<span class="fn">include_router</span>(UserProtectedRouter, prefix=<span class="str">"/user"</span>)</pre>
+    </div>
+    <div class="callout callout-tip">
+      <div class="callout-icon">💡</div>
+      <div><strong>Why two routers?</strong> <code>/user/login</code> and <code>/user/users</code> (register) must be public — you can't be logged in before you log in! Everything else needs auth. Splitting into two routers is cleaner than individual <code>Depends</code> on every function.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Auto-assign "User" role on registration</div>
+    <div class="explain">When <code>create_user()</code> in CRUD runs, after saving the user it automatically looks up the "User" role and assigns it. New users instantly get default permissions.</div>
+    <div class="code-wrap">
+      <div class="code-label">User/CRUD/user.py — create_user()</div>
+      <pre>
+<span class="kw">async def</span> <span class="fn">create_user</span>(db, username, email, password, ...):
+    new_user = <span class="cls">User</span>(username=username, password=<span class="fn">hash_password</span>(password), ...)
+    db.<span class="fn">add</span>(new_user)
+    <span class="kw">await</span> db.<span class="fn">commit</span>()
+    <span class="kw">await</span> db.<span class="fn">refresh</span>(new_user)
+
+<span class="hl">    <span class="cm"># Auto-assign default "User" role</span>
+    role_result = <span class="kw">await</span> db.<span class="fn">execute</span>(<span class="fn">select</span>(Role).<span class="fn">where</span>(Role.role_name == <span class="str">"User"</span>))
+    user_role = role_result.<span class="fn">scalar_one_or_none</span>()
+    <span class="kw">if</span> user_role:
+        db.<span class="fn">add</span>(<span class="cls">UserRole</span>(user_id=new_user.user_id, role_id=user_role.role_id, ...))
+        <span class="kw">await</span> db.<span class="fn">commit</span>()</span>
+    <span class="kw">return</span> new_user</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 19 ── -->
+<div class="section" id="s19">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#ef4444,#f59e0b)">🔍</div>
+    <div>
+      <div class="section-title">19. SQLAlchemy Query Patterns</div>
+      <div class="section-subtitle">select(), scalar_one_or_none(), scalars().all() — used everywhere</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">Core query methods you must know <span class="tag tag-sql">SQLAlchemy</span></div>
+    <div class="code-wrap">
+      <div class="code-label">User/CRUD/user.py — real patterns from your project</div>
+      <pre>
+<span class="imp">from</span> sqlalchemy <span class="imp">import</span> select, delete
+
+<span class="cm"># ── 1. GET ONE OR NONE (most common) ──</span>
+<span class="hl">result = <span class="kw">await</span> db.<span class="fn">execute</span>(<span class="fn">select</span>(User).<span class="fn">where</span>(User.user_id == user_id))
+user = result.<span class="fn">scalar_one_or_none</span>()  <span class="cm"># None if not found (no crash)</span></span>
+
+<span class="cm"># ── 2. GET ALL ROWS ──</span>
+<span class="hl">result = <span class="kw">await</span> db.<span class="fn">execute</span>(<span class="fn">select</span>(User))
+users = result.<span class="fn">scalars</span>().<span class="fn">all</span>()  <span class="cm"># list of User objects</span></span>
+
+<span class="cm"># ── 3. FILTER + JOIN (permission check) ──</span>
+<span class="hl">result = <span class="kw">await</span> db.<span class="fn">execute</span>(
+    <span class="fn">select</span>(RoleFeatureAction)
+    .<span class="fn">join</span>(UserRole, RoleFeatureAction.role_id == UserRole.role_id)
+    .<span class="fn">join</span>(FeatureAction, RoleFeatureAction.feature_action_id == FeatureAction.feature_action_id)
+    .<span class="fn">where</span>(UserRole.user_id == user_id, FeatureAction.permission_name == permission_key)
+)</span>
+
+<span class="cm"># ── 4. BULK DELETE ──</span>
+<span class="hl"><span class="kw">await</span> db.<span class="fn">execute</span>(<span class="fn">delete</span>(CloseFriend).<span class="fn">where</span>(CloseFriend.user_id == user_id))</span>
+
+<span class="cm"># ── 5. INSERT ──</span>
+<span class="hl">new_user = <span class="cls">User</span>(username=<span class="str">"dan"</span>, ...)
+db.<span class="fn">add</span>(new_user)
+<span class="kw">await</span> db.<span class="fn">commit</span>()
+<span class="kw">await</span> db.<span class="fn">refresh</span>(new_user)  <span class="cm"># loads auto-generated ID</span></span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">permission_name format — "feature:action"</div>
+    <div class="explain">The <code>check_user_permission()</code> function builds a key like <code>"post:create"</code> and checks if any of the user's roles have a <code>FeatureAction</code> with that <code>permission_name</code>.</div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — check_user_permission()</div>
+      <pre>
+<span class="kw">async def</span> <span class="fn">check_user_permission</span>(db, user_id, feature_name, action_name):
+<span class="hl">    permission_key = <span class="fn">f"{feature_name}:{action_name}"</span>  <span class="cm"># e.g. "post:create", "role:update"</span></span>
+    result = <span class="kw">await</span> db.<span class="fn">execute</span>(
+        <span class="fn">select</span>(RoleFeatureAction)
+        .<span class="fn">join</span>(UserRole, ...)
+        .<span class="fn">join</span>(FeatureAction, ...)
+        .<span class="fn">where</span>(UserRole.user_id == user_id,
+               FeatureAction.permission_name == permission_key)
+    )
+    <span class="kw">return</span> result.<span class="fn">scalar_one_or_none</span>() <span class="kw">is not None</span>  <span class="cm"># True/False</span>
+
+<span class="cm"># Examples of permission_name values used in project:</span>
+<span class="cm"># "post:create"   "post:delete"   "role:create"   "role:update"</span>
+<span class="cm"># "user:view"     "user:delete"   "comment:create" "reel:create"</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 20 ── -->
+<div class="section" id="s20">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#06b6d4,#10b981)">🔗</div>
+    <div>
+      <div class="section-title">20. ORM Relationships</div>
+      <div class="section-subtitle">relationship(), back_populates, lazy="selectin", ForeignKey CASCADE</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">relationship() — linking tables as Python objects <span class="tag tag-sql">SQLAlchemy</span></div>
+    <div class="explain">Instead of writing JOINs manually, SQLAlchemy's <code>relationship()</code> lets you access related objects as Python attributes. For example, <code>user.posts</code> gives you all posts by that user.</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Models.py — User and Post</div>
+      <pre>
+<span class="kw">class</span> <span class="cls">User</span>(Base):
+<span class="hl">    posts = <span class="fn">relationship</span>(<span class="str">"Post"</span>, back_populates=<span class="str">"author"</span>, lazy=<span class="str">"selectin"</span>)</span>
+    <span class="cm"># user.posts → list of Post objects</span>
+
+<span class="kw">class</span> <span class="cls">Post</span>(Base):
+<span class="hl">    author = <span class="fn">relationship</span>(<span class="str">"User"</span>, back_populates=<span class="str">"posts"</span>)</span>
+    <span class="cm"># post.author → the User object</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key relationship arguments explained</div>
+    <table class="compare-table">
+      <tr><th>Argument</th><th>What it means</th><th>Example</th></tr>
+      <tr><td><code>back_populates</code></td><td>Links both sides of the relationship together (bidirectional)</td><td class="tval">posts ↔ author</td></tr>
+      <tr><td><code>lazy="selectin"</code></td><td>Loads related objects automatically using a separate SELECT IN query (async-safe)</td><td class="tval">user.posts auto-loaded</td></tr>
+      <tr><td><code>uselist=False</code></td><td>One-to-one relationship (returns single object, not list)</td><td class="tval">user.bio (one bio)</td></tr>
+      <tr><td><code>foreign_keys=[...]</code></td><td>Used when two FK columns point to same table (e.g. follower_id, following_id both → users)</td><td class="tval">UserFollower model</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ForeignKey with ondelete="CASCADE"</div>
+    <div class="explain">Used in <code>Reel</code> and <code>RefreshToken</code> models. If the parent (User) is deleted, all related Reels and RefreshTokens are automatically deleted by the DB — no orphan rows.</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Models.py — Reel and RefreshToken</div>
+      <pre>
+<span class="kw">class</span> <span class="cls">Reel</span>(Base):
+    user_id = <span class="fn">Column</span>(<span class="cls">Integer</span>,
+<span class="hl">        <span class="fn">ForeignKey</span>(<span class="str">"users.user_id"</span>, ondelete=<span class="str">"CASCADE"</span>), nullable=<span class="kw">False</span>)</span>
+    <span class="cm"># Delete user → all their reels deleted automatically</span>
+
+<span class="kw">class</span> <span class="cls">RefreshToken</span>(Base):
+    user_id = <span class="fn">Column</span>(<span class="cls">Integer</span>,
+<span class="hl">        <span class="fn">ForeignKey</span>(<span class="str">"users.user_id"</span>, ondelete=<span class="str">"CASCADE"</span>), nullable=<span class="kw">False</span>)</span>
+    <span class="cm"># Delete user → all their refresh tokens deleted automatically</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 21 ── -->
+<div class="section" id="s21">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#ec4899,#8b5cf6)">🧩</div>
+    <div>
+      <div class="section-title">21. UniqueConstraint &amp; DEFERRED</div>
+      <div class="section-subtitle">Advanced DB constraint pattern used in UserBio and PrivacyHistory</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">The Problem &amp; Solution <span class="tag tag-sql">PostgreSQL</span></div>
+    <div class="explain">We want only ONE active bio per user at a time. A naive <code>UniqueConstraint(user_id, is_active)</code> would block us from updating: to set a new bio active, we'd first need to deactivate the old one — but deactivating + activating in the same transaction would briefly violate uniqueness mid-way.</div>
+    <div class="callout callout-warn">
+      <div class="callout-icon">⚠️</div>
+      <div><strong>DEFERRED to the rescue:</strong> <code>deferrable=True, initially="DEFERRED"</code> tells PostgreSQL: "Don't check this constraint after every individual statement — check it at the END of the transaction." So you can do both updates in one transaction and it only validates when you COMMIT.</div>
+    </div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Models.py — UserBio</div>
+      <pre>
+<span class="kw">class</span> <span class="cls">UserBio</span>(Base):
+    __tablename__ = <span class="str">"user_bio"</span>
+    bio_id   = <span class="fn">Column</span>(<span class="cls">Integer</span>, primary_key=<span class="kw">True</span>)
+    user_id  = <span class="fn">Column</span>(<span class="cls">Integer</span>, <span class="fn">ForeignKey</span>(<span class="str">"users.user_id"</span>))
+    bio_text = <span class="fn">Column</span>(<span class="cls">Text</span>)
+    is_active= <span class="fn">Column</span>(<span class="cls">Boolean</span>, default=<span class="kw">False</span>)
+<span class="hl">    __table_args__ = (<span class="cls">UniqueConstraint</span>(
+        <span class="str">"user_id"</span>, <span class="str">"is_active"</span>,
+        name=<span class="str">"uq_user_bio_user_active"</span>,
+        deferrable=<span class="kw">True</span>,         <span class="cm"># can be deferred</span>
+        initially=<span class="str">"DEFERRED"</span>      <span class="cm"># deferred by default — checked at COMMIT</span>
+    ),)</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">server_default=func.now() — DB-level timestamp</div>
+    <div class="explain">Some models use <code>server_default=func.now()</code> — the database itself sets the timestamp. Others use Python's <code>datetime.utcnow()</code>. Both work, but <code>server_default</code> is more reliable as it uses the DB server's clock.</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Models.py — two approaches</div>
+      <pre>
+<span class="cm"># Approach 1: DB sets the timestamp (PostLike, PostComment, Reel)</span>
+<span class="hl">created_at = <span class="fn">Column</span>(<span class="cls">DateTime</span>, server_default=<span class="fn">func.now</span>())</span>
+
+<span class="cm"># Approach 2: Python sets the timestamp (User, UserRole)</span>
+<span class="hl">created_at = <span class="fn">Column</span>(<span class="cls">DateTime</span>)
+<span class="cm"># ... then in CRUD:</span>
+new_user = <span class="cls">User</span>(created_at=datetime.<span class="fn">utcnow</span>(), ...)</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 22 ── -->
+<div class="section" id="s22">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#f59e0b,#06b6d4)">⚙️</div>
+    <div>
+      <div class="section-title">22. CORS Middleware &amp; .env Config</div>
+      <div class="section-subtitle">How secrets are loaded and cross-origin requests are handled</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">python-dotenv — Loading .env secrets <span class="tag tag-async">Config</span></div>
+    <div class="explain">Secrets like DB passwords and JWT keys must never be hardcoded. They live in a <code>.env</code> file (gitignored) and are loaded at startup by <code>python-dotenv</code>.</div>
+    <div class="code-wrap">
+      <div class="code-label">Setting/Config.py — actual code</div>
+      <pre>
+<span class="kw">import</span> os
+<span class="imp">from</span> dotenv <span class="imp">import</span> load_dotenv
+
+<span class="hl">load_dotenv()  <span class="cm"># reads .env file into environment variables</span></span>
+
+DATABASE_URL              = os.<span class="fn">getenv</span>(<span class="str">"DATABASE_URL"</span>)
+SECRET_KEY                = os.<span class="fn">getenv</span>(<span class="str">"SECRET_KEY"</span>, <span class="str">"fallback-key"</span>)
+ALGORITHM                 = os.<span class="fn">getenv</span>(<span class="str">"ALGORITHM"</span>, <span class="str">"HS256"</span>)
+ACCESS_TOKEN_EXPIRE_MINUTES = <span class="fn">int</span>(os.<span class="fn">getenv</span>(<span class="str">"ACCESS_TOKEN_EXPIRE_MINUTES"</span>, <span class="str">"60"</span>))
+MONGO_URL                 = os.<span class="fn">getenv</span>(<span class="str">"MONGO_URL"</span>, <span class="str">"mongodb://localhost:27017"</span>)</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">CORSMiddleware — allowing frontend to call the backend</div>
+    <div class="explain"><strong>CORS</strong> (Cross-Origin Resource Sharing) — browsers block JS from calling a different domain by default. Our frontend (port 80) calling our API (port 8001) is a cross-origin request. The middleware adds the right response headers to allow it.</div>
+    <div class="code-wrap">
+      <div class="code-label">main.py — CORSMiddleware</div>
+      <pre>
+<span class="hl">app.<span class="fn">add_middleware</span>(
+    <span class="cls">CORSMiddleware</span>,
+    allow_origins=[<span class="str">"*"</span>],        <span class="cm"># allow any domain</span>
+    allow_credentials=<span class="kw">True</span>,     <span class="cm"># allow cookies/auth headers</span>
+    allow_methods=[<span class="str">"*"</span>],         <span class="cm"># GET, POST, PUT, DELETE etc.</span>
+    allow_headers=[<span class="str">"*"</span>],         <span class="cm"># Authorization, Content-Type etc.</span>
+)</span></pre>
+    </div>
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div><code>allow_origins=["*"]</code> is convenient for development. In production, you'd restrict this to specific domains like <code>["https://yourapp.com"]</code>.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">StaticFiles — serving uploaded media</div>
+    <div class="code-wrap">
+      <div class="code-label">main.py</div>
+      <pre>
+<span class="hl">app.<span class="fn">mount</span>(<span class="str">"/static"</span>, <span class="cls">StaticFiles</span>(directory=<span class="str">"static"</span>), name=<span class="str">"static"</span>)</span>
+<span class="cm"># Files in static/uploads/ are served at http://localhost:8001/static/uploads/file.jpg</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 23 ── -->
+<div class="section" id="s23">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#ef4444,#8b5cf6)">🚨</div>
+    <div>
+      <div class="section-title">23. HTTP Exceptions &amp; Status Codes</div>
+      <div class="section-subtitle">HTTPException, WWW-Authenticate header, all status codes used</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="card">
+    <div class="card-title">HTTPException — how errors are raised <span class="tag tag-dec">FastAPI</span></div>
+    <div class="code-wrap">
+      <div class="code-label">User/Router.py — real examples</div>
+      <pre>
+<span class="cm"># 400 — Bad request (wrong data from client)</span>
+<span class="hl"><span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=<span class="num">400</span>, detail=<span class="str">"Username already registered"</span>)</span>
+
+<span class="cm"># 401 — Unauthorized (no/invalid token)</span>
+<span class="hl"><span class="kw">raise</span> <span class="cls">HTTPException</span>(
+    status_code=<span class="num">401</span>,
+    detail=<span class="str">"Could not validate credentials"</span>,
+    headers={<span class="str">"WWW-Authenticate"</span>: <span class="str">"Bearer"</span>}   <span class="cm"># ← tells client what auth scheme</span>
+)</span>
+
+<span class="cm"># 403 — Forbidden (authenticated but not allowed)</span>
+<span class="hl"><span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=<span class="num">403</span>, detail=<span class="str">"Not enough permissions"</span>)</span>
+
+<span class="cm"># 404 — Not Found</span>
+<span class="hl"><span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=<span class="num">404</span>, detail=<span class="str">"User not found"</span>)</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">All HTTP status codes used in your project</div>
+    <table class="compare-table">
+      <tr><th>Code</th><th>Name</th><th>When used</th></tr>
+      <tr><td><strong style="color:#10b981">200</strong></td><td>OK</td><td>Successful GET, PUT, DELETE</td></tr>
+      <tr><td><strong style="color:#10b981">201</strong></td><td>Created</td><td>Successful POST (user/post/role created). Explicitly set via <code>status_code=201</code></td></tr>
+      <tr><td><strong style="color:#f59e0b">400</strong></td><td>Bad Request</td><td>Duplicate username, invalid file type, wrong password, reel already liked</td></tr>
+      <tr><td><strong style="color:#ef4444">401</strong></td><td>Unauthorized</td><td>No token, invalid token, revoked refresh token</td></tr>
+      <tr><td><strong style="color:#ef4444">403</strong></td><td>Forbidden</td><td>Valid user but no permission (e.g. editing someone else's post)</td></tr>
+      <tr><td><strong style="color:#ef4444">404</strong></td><td>Not Found</td><td>User/post/role/bio not found in DB</td></tr>
+    </table>
+    <div class="callout callout-tip">
+      <div class="callout-icon">💡</div>
+      <div><strong>401 vs 403:</strong> 401 = "I don't know who you are" (no/bad token). 403 = "I know who you are, but you're not allowed." This is a common interview distinction!</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Role &amp; Permission System — Full Picture</div>
+    <div class="explain">The RBAC (Role-Based Access Control) uses 5 tables working together:</div>
+    <table class="compare-table">
+      <tr><th>Table</th><th>Contains</th><th>Example</th></tr>
+      <tr><td><code>roles</code></td><td>Role definitions</td><td class="tval">User, Admin, Superadmin</td></tr>
+      <tr><td><code>user_roles</code></td><td>Which roles a user has</td><td class="tval">user_id=5, role_id=2</td></tr>
+      <tr><td><code>features</code></td><td>App features</td><td class="tval">post, user, role, comment, reel</td></tr>
+      <tr><td><code>actions</code></td><td>Operations</td><td class="tval">create, read, update, delete</td></tr>
+      <tr><td><code>feature_actions</code></td><td>Combinations with permission_name</td><td class="tval">"post:create", "role:update"</td></tr>
+      <tr><td><code>role_feature_actions</code></td><td>What permissions a role has</td><td class="tval">Admin role → "user:delete" permission</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ════ VIVA Q&A ════ -->
+<div class="section" id="viva">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#ef4444,#f59e0b)">💥</div>
+    <div>
+      <div class="section-title">Possible Viva Questions &amp; Answers</div>
+      <div class="section-subtitle">Click each question to reveal the full answer</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">1</div>
+      <div class="qa-question">What is a generator? Where is it used in your project?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p>A <strong>generator</strong> is a Python function that uses <code>yield</code> instead of <code>return</code>. It pauses at <code>yield</code>, gives a value to the caller, and resumes from that exact point later — unlike a normal function that runs to completion and exits.</p>
+      <p style="margin-top:10px;"><strong>In our project:</strong> <code>get_db()</code> in <code>Setting/Database.py</code> is the generator:</p>
+      <pre>
+<span class="kw">async def</span> <span class="fn">get_db</span>():
+    <span class="kw">async with</span> <span class="fn">SessionLocal</span>() <span class="kw">as</span> session:
+        <span class="kw">yield</span> session    <span class="cm"># PAUSE: give session to endpoint</span>
+                         <span class="cm"># RESUME: session auto-closes</span></pre>
+      <p style="margin-top:10px;"><strong>Why generator?</strong> It guarantees the DB session always closes after each request — even if an error occurs. This prevents connection leaks.</p>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">2</div>
+      <div class="qa-question">What is <code>db: AsyncSession</code>? Write the full syntax for creating a session in your project.</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><code>AsyncSession</code> is SQLAlchemy's <strong>asynchronous database session</strong>. It's your open connection to the database — you use it to run queries, add data, commit, and refresh objects — all without blocking the server.</p>
+      <p style="margin-top:10px;"><strong>Full creation syntax from our project (Setting/Database.py):</strong></p>
+      <pre>
+<span class="cm"># Step 1: Create async engine (pool of DB connections)</span>
+engine = <span class="fn">create_async_engine</span>(DATABASE_URL, echo=<span class="kw">True</span>)
+
+<span class="cm"># Step 2: Create session factory</span>
+SessionLocal = <span class="fn">async_sessionmaker</span>(bind=engine, expire_on_commit=<span class="kw">False</span>)
+
+<span class="cm"># Step 3: Generator function yields a session</span>
+<span class="kw">async def</span> <span class="fn">get_db</span>():
+    <span class="kw">async with</span> <span class="fn">SessionLocal</span>() <span class="kw">as</span> session:
+        <span class="kw">yield</span> session
+
+<span class="cm"># Step 4: Inject via Depends in endpoint</span>
+db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)</pre>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">3</div>
+      <div class="qa-question">What does <code>get_db</code> do in your project?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><code>get_db</code> is an <strong>async generator function</strong> in <code>Setting/Database.py</code>. It:</p>
+      <ol style="padding-left:20px;margin-top:8px;line-height:2.2;">
+        <li>Opens a new <code>AsyncSession</code> using <code>async with SessionLocal()</code></li>
+        <li><code>yield</code>s that session to the calling endpoint (via <code>Depends(get_db)</code>)</li>
+        <li>After the endpoint finishes, the <code>async with</code> block automatically closes the session</li>
+      </ol>
+      <p style="margin-top:10px;">It is used in nearly every Router endpoint and CRUD function. It ensures proper session lifecycle — no manual open/close needed, no connection leaks.</p>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">4</div>
+      <div class="qa-question">What is a decorator? Give examples from your project.</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p>A <strong>decorator</strong> wraps a function to add extra behaviour without changing its original code. Python uses the <code>@</code> symbol as syntactic sugar for this wrapping.</p>
+      <pre>
+<span class="cm"># Route decorators — register functions as HTTP endpoints</span>
+<span class="dec">@UserRouter.post</span>(<span class="str">"/login"</span>)             <span class="cm"># POST /user/login</span>
+<span class="dec">@UserProtectedRouter.get</span>(<span class="str">"/users/me"</span>)  <span class="cm"># GET /user/users/me</span>
+<span class="dec">@AdminRouter.delete</span>(<span class="str">"/roles/{role_id}"</span>)<span class="cm"># DELETE /admin/roles/5</span>
+
+<span class="cm"># Event decorator — runs on server start</span>
+<span class="dec">@app.on_event</span>(<span class="str">"startup"</span>)
+<span class="kw">async def</span> <span class="fn">startup_event</span>():
+    <span class="kw">await</span> <span class="fn">init_mongo</span>()</pre>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">5</div>
+      <div class="qa-question">What is <code>Depends()</code> and why is it used?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><code>Depends()</code> is FastAPI's <strong>Dependency Injection</strong> system. It tells FastAPI: "Call this function/class first, then inject its return value as a parameter of my endpoint." This avoids repeating setup code in every endpoint.</p>
+      <pre>
+db: <span class="cls">AsyncSession</span> = <span class="fn">Depends</span>(get_db)            <span class="cm"># injects DB session</span>
+current_user = <span class="fn">Depends</span>(get_current_user)      <span class="cm"># injects logged-in user</span>
+current_user = <span class="fn">Depends</span>(<span class="cls">PermissionChecker</span>(...))  <span class="cm"># injects user + checks permission</span></pre>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">6</div>
+      <div class="qa-question">What is <code>PermissionChecker</code>? Why is it a class and not a function?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><code>PermissionChecker</code> is a <strong>callable class</strong> used as a configurable FastAPI dependency. It checks if the logged-in user has a specific permission before allowing access.</p>
+      <p style="margin-top:8px;"><strong>Why a class?</strong> Because you need to configure it differently for each endpoint (different feature/action). A plain function can't store configuration. A class solves this:</p>
+      <ul style="padding-left:20px;line-height:2.2;margin-top:6px;">
+        <li><code>__init__</code> stores the config (feature_name, action_name) — runs once</li>
+        <li><code>__call__</code> performs the permission check — runs every request</li>
+      </ul>
+      <pre>
+<span class="fn">Depends</span>(<span class="cls">PermissionChecker</span>(<span class="str">"role"</span>, <span class="str">"delete"</span>))  <span class="cm"># delete roles</span>
+<span class="fn">Depends</span>(<span class="cls">PermissionChecker</span>(<span class="str">"user"</span>, <span class="str">"view"</span>))    <span class="cm"># admin view users</span>
+<span class="fn">Depends</span>(<span class="cls">PermissionChecker</span>(<span class="str">"post"</span>, <span class="str">"delete"</span>)) <span class="cm"># admin delete posts</span></pre>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">7</div>
+      <div class="qa-question">How does JWT authentication work in your project? Explain step by step.</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <ol style="padding-left:20px;line-height:2.4;">
+        <li>User POSTs credentials to <code>/user/login</code></li>
+        <li>Server looks up user in DB, verifies password with <code>bcrypt.checkpw()</code></li>
+        <li>Server creates a JWT: <code>jwt.encode({"sub": str(user_id), "exp": ...}, SECRET_KEY, ALGORITHM)</code></li>
+        <li>Also creates a random refresh token and saves it in the <code>refresh_tokens</code> DB table</li>
+        <li>Client stores both tokens in <code>localStorage</code></li>
+        <li>Client sends JWT in every request header: <code>Authorization: Bearer &lt;token&gt;</code></li>
+        <li><code>oauth2_scheme</code> extracts the token string; <code>get_current_user</code> decodes it and finds the user</li>
+        <li>When JWT expires, client sends refresh token to <code>/user/refresh</code> to get a new JWT</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">8</div>
+      <div class="qa-question">Why do we hash passwords? What is bcrypt?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p>We <strong>never store plain text passwords</strong> because if the database is hacked, all passwords would be exposed instantly. A hash is a one-way transformation — you cannot reverse it to get the original password.</p>
+      <p style="margin-top:8px;"><strong>bcrypt</strong> is a password hashing algorithm designed to be computationally slow (to resist brute-force attacks). It includes a random <em>salt</em> so two identical passwords produce different hashes — this prevents rainbow table attacks.</p>
+      <pre>
+salt = bcrypt.<span class="fn">gensalt</span>()           <span class="cm"># random salt</span>
+hashed = bcrypt.<span class="fn">hashpw</span>(pwd, salt)  <span class="cm"># one-way hash</span>
+ok = bcrypt.<span class="fn">checkpw</span>(plain, hashed) <span class="cm"># compare at login</span></pre>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">9</div>
+      <div class="qa-question">What is the difference between <code>UserRouter</code> and <code>UserProtectedRouter</code>?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><code>UserRouter = APIRouter()</code> — <strong>public router</strong>. No token needed. Routes: <code>POST /login</code>, <code>POST /users</code> (register), <code>GET /users</code> (list).</p>
+      <p style="margin-top:8px;"><code>UserProtectedRouter = APIRouter(dependencies=[Depends(get_current_user)])</code> — <strong>protected router</strong>. Every route automatically verifies the JWT. No token or bad token → 401 Unauthorized. Routes: <code>GET /users/me</code>, <code>GET /search</code>, all bio/privacy/follow/story/post endpoints.</p>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">10</div>
+      <div class="qa-question">What is Alembic and why is it used instead of just calling <code>Base.metadata.create_all()</code>?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><code>Base.metadata.create_all()</code> creates tables from scratch but <strong>cannot modify existing tables</strong>. If you add a column to a model, it won't alter the existing table.</p>
+      <p style="margin-top:8px;"><strong>Alembic</strong> generates versioned migration scripts that can ALTER existing tables, add columns, rename columns, and even roll back changes. It tracks which migrations have been applied in a special <code>alembic_version</code> table.</p>
+      <pre>
+alembic revision --autogenerate -m <span class="str">"add is_verified column"</span>
+alembic upgrade head   <span class="cm"># safely adds column to existing table</span></pre>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">11</div>
+      <div class="qa-question">What does <code>scalar_one_or_none()</code> do? Why is it used?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p>After running <code>await db.execute(select(...))</code>, you get a <code>Result</code> object, not the actual data. You call methods on it to extract rows:</p>
+      <pre>
+result = <span class="kw">await</span> db.<span class="fn">execute</span>(<span class="fn">select</span>(models.User).<span class="fn">where</span>(models.User.user_id == user_id))
+
+user = result.<span class="fn">scalar_one_or_none</span>()  <span class="cm"># ONE object or None — safe</span>
+users = list(result.<span class="fn">scalars</span>().<span class="fn">all</span>()) <span class="cm"># LIST of all results</span></pre>
+      <p style="margin-top:8px;"><code>scalar_one_or_none()</code> is safe for "find by ID" queries — it returns the object if found, or <code>None</code> if not found, without throwing an error.</p>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">12</div>
+      <div class="qa-question">What is the difference between <code>db.commit()</code> and <code>db.refresh()</code>?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><code>await db.commit()</code> — <strong>saves all staged changes to the database permanently</strong>. Before commit, changes exist only in memory (in the session). After commit, they are persisted.</p>
+      <p style="margin-top:8px;"><code>await db.refresh(obj)</code> — <strong>reloads the object's attributes from the database into memory</strong>. After inserting a new row, the DB auto-generates the primary key (<code>user_id</code>). Without <code>refresh()</code>, the in-memory object still has <code>None</code> for that field.</p>
+      <pre>
+db.<span class="fn">add</span>(new_user)            <span class="cm"># stage INSERT</span>
+<span class="kw">await</span> db.<span class="fn">commit</span>()           <span class="cm"># save → DB generates user_id</span>
+<span class="kw">await</span> db.<span class="fn">refresh</span>(new_user)  <span class="cm"># reload → new_user.user_id is now set!</span></pre>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">13</div>
+      <div class="qa-question">What is <code>CORSMiddleware</code> and why is it in the project?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><strong>CORS = Cross-Origin Resource Sharing.</strong> Browsers block JavaScript from calling APIs on different domains/ports by default (security policy). <code>CORSMiddleware</code> adds HTTP headers to responses that tell the browser: "this API allows cross-origin requests."</p>
+      <pre>
+app.<span class="fn">add_middleware</span>(<span class="cls">CORSMiddleware</span>,
+    allow_origins=[<span class="str">"*"</span>],      <span class="cm"># any origin (OK for dev; restrict in prod)</span>
+    allow_credentials=<span class="kw">True</span>,
+    allow_methods=[<span class="str">"*"</span>],      <span class="cm"># GET, POST, PUT, DELETE…</span>
+    allow_headers=[<span class="str">"*"</span>],      <span class="cm"># including Authorization: Bearer</span>
+)</pre>
+      <p style="margin-top:8px;">Without CORS, the browser would block the frontend JavaScript from calling the FastAPI backend.</p>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">14</div>
+      <div class="qa-question">Why use <code>async with SessionLocal() as session</code> — what does <code>async with</code> do?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><code>async with</code> is an <strong>async context manager</strong>. It automatically calls <code>__aenter__</code> when entering (opens the session) and <code>__aexit__</code> when exiting (closes the session) — even if an exception is raised inside the block.</p>
+      <pre>
+<span class="kw">async with</span> <span class="fn">SessionLocal</span>() <span class="kw">as</span> session:
+    <span class="cm"># session is open here</span>
+    <span class="kw">yield</span> session
+<span class="cm"># session.close() is called automatically here — even on errors</span></pre>
+      <p style="margin-top:8px;">This is why we never manually call <code>session.close()</code> anywhere in the project.</p>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">15</div>
+      <div class="qa-question">What is the difference between a Pydantic model and a SQLAlchemy model?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <table class="compare-table">
+        <tr><th></th><th>Pydantic Schema</th><th>SQLAlchemy Model</th></tr>
+        <tr><td><strong>Purpose</strong></td><td>Validate &amp; shape incoming/outgoing JSON</td><td>Map Python class to DB table</td></tr>
+        <tr><td><strong>Inherits from</strong></td><td><code>pydantic.BaseModel</code></td><td><code>Setting.Database.Base</code></td></tr>
+        <tr><td><strong>Used in</strong></td><td>Router function parameters</td><td>CRUD queries, DB storage</td></tr>
+        <tr><td><strong>Example</strong></td><td><code>class UserCreate(BaseModel)</code></td><td><code>class User(Base)</code></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">16</div>
+      <div class="qa-question">What is <code>HTTPException</code>? What status codes do you use in the project?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><code>HTTPException</code> is FastAPI's way of sending an error response. When you <code>raise</code> it, FastAPI immediately stops the request and returns the error.</p>
+      <pre>
+<span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=<span class="num">400</span>, detail=<span class="str">"Username already registered"</span>)  <span class="cm"># Bad Request</span>
+<span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=<span class="num">401</span>, detail=<span class="str">"Could not validate credentials"</span>) <span class="cm"># Unauthorized</span>
+<span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=<span class="num">403</span>, detail=<span class="str">"Not enough permissions"</span>)         <span class="cm"># Forbidden</span>
+<span class="kw">raise</span> <span class="cls">HTTPException</span>(status_code=<span class="num">404</span>, detail=<span class="str">"User not found"</span>)                  <span class="cm"># Not Found</span></pre>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">17</div>
+      <div class="qa-question">Explain the Role-Permission system: Role, Feature, Action tables.</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p>The permission system has 5 tables that work together:</p>
+      <ul style="padding-left:20px;line-height:2.3;margin-top:8px;">
+        <li><strong>Role</strong> — e.g., "admin", "superadmin", "User"</li>
+        <li><strong>Feature</strong> — e.g., "post", "user", "role"</li>
+        <li><strong>Action</strong> — e.g., "create", "view", "update", "delete"</li>
+        <li><strong>FeatureAction</strong> — links Feature + Action, stores <code>permission_name = "role:delete"</code></li>
+        <li><strong>RoleFeatureAction</strong> — links a Role to a FeatureAction (which roles have which permissions)</li>
+      </ul>
+      <p style="margin-top:8px;"><code>check_user_permission(db, user_id, "role", "delete")</code> joins <code>UserRole → RoleFeatureAction → FeatureAction</code> to check if user's role has <code>"role:delete"</code>.</p>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">18</div>
+      <div class="qa-question">What is <code>oauth2_scheme</code>?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <pre>
+oauth2_scheme = <span class="cls">OAuth2PasswordBearer</span>(tokenUrl=<span class="str">"/user/login"</span>, auto_error=<span class="kw">False</span>)</pre>
+      <p style="margin-top:8px;">This is a FastAPI security utility. When used as a dependency, it automatically reads the <code>Authorization: Bearer &lt;token&gt;</code> header from the incoming HTTP request and extracts just the token string. <code>auto_error=False</code> means it returns <code>None</code> instead of raising a 401 if no token is present — we handle the error manually in <code>get_current_user</code>.</p>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">19</div>
+      <div class="qa-question">What is <code>expire_on_commit=False</code> in <code>async_sessionmaker</code>?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p>By default, SQLAlchemy marks all loaded objects as "expired" after a <code>commit()</code>. The next time you access their attributes, it tries to run another SELECT query to refresh them. In async SQLAlchemy, this auto-refresh causes errors because it tries to make implicit DB calls.</p>
+      <p style="margin-top:8px;"><code>expire_on_commit=False</code> disables this: after committing, the in-memory object's attributes remain accessible without triggering another DB query. We manually call <code>await db.refresh(obj)</code> when we need fresh data from the DB.</p>
+    </div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      <div class="qa-num">20</div>
+      <div class="qa-question">What is Motor? Why is it used instead of PyMongo?</div>
+      <div class="qa-toggle">▼</div>
+    </div>
+    <div class="qa-a">
+      <p><strong>Motor</strong> is the <em>async</em> MongoDB driver for Python. <strong>PyMongo</strong> is the standard (sync) MongoDB driver.</p>
+      <p style="margin-top:8px;">Since our FastAPI app uses <code>async/await</code> everywhere, we need an async DB driver. Using the sync PyMongo in an async FastAPI app would block the event loop, defeating the purpose of async. Motor wraps PyMongo to provide non-blocking async operations using <code>AsyncIOMotorClient</code>.</p>
+      <pre>
+<span class="imp">from</span> motor.motor_asyncio <span class="imp">import</span> AsyncIOMotorClient
+mongo_client = <span class="cls">AsyncIOMotorClient</span>(MONGO_URL)  <span class="cm"># async connection</span></pre>
+    </div>
+  </div>
+
+</div><!-- end viva section -->
+
+</main>
+
+<script>
+  function toggleQA(el) {
+    el.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
